@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Extract time band data from a split Lexis object</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for time.band {Epi}"><tr><td>time.band {Epi}</td><td align="right">R Documentation</td></tr></table>
+<h2>Extract time band data from a split Lexis object</h2>
+
+
+<h3>Description</h3>
+
+<p>
+The break points of a <code>Lexis</code> object (created by a call to
+<code>splitLexis</code>) divide the follow-up intervals into time bands
+along a given time scale. The <code>breaks</code> function returns
+the break points, for a given time scale, and the <code>timeBand</code>
+classifies each row into one of the time bands.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+timeBand(lex, time.scale, type)
+breaks(lex, time.scale)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>lex</code></td>
+<td>
+an object of class <code>Lexis</code></td></tr>
+<tr valign="top"><td><code>time.scale</code></td>
+<td>
+a character or integer vector of length 1
+identifying the time scale of interest</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+a string that determines how the time bands are labelled.
+See Details below</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+Time bands may be labelled in various ways according to the
+<code>type</code> argument. The permitted values of the <code>type</code>
+argument, and the corresponding return values are:
+<dt>"factor"</dt><dd>a factor (unordered) with labels "(left,right]"</dd>
+<dt>"integer"</dt><dd>a numeric vector with integer codes starting from 0</dd>
+<dt>"left"</dt><dd>the left-hand limit of the time band</dd>
+<dt>"middle"</dt><dd>the middle of the time band</dd>
+<dt>"right"</dt><dd>the right-hand limit of the time band</dd>
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+The <code>breaks</code> function returns a vector of break points
+for the <code>Lexis</code> object, or NULL if no break points have been
+defined by a call to <code>splitLexis</code>.  The <code>timeBand</code>
+function returns a numeric vector or factor, depending on the value
+of the <code>type</code> argument.</p>
+
+<h3>Note</h3>
+
+<p>
+A newly created <code>Lexis</code> object has no break points defined.
+In this case, <code>breaks</code> will return NULL, and
+<code>timeBand</code> will return a degenerate factor with one level
+labelled "(-Inf,Inf]".
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>
+Martyn Plummer
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="Lexis.html">Lexis</a></code>
+</p>
+
+
+
+<hr><div align="center">[Package <em>Epi</em> version 0.8.0 <a href="00Index.html">Index]</a></div>
+
+</body></html>

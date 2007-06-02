@@ -1,0 +1,70 @@
+isec                   package:Epi                   R Documentation
+
+_D_e_t_e_r_m_i_n_e _t_h_e _i_n_t_e_r_s_e_c_t_i_o_n _b_e_t_w_e_e_n _f_o_l_l_o_w-_u_p _i_n_t_e_r_v_a_l_s _a_n_d _a _f_i_x_e_d
+_i_n_t_e_r_v_a_l.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     For a given piece of follow-up for ach person, this function
+     determines the part of the follow-up which is inside a
+     pre-specified interval. The function may occasionally be useful
+     but is mainly included as a tool to be used in the function
+     'Lexis'.
+
+_U_s_a_g_e:
+
+       isec( enter, exit, fail = 0, int, cens.value = 0,
+             Expand = 1:length(enter))
+
+_A_r_g_u_m_e_n_t_s:
+
+   enter: Numereical vector of entry times.
+
+    exit: Numerical vector of exit times.
+
+    fail: Vector of exit status, i.e. status at time 'exit'
+
+     int: The fixed interval. Numerical vector of length 2.
+
+cens.value: Censoring value. Numerical. If the person survives the
+          fixed interval, this will be the value of the status
+          indicator, 'Fail'
+
+  Expand: Person id to be carried to the output
+
+_V_a_l_u_e:
+
+     A matrix with columns 'Expand' - person identification, 'Enter' -
+     date of entry into the interval, 'Exit' - date of exit from the
+     interval and 'Fail'.
+
+_A_u_t_h_o_r(_s):
+
+     Bendix Carstensen, Steno Diabetes Center, bxc@steno.dk, <URL:
+     www.biostat.ku.dk/~bxc>
+
+_S_e_e _A_l_s_o:
+
+     'Lexis', 'icut', 'fcut1', 'fcut', 'ex1'
+
+_E_x_a_m_p_l_e_s:
+
+     one <- round( runif( 15, 0, 15 ), 1 )
+     two <- round( runif( 15, 0, 15 ), 1 )
+     doe <- pmin( one, two )
+     dox <- pmax( one, two )
+     # Goofy data rows to test possibly odd behaviour
+     doe[1:3] <- dox[1:3] <- 8
+     dox[2] <- 6
+     dox[3] <- 7.5
+     # Some failure indicators
+     fail <- sample( 0:1, 15, replace=TRUE, prob=c(0.7,0.3) )
+     # So what have we got?
+     data.frame( doe, dox, fail )
+     # Find intersection with interval (4,8)
+     isec( doe, dox, fail, int=c(4,8) )
+     # See how it compares to original data
+     merge( data.frame( Expand=1:15, doe, dox, fail ),
+            data.frame( isec( doe, dox, fail, int=c(4,8) ) ), all=TRUE )
+       
+

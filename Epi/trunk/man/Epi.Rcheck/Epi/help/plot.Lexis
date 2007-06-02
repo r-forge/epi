@@ -1,0 +1,73 @@
+plot.Lexis                package:Epi                R Documentation
+
+_L_e_x_i_s _d_i_a_g_r_a_m_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The follow-up histories represented by a Lexis object can be
+     plotted using one or two dimensions.  The two dimensional plot is
+     a Lexis diagram showing follow-up time simultaneously on two time
+     scales.
+
+_U_s_a_g_e:
+
+     ## S3 method for class 'Lexis':
+     plot(x, time.scale = NULL, breaks="lightgray", ...)
+     ## S3 method for class 'Lexis':
+     points(x, time.scale = NULL, ...)
+     ## S3 method for class 'Lexis':
+     lines(x, time.scale = NULL, ...)
+
+_A_r_g_u_m_e_n_t_s:
+
+       x: An object of class 'Lexis'
+
+time.scale: A vector of length 1 or 2 giving the time scales to be
+          plotted either by name or numerical order
+
+  breaks: a string giving the colour of grid lines to be drawn when
+          plotting a split Lexis object. Grid lines can be suppressed
+          by supplying the value 'NULL' to the 'breaks' argument
+
+     ...: Further graphical parameters to be passed to the plotting
+          methods. Grids can be drawn using the followin parameters in
+          'plot':
+
+             *  'grid' If logical, a background grid is set up using
+                the axis ticks. If a list, the first component is used
+                as positions for the vertical lines and the last as
+                positions for the horizontal. If a nunerical vector,
+                grids on both axes are set up using the distance
+                between the numbers.
+
+             *  'col.grid="lightgray"' Color of the background grid.
+
+             *  'lty.grid=2' Line type for the grid.
+
+             *  'coh.grid=FALSE' Should a 45 degree grid be plotted?
+                .in -3
+
+_D_e_t_a_i_l_s:
+
+     The plot method for 'Lexis' objects traces ``life lines'' from the
+     start to the end of follow-up.  The 'points' method plots points
+     at the end of the life lines.
+
+     If 'time.scale' is of length 1, the life lines are drawn
+     horizontally, with the time scale on the X axis and the id value
+     on the Y axis. If 'time.scale' is of length 2, a Lexis diagram is
+     produced, with diagonal life lines plotted against both time
+     scales simultaneously.
+
+     If 'lex' has been split along one of the time axes by a call to
+     'splitLexis', then vertical or horizontal grid lines are plotted
+     at the break points.
+
+_A_u_t_h_o_r(_s):
+
+     Martyn Plummer
+
+_S_e_e _A_l_s_o:
+
+     'Lexis', 'splitLexis'
+

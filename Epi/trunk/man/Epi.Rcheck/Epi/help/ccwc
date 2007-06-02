@@ -1,0 +1,79 @@
+ccwc                   package:Epi                   R Documentation
+
+_G_e_n_e_r_a_t_e _a _n_e_s_t_e_d _c_a_s_e-_c_o_n_t_r_o_l _s_t_u_d_y
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Given the basic outcome variables for a cohort study: the time of
+     entry  to the cohort, the time of exit and the reason for exit
+     ("failure" or "censoring"), this function computes risk sets and
+     generates a matched case-control study in which each case is
+     compared with a set of controls randomly sampled from the
+     appropriate risk set. Other variables may be matched when
+     selecting controls.
+
+_U_s_a_g_e:
+
+     ccwc(entry=0, exit, fail, origin=0, controls=1, match=list(), include=list(), data=NULL, silent=F)
+
+_A_r_g_u_m_e_n_t_s:
+
+   entry: Time of entry to follow-up 
+
+    exit: Time of exit from follow-up 
+
+    fail: Status on exit (1=Fail, 0=Censored) 
+
+  origin: Origin of analysis time scale 
+
+controls: The number of controls to be selected for each case 
+
+   match: List of categorical variables on which to match cases and
+          controls 
+
+ include: List of other variables to be carried across into the
+          case-control study 
+
+    data: Data frame in which to look for input variables 
+
+  silent: If  False, echos a . to the screen for each case-control set
+          created; otherwise produces no output. 
+
+_V_a_l_u_e:
+
+     The case-control study, as a  dataframe containing: 
+
+     Set: case-control set number 
+
+     Map: row number of record in input dataframe 
+
+    Time: failure time of the case in this set 
+
+    Fail: failure status (1=case, 0=control) 
+
+     These are followed by the matching variables, and finally by the
+     variables in the 'include' list
+
+_A_u_t_h_o_r(_s):
+
+     David Clayton
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Clayton and Hills, Statistical Models in Epidemiology, Oxford
+     University Press, Oxford:1993.
+
+_S_e_e _A_l_s_o:
+
+     'Lexis'
+
+_E_x_a_m_p_l_e_s:
+
+     #
+     # For the diet and heart dataset, create a nested case-control study
+     # using the age scale and matching on job
+     #
+     data(diet)
+     dietcc <- ccwc(doe, dox, chd, origin=dob, controls=2, data=diet,
+                    include=energy, match=job)
+

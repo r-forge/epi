@@ -1,0 +1,71 @@
+Changes in 0.8.0
+
+o A new function Lexis() to define follow-up on multiple timescales has
+  been added. An object of class Lexis is defined and a number of
+  utilities for the class are available. Time-splititng is now done by 
+  splitLexis().
+
+o The old Lexis function for time-splitting has been renamed to
+  W.Lexis for backward compatibility.
+
+o The function epi.eff() has been replaced by effx() and effx.match().
+
+Changes 0.7.2 to 0.7.3
+
+o Icens is now able to handle a constant underlying rate. (A bug in
+  expand.data was fixed).
+
+Changes 0.7.0 to 0.7.2
+
+o Bugs in ROC fixed, and the functionality of the grid option slightly
+  chnaged.
+
+Changes 0.6.1 to 0.7.0
+
+o Function Icens() for estimation of rates from intervalcensored 
+  follow-up data by Martyn Plummer added.
+
+o Function epi.eff by Michael Hills is added. Estimates effects in
+  various epidemiological study types.
+
+Changes 0.6.0 to 0.6.1
+
+o Coding errors in thoro dataset corrected. Only concerning dates and
+  status for livercancer diagnosis.
+
+o Lexis.lines now allows col.life, lwd.life, pch.fail, col.fail and
+  cex.fail to have the same length as the data, i.e. to produce
+  individualized lines and points. As Lexis.diagram calls Lexis.lines,
+  this facility is also available through Lexis.diagram.
+
+Changes from 0.4 to 0.6
+
+o ci.pd() amended to support the Agresti-Caffo method for confidence
+  intervals for difference between proportions. Newcombes method 10
+  is still used in twoby2.
+
+o apc.fit() added. Fits age-period-cohort models with a range of
+  possibilities for parametrizations.
+
+o Functions for time-splitting at arbitrary times and at recurrent 
+  failures have been added: isec(), icut(), fcut1(), fcut() and
+  ex1(). Eventually they will be superseded by new facilities in Lexis.
+
+o Function apc.plot() to make a plot of an apc fit is added. It is just
+  a wrapper for apc.frame() and apc.lines(), with suitable computation of
+  the paramters supplied to apc.frame.
+
+o Lexis.lines(): pch.fail and col.fail expandS to vectors of length two
+  if only one value is given. 
+
+o ci.cum() aimed at computing cumulative hazard functions from
+  parametric functions for hazards.
+
+o Problem in print.floated() with printing of objects of class
+  "floated" fixed.
+
+o Problem in ci.lin when subset did not match any factor names and
+  diff=T was given the function crashed. Fixed, and documentation updated.
+
+o cal.yr produces objects of class c("cal.yr","numeric"). Functions
+  as.Date.numeric and as.Date.cal.yr added.

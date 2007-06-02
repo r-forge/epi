@@ -1,0 +1,70 @@
+cal.yr                  package:Epi                  R Documentation
+
+_F_u_n_c_t_i_o_n_s _t_o _c_o_n_v_e_r_t _c_h_a_r_a_c_t_e_r, _f_a_c_t_o_r _a_n_d _v_a_r_i_o_u_s _d_a_t_e _o_b_j_e_c_t_s _i_n_t_o _a _n_u_m_b_e_r,
+_a_n_d _v_i_c_e _v_e_r_s_a.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Dates are converted to a numerical value, giving the calendar year
+     as a fractional number. 1 January 1970 is converted to 1970.0, and
+     other dates are converted by assuming that years are all 365.25
+     days long, so inaccuracies may arise, for example, 1 Jan 2000 is
+     converted to 1999.999. Differences between converted values will
+     be 1/365.25 of the  difference between corresponding 'Date'
+     objects.
+
+_U_s_a_g_e:
+
+       cal.yr(x, format)
+       as.Date.cal.yr( x, ... )
+       as.Date.numeric( x, ..., unit="d" )
+
+_A_r_g_u_m_e_n_t_s:
+
+       x: A factor or character vector, representing a date in format
+          'format', or an object of class 'Date', 'POSIXlt', 'POSIXct',
+          'date', 'dates' or 'chron' (the latter two requires the
+          'chron' package).
+
+  format: Format of the date values if 'x' is factor or character
+
+    unit: Which units are the date measured in, '"y"' for years, '"d"'
+          for days.
+
+     ...: Arguments passed on from other methods.
+
+_V_a_l_u_e:
+
+     'cal.yr' returns a numerical vector of the same length as 'x', of
+     class 'c("cal.yr","numeric")'.
+
+     'as.Date.cal.yr' and 'as.Date.numeric' return 'Date' objects.
+
+_A_u_t_h_o_r(_s):
+
+     Bendix Carstensen, Steno Diabetes Center & Dept. of Biostatistics,
+     University of Copenhagen, bxc@steno.dk, <URL:
+     http://www.pubhealth.ku.dk/~bxc>
+
+_S_e_e _A_l_s_o:
+
+     'DateTimeClasses', 'Date'
+
+_E_x_a_m_p_l_e_s:
+
+      # Charcter vector of dates:
+      birth <- c("14/07/1852","01/04/1954","10/06/1987","16/05/1990",
+                 "01/01/1996","01/01/1997","01/01/1998","01/01/1999")
+      # Proper conversion to class "Date":
+      birth.dat <- as.Date( birth, format="%d/%m/%Y" )
+      # Converson of character to class "cal.yr"
+      bt.yr <- cal.yr( birth, format="%d/%m/%Y" )
+      # Back to class "Date":
+      bt.dat <- as.Date( bt.yr )
+      # Numerical calculation of days since 1.1.1970:
+      days <- Days <- (bt.yr-1970)*365.25
+      # Blunt assignment of class:
+      class( Days ) <- "Date"
+      # Then data.frame() to get readable output of results:
+      data.frame( birth, birth.dat, bt.yr, bt.dat, days, Days, round(Days) )
+

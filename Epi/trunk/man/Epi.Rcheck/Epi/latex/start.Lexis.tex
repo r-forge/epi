@@ -1,0 +1,42 @@
+\HeaderA{start.Lexis}{Time series methods for Lexis objects}{start.Lexis}
+\aliasA{deltat.Lexis}{start.Lexis}{deltat.Lexis}
+\aliasA{entry}{start.Lexis}{entry}
+\aliasA{exit}{start.Lexis}{exit}
+\aliasA{status}{start.Lexis}{status}
+\keyword{ts}{start.Lexis}
+\begin{Description}\relax
+Extract the entry time, exit time, status, or duration of follow-up from a
+\code{Lexis} object.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+entry(x, time.scale = NULL)
+exit(x, time.scale = NULL)
+status(x, at=c("exit","entry"))
+## S3 method for class 'Lexis':
+deltat(x, ...)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] an object of class \code{Lexis}
+\item[\code{time.scale}] a string or integer indicating the time scale. If
+omitted, the first time scale is used as a default
+\item[\code{at}] string indicating the time point at which status is to be measured
+\item[\code{...}] optional arguments to the \code{deltat} method
+\end{ldescription}
+\end{Arguments}
+\begin{Value}
+The \code{entry} and \code{exit} functions return a vector containing
+the entry times and exit times, respectively, on the requested time
+scale. The \code{status} function returns the status either at entry
+or (by default) at exit, and the \code{deltat} method returns the length
+of the follow-up interval.
+\end{Value}
+\begin{Author}\relax
+Martyn Plummer
+\end{Author}
+\begin{SeeAlso}\relax
+\code{\LinkA{Lexis}{Lexis}}
+\end{SeeAlso}
+

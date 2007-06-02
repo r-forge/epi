@@ -1,0 +1,40 @@
+projection.ip              package:Epi              R Documentation
+
+_P_r_o_j_e_c_t_i_o_n _o_f _c_o_l_u_m_n_s _o_f _a _m_a_t_r_i_x.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Projects the columns of the matrix 'M' on the space spanned by the
+     columns of the matrix 'X', with respect to the inner product
+     defined by 'weight': '<x|y>=sum(x*w*y)'.
+
+_U_s_a_g_e:
+
+     projection.ip(X, M, orth = FALSE, weight = rep(1, nrow(X)))
+
+_A_r_g_u_m_e_n_t_s:
+
+       X: Matrix defining the space to project onto. 
+
+       M: Matrix of columns to be projected. Must have the same number
+          of rows as 'X'. 
+
+    orth: Should the projection be on the orthogonal complement to
+          'span(X)'? 
+
+  weight: Weights defining the inner product. Numerical vector of
+          length 'nrow(X)'. 
+
+_V_a_l_u_e:
+
+     A matrix of full rank with columns in 'span(X)'.
+
+_A_u_t_h_o_r(_s):
+
+     Bendix Carstensen, Steno Diabetes Center, <URL:
+     http://www.pubhealth.ku.dk/~bxc>, with help from Peter Dalgaard.
+
+_S_e_e _A_l_s_o:
+
+     'detrend'
+

@@ -1,0 +1,143 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Create a Lexis object</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for Lexis {Epi}"><tr><td>Lexis {Epi}</td><td align="right">R Documentation</td></tr></table>
+<h2>Create a Lexis object</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Create an object of class <code>Lexis</code> to represent follow-up on
+multiple time scales.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
+      merge=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>entry</code></td>
+<td>
+a named list of entry times. Each element of the list is
+a numeric variable representing the entry time on the named time
+scale. All time scales must have the same units (e.g. years)</td></tr>
+<tr valign="top"><td><code>exit</code></td>
+<td>
+a named list of exit times</td></tr>
+<tr valign="top"><td><code>duration</code></td>
+<td>
+a numeric vector giving the duration of follow-up</td></tr>
+<tr valign="top"><td><code>entry.status</code></td>
+<td>
+a vector giving the status at entry</td></tr>
+<tr valign="top"><td><code>exit.status</code></td>
+<td>
+a vector giving status at exit. Any change in
+status during follow-up is assumed to take place exactly at the exit time</td></tr>
+<tr valign="top"><td><code>id</code></td>
+<td>
+a vector giving a unique identity value for each row of the
+Lexis object</td></tr>
+<tr valign="top"><td><code>data</code></td>
+<td>
+an optional data frame, list, or environment containing
+the variables. If  not found in <code>data</code>, the variables are
+taken from the environment from which <code>Lexis</code> was called</td></tr>
+<tr valign="top"><td><code>merge</code></td>
+<td>
+a logical flag. If <code>TRUE</code> then the <code>data</code> 
+argument will be coerced to a data frame and then merged with
+the resulting <code>Lexis</code> object</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+The analysis of long-term population-based follow-up studies typically
+requires multiple time scales to be taken into account, such as
+age, calender time, or time since an event. A <code>Lexis</code> object is
+a data frame with additional attributes that allows these multiple time
+dimensions of follow-up to be managed.
+</p>
+<p>
+Lexis objects are named after the German gemographer Wilhelm
+Lexis (1837-1914), who is credited with the invention of the
+"Lexis diagram" for representing population dynamics simultaneously
+by age, period and cohort.
+</p>
+<p>
+The <code>Lexis</code> function creates a minimal <code>Lexis</code> object with
+only those variables required to define the follow-up history in each
+row. Additional variables can be merged into the <code>Lexis</code> object
+using the <code>merge</code> method for <code>Lexis</code> objects.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+An object of class <code>Lexis</code>. This is represented as a data frame
+with a column for each time scale, and additional columns with the
+following names:
+</p>
+<table summary="R argblock">
+<tr valign="top"><td><code>lex.id</code></td>
+<td>
+Identification of the inidvidual</td></tr>
+<tr valign="top"><td><code>lex.deltat</code></td>
+<td>
+Duration of follow-up</td></tr>
+<tr valign="top"><td><code>lex.status1</code></td>
+<td>
+Entry status</td></tr>
+<tr valign="top"><td><code>lex.status2</code></td>
+<td>
+Exit status</td></tr>
+</table>
+<p>
+
+If <code>merge=TRUE</code> then the <code>Lexis</code> object will also contain
+all variables from the <code>data</code> argument.</p>
+
+<h3>Note</h3>
+
+<p>
+Only two of the three arguments <code>entry</code>, <code>exit</code> and
+<code>duration</code> need to be given.  If the third parameter is missing,
+it is imputed. If duration is imputed, it must be the same on
+all time scales.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>
+Martyn Plummer
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="plot.Lexis.html">plot.Lexis</a></code>, <code><a href="split.Lexis.html">splitLexis</a></code>,
+<code><a href="merge.Lexis.html">merge.Lexis</a></code>, <code><a href="start.Lexis.html">entry</a></code>,
+<code><a href="time.scales.html">timeScales</a></code>,
+<code><a href="time.band.html">timeBand</a></code>
+</p>
+
+
+
+<hr><div align="center">[Package <em>Epi</em> version 0.8.0 <a href="00Index.html">Index]</a></div>
+
+</body></html>

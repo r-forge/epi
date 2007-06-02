@@ -1,0 +1,84 @@
+\HeaderA{icut}{Function to cut the follow-up in cohort at a point in time.}{icut}
+\keyword{manip}{icut}
+\keyword{datagen}{icut}
+\begin{Description}\relax
+The follow up time from \code{enter} to \code{exit} is classified as
+to wheter it is before \code{cut} (\code{Time}=0) or after
+\code{Time}=1). If \code{cut} is between \code{enter} and \code{exit},
+the follow-up is split in two intervals, the first gets the value
+\code{cens} for the status.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+icut( enter, exit, cut, fail = 0, cens.value = 0,
+      data = data.frame(enter, exit, fail, cut),
+      Expand = 1:nrow( data ),
+      na.cut = Inf )
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{enter}] Date of entry. Numerical vector.
+\item[\code{exit}] Date of exit. Numerical vector.
+\item[\code{fail}] Indicator if exit status.
+\item[\code{cens.value}] Value to use for censoring status.
+\item[\code{cut}] Date where to cut follow-up. Numerical vector.
+\item[\code{data}] Dataframe of variables to carry over to the output dataframe.
+\item[\code{Expand}] Variable identifying original records.
+\item[\code{na.cut}] What value should be assigned to missing values of the
+cutpoint. Defaults to \code{Inf}, so the inetrmediate event is
+considered not to have occcurred. If set to \code{-Inf}, all persons
+with missing \code{cut} are considered to have had an intermediate
+event. If set to \code{NA} records with missing \code{cut} are
+omitted from the result.
+\end{ldescription}
+\end{Arguments}
+\begin{Details}\relax
+The purpose of this function is to divide follow-up into pre- and post
+some intermediate event like recurrence of disease, thus enabling
+Follow-up for persons with a recurrence date (\code{cut}) will be
+split in two, with indication (in \code{Time}) of what is pre and what
+is post recurrence. This is typically what precedes a survival
+analysis where recurrence is modelled as a time-dependent variable.
+\end{Details}
+\begin{Value}
+A data frame with one row per interval of follow up and columns given
+in the \code{data} argument, preceded by the columns:
+\begin{ldescription}
+\item[\code{Expand}] Identification of the rows from the input dataframe.
+\item[\code{Enter}] Entry date for the interval.
+\item[\code{Exit}] Exit date for the interval.
+\item[\code{Fail}] Failure indicator for the interval.
+\item[\code{Time}] Indicator variable for intervals after \code{cut}.
+\end{ldescription}
+\end{Value}
+\begin{Author}\relax
+Bendix Carstensen, Steno Diabetes Center,
+\email{bxc@steno.dk}, \url{www.biostat.ku.dk/~bxc}
+\end{Author}
+\begin{SeeAlso}\relax
+\code{\LinkA{Lexis}{Lexis}},
+\code{\LinkA{isec}{isec}},
+\code{\LinkA{fcut1}{fcut1}},
+\code{\LinkA{fcut}{fcut}},
+\code{\LinkA{ex1}{ex1}}
+\end{SeeAlso}
+\begin{Examples}
+\begin{ExampleCode}
+one <- round( runif( 15, 0, 15 ), 1 )
+two <- round( runif( 15, 0, 15 ), 1 )
+doe <- pmin( one, two )
+dox <- pmax( one, two )
+# Goofy data rows to test possibly odd behaviour
+doe[1:3] <- dox[1:3] <- 8
+dox[2] <- 6
+dox[3] <- 7.5
+# Some failure indicators
+fail <- sample( 0:1, 15, replace=TRUE, prob=c(0.7,0.3) )
+# So what have we got
+data.frame( doe, dox, fail )
+# Cut follow-up at 5
+icut( doe, dox, fail, cut=5 )
+\end{ExampleCode}
+\end{Examples}
+

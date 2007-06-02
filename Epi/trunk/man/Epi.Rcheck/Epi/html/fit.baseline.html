@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Fit a piecewise contsnt intesity model for interval censored data.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for fit.baseline {Epi}"><tr><td>fit.baseline {Epi}</td><td align="right">R Documentation</td></tr></table>
+<h2>Fit a piecewise contsnt intesity model for interval censored data.</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Utility function
+</p>
+<p>
+Fits a binomial model with logaritmic link, with <code>y</code> as outcome
+and covariates in <code>rates.frame</code> to estimate rates in the
+inttervals between <code>breaks</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+fit.baseline( y, rates.frame, start )
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+Binary vector of outcomes</td></tr>
+<tr valign="top"><td><code>rates.frame</code></td>
+<td>
+Dataframe expanded from the original data by
+<code><a href="expand.data.html">expand.data</a></code></td></tr>
+<tr valign="top"><td><code>start</code></td>
+<td>
+Starting values for the rate parameters. If not supplied,
+then starting values are generated.</td></tr>
+</table>
+
+<h3>Value</h3>
+
+<p>
+A <code><a href="../../stats/html/glm.html">glm</a></code> object, with binomial error and logaritmic link.</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Martyn Plummer, <a href="mailto:plummer@iarc.fr">plummer@iarc.fr</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="fit.add.html">fit.add</a></code>
+<code><a href="fit.mult.html">fit.mult</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+  </pre>
+
+
+
+<hr><div align="center">[Package <em>Epi</em> version 0.8.0 <a href="00Index.html">Index]</a></div>
+
+</body></html>

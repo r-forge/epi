@@ -1,0 +1,48 @@
+gmortDK                 package:Epi                 R Documentation
+
+_P_o_p_u_l_a_t_i_o_n _m_o_r_t_a_l_i_t_y _r_a_t_e_s _f_o_r _D_e_n_m_a_r_k _i_n _5-_y_e_a_r_s _a_g_e _g_r_o_u_p_s.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The 'gmortDK' data frame has 418 rows and 21 columns.
+
+_F_o_r_m_a_t:
+
+     This data frame contains the following columns:
+
+        'agr':  Age group, 0:0-4, 5:5-9,..., 90:90+.
+        'per':  Calendar period, 38: 1938-42, 43: 1943-47, ..., 88:1988-92.
+        'sex':  Sex, 1: male, 2: female.
+       'risk':  Number of person-years in the Danish population.
+         'dt':  Number of deaths.
+         'rt':  Overall mortality rate in cases per 1000 person-years, i.e. 'rt=1000*dt/risk'
+                Cause-specific mortality rates in cases per 1000 person-years:
+         'r1':  Infections
+         'r2':  Cancer.
+         'r3':  Tumors, benign, unspecific nature.
+         'r4':  Endocrine, metabolic.
+         'r5':  Blood.
+         'r6':  Nervous system, psychiatric.
+         'r7':  Cerebrovascular.
+         'r8':  Cardiac.
+         'r9':  Respiratory diseases, excl. cancer.
+        'r10':  Liver, excl. cancer.
+        'r11':  Digestive, other.
+        'r12':  Genitourinary.
+        'r13':  Ill-defined symptoms.
+        'r14':  All other, natural.
+        'r15':  Violent.
+
+_S_o_u_r_c_e:
+
+     Statistics Denmark, National board of health provided original
+     data.  Michael Andersson grouped the causes of death.
+
+_S_e_e _A_l_s_o:
+
+     'thoro', 'mortDK'
+
+_E_x_a_m_p_l_e_s:
+
+     data(gmortDK)
+

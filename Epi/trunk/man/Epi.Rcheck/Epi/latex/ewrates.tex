@@ -1,0 +1,32 @@
+\HeaderA{ewrates}{Rates of lung and nasal cancer mortality, and total mortality.}{ewrates}
+\keyword{datasets}{ewrates}
+\begin{Description}\relax
+England and Wales mortality rates from lung cancer, nasal cancer,
+and all causes 1936 - 1980. The 1936 rates are repeated as 1931 rates in
+order to accomodate follow up for the \code{\LinkA{nickel}{nickel}} study.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}data(ewrates)\end{verbatim}
+\end{Usage}
+\begin{Format}\relax
+A data frame with 150 observations on the following 5 variables:
+\Tabular{rl}{
+\code{id}: & Subject identifier (numeric) \\
+\code{year}  & Calendar period, 1931: 1931--35, 1936: 1936--40,
+\ldots \\
+\code{age}   & Age class: 10: 10--14, 15:15--19, \ldots  \\
+\code{lung}  & Lung cancer mortality rate per 1,000,000 py. \\
+\code{nasal} & Nasal cancer mortality rate per 1,000,000 py. \\
+\code{other} & All cause mortality rate per 1,000,000 py.
+}
+\end{Format}
+\begin{Source}\relax
+From Breslow and Day, Vol II, Appendix IX.
+\end{Source}
+\begin{Examples}
+\begin{ExampleCode}
+data(ewrates)
+str(ewrates)
+\end{ExampleCode}
+\end{Examples}
+

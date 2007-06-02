@@ -1,0 +1,104 @@
+float                  package:Epi                  R Documentation
+
+_C_a_l_c_u_l_a_t_e _f_l_o_a_t_e_d _v_a_r_i_a_n_c_e_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Given a fitted  model object, the 'float()' function calculates
+     floating variances (aka quasi-variances) for a given factor in the
+     model.
+
+_U_s_a_g_e:
+
+     float(object, factor, iter.max=50)
+
+_A_r_g_u_m_e_n_t_s:
+
+  object: a fitted model object
+
+  factor: character string giving the name of the factor of interest.
+          If this is not given, the first factor in the model is used.
+
+iter.max: Maximum number of iterations for EM algorithm
+
+_D_e_t_a_i_l_s:
+
+     float() implements the "floating absolute risk" proposal of
+     Easton, Peto and Babiker(1992). This is an alternative way of
+     presenting parameter estimates for factors in regression models,
+     which avoids some of the difficulties of treatment contrasts. It
+     was originally designed for epidemiological studies of relative
+     risk (hence the name) but the idea is widely applicable.  
+
+     A problem with treatment contrasts is that they are not
+     orthogonal. The variances of the treatment contrasts may be
+     inflated by a poor choice of reference level, and the correlations
+     between them may be very high.  float() associates each level of
+     the factor, including the reference level, with a"floating"
+     variance (or quasi-variance). Floating variances are not real
+     variances, but they can be used to calculate the variance of any
+     contrast by treating each level as independent.
+
+     Plummer (2003) showed that floating variances can be derived from
+     a covariance structure model applied to the variance-covariance
+     matrix of the parameter estimates. This model can be fitted by
+     minimizing the Kullback-Leibler information divergence between the
+     true and distributions for the parameter estimates and the
+     distribution given by the covariance structure model. Fitting is
+     done using the EM algorithm.
+
+     In order to check the goodness-of-fit of the floating variance
+     model, 'float()' compares the standard errors predicted by the
+     model with the standard errors derived from the true
+     variance-covariance matrix of the parameter contrasts. The maximum
+     and minimum ratios between true and model standard errors are
+     calculated over all possible contrasts. These should be within 5
+     percent, or the use of the floating variances may lead to invalid
+     confidence intervals.
+
+_V_a_l_u_e:
+
+     An object of class 'floated'. This is a list with the following
+     components 
+
+    coef: vector of coefficients. These are the same as the treatment
+          contrasts but the reference level is present with coefficient
+          0.
+
+     var: vector of floating (or quasi-) variances
+
+  limits: Bounds on the accuracy of standard errors over all possible
+          contrasts
+
+_N_o_t_e:
+
+     Menezes(1999) and Firth and Menezes (2004) take a slightly
+     different approach to this problem, using a pseudo-likelihood
+     approach to fit the quasi-variance model. Their work is
+     implemented in the package qvcalc.
+
+_A_u_t_h_o_r(_s):
+
+     Martyn Plummer
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Easton DF, Peto J and Babiker GAG (1991) Floating absolute risk:
+     An alternative to relative risk in survival and case control
+     analysis avoiding an arbitrary reference group. _Statistics in
+     Medicine_, *10*, 1025-1035.
+
+     Firth D and Mezezes RX (2004)  Quasi-variances. _Biometrika_ *91*,
+     65-80.
+
+     Menezes RX(1999)  More useful standard errors for group and factor
+     effects in generalized linear models.  _D.Phil. Thesis_,
+     Department of Statistics, University of Oxford.
+
+     Plummer M (2003) Improved estimates of floating absolute risk,
+     _Statistics in Medicine_, *23*, 93-104.
+
+_S_e_e _A_l_s_o:
+
+     'ftrend', 'qvcalc'
+

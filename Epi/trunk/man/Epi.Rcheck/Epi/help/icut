@@ -1,0 +1,92 @@
+icut                   package:Epi                   R Documentation
+
+_F_u_n_c_t_i_o_n _t_o _c_u_t _t_h_e _f_o_l_l_o_w-_u_p _i_n _c_o_h_o_r_t _a_t _a _p_o_i_n_t _i_n _t_i_m_e.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The follow up time from 'enter' to 'exit' is classified as to
+     wheter it is before 'cut' ('Time'=0) or after 'Time'=1). If 'cut'
+     is between 'enter' and 'exit', the follow-up is split in two
+     intervals, the first gets the value 'cens' for the status.
+
+_U_s_a_g_e:
+
+     icut( enter, exit, cut, fail = 0, cens.value = 0,
+           data = data.frame(enter, exit, fail, cut),
+           Expand = 1:nrow( data ),
+           na.cut = Inf )
+
+_A_r_g_u_m_e_n_t_s:
+
+   enter: Date of entry. Numerical vector.
+
+    exit: Date of exit. Numerical vector.
+
+    fail: Indicator if exit status.
+
+cens.value: Value to use for censoring status.
+
+     cut: Date where to cut follow-up. Numerical vector.
+
+    data: Dataframe of variables to carry over to the output dataframe.
+
+  Expand: Variable identifying original records.
+
+  na.cut: What value should be assigned to missing values of the
+          cutpoint. Defaults to 'Inf', so the inetrmediate event is
+          considered not to have occcurred. If set to '-Inf', all
+          persons with missing 'cut' are considered to have had an
+          intermediate event. If set to 'NA' records with missing 'cut'
+          are omitted from the result.
+
+_D_e_t_a_i_l_s:
+
+     The purpose of this function is to divide follow-up into pre- and
+     post some intermediate event like recurrence of disease, thus
+     enabling Follow-up for persons with a recurrence date ('cut') will
+     be split in two, with indication (in 'Time') of what is pre and
+     what is post recurrence. This is typically what precedes a
+     survival analysis where recurrence is modelled as a time-dependent
+     variable.
+
+_V_a_l_u_e:
+
+     A data frame with one row per interval of follow up and columns
+     given in the 'data' argument, preceded by the columns: 
+
+  Expand: Identification of the rows from the input dataframe.
+
+   Enter: Entry date for the interval.
+
+    Exit: Exit date for the interval.
+
+    Fail: Failure indicator for the interval.
+
+    Time: Indicator variable for intervals after 'cut'.
+
+_A_u_t_h_o_r(_s):
+
+     Bendix Carstensen, Steno Diabetes Center, bxc@steno.dk, <URL:
+     www.biostat.ku.dk/~bxc>
+
+_S_e_e _A_l_s_o:
+
+     'Lexis', 'isec', 'fcut1', 'fcut', 'ex1'
+
+_E_x_a_m_p_l_e_s:
+
+     one <- round( runif( 15, 0, 15 ), 1 )
+     two <- round( runif( 15, 0, 15 ), 1 )
+     doe <- pmin( one, two )
+     dox <- pmax( one, two )
+     # Goofy data rows to test possibly odd behaviour
+     doe[1:3] <- dox[1:3] <- 8
+     dox[2] <- 6
+     dox[3] <- 7.5
+     # Some failure indicators
+     fail <- sample( 0:1, 15, replace=TRUE, prob=c(0.7,0.3) )
+     # So what have we got
+     data.frame( doe, dox, fail )
+     # Cut follow-up at 5
+     icut( doe, dox, fail, cut=5 )
+

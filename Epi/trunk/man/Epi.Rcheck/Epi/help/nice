@@ -1,0 +1,41 @@
+nice                   package:Epi                   R Documentation
+
+_N_i_c_e _b_r_e_a_k_p_o_i_n_t_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The function calls 'pretty' for linear scale. For a log-scale nice
+     are computed using a set of specified number in a decade.
+
+_U_s_a_g_e:
+
+     nice(x, log = F, lpos = c(1, 2, 5), ...)
+
+_A_r_g_u_m_e_n_t_s:
+
+       x: Numerical vector to
+
+     log: Logical. Is the scale logartimic?
+
+    lpos: Numeric. Numbers between 1 and 10 giving the desired
+          breakpoints in this interval.
+
+     ...: Arguments passed on to 'pretty' if 'log'=FALSE
+
+_V_a_l_u_e:
+
+     A vector of breakpoints.
+
+_A_u_t_h_o_r(_s):
+
+     Bendix Carstensen, bxc@steno.dk, <URL:
+     http://www.biostat.ku.dk/~bxc>
+
+_S_e_e _A_l_s_o:
+
+     pretty
+
+_E_x_a_m_p_l_e_s:
+
+     nice( exp( rnorm( 100 ) ), log=TRUE )
+

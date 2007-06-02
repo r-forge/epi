@@ -1,0 +1,42 @@
+\HeaderA{split.Lexis}{Split follow-up time in a Lexis object}{split.Lexis}
+\aliasA{splitLexis}{split.Lexis}{splitLexis}
+\keyword{manip}{split.Lexis}
+\begin{Description}\relax
+The \code{splitLexis} function divides each row of a \code{Lexis}
+object into disjoint follow-up intervals according to the supplied
+break points.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+splitLexis(lex, breaks)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{lex}] an object of class \code{Lexis}
+\item[\code{breaks}] a named list of numeric vectors giving the break points
+on one or more time scales. Optionally, a single vector of
+break points may be given, in which case the first time scale is assumed.
+
+\end{ldescription}
+\end{Arguments}
+\begin{Value}
+An object of class \code{Lexis} with multiple rows for each row of
+the argument \code{lex}. Each row of the new \code{Lexis} object
+contains the part of the follow-up interval that falls inside one of
+the time bands defined by the break points.
+
+The variables representing the various time scales, are appropriately
+updated in the new \code{Lexis} object. The entry and exit status
+variables are also updated according to the rule that the entry status
+is retained until the end of follow-up. All other variables are
+considered to represent variables that are constant in time, and so
+are replicated across all rows having the same id value.
+\end{Value}
+\begin{Author}\relax
+Martyn Plummer
+\end{Author}
+\begin{SeeAlso}\relax
+\code{\LinkA{timeBand}{timeBand}}
+\end{SeeAlso}
+

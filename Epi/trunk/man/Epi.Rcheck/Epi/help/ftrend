@@ -1,0 +1,76 @@
+ftrend                  package:Epi                  R Documentation
+
+_F_i_t _a _f_l_o_a_t_i_n_g _t_r_e_n_d _t_o _a _f_a_c_t_o_r _i_n _g_e_n_e_r_a_l_i_z_e_d _l_i_n_e_a_r _m_o_d_e_l
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Fits a "floating trend" model to the given factor in a glm in a
+     generalized linear model by centering covariates.
+
+_U_s_a_g_e:
+
+     ftrend(object, ...)
+
+_A_r_g_u_m_e_n_t_s:
+
+  object: fitted 'lm' or 'glm' object. The model must not have an
+          intercept term
+
+     ...: arguments to the 'nlm' function
+
+_D_e_t_a_i_l_s:
+
+     'ftrend()' calculates "floating trend" estimates for factors in
+     generalized linear models.  This is an alternative to treatment
+     contrasts suggested by Greenland et al. (1999).  If a regression
+     model is fitted with no intercept term, then contrasts are  not
+     used for the first factor in the model. Instead, there is one
+     parameter  for each level of this factor.  However, the
+     interpretation of these parameters,  and their variance-covariance
+     matrix, depends on the numerical coding used for the  covariates.
+     If an arbitrary constant is added to the covariate values, then  
+     the variance matrix is changed. 
+
+     The 'ftrend()' function takes the fitted model and works out an
+     optimal  constant to add to the covariate values so that the
+     covariance matrix is approximately diagonal.  The parameter
+     estimates can then be treated as approximately independent, thus
+     simplifying their presentation. This is particularly useful for
+     graphical display of dose-response relationships (hence the name).
+
+     Greenland et al. (1999) originally suggested centring the
+     covariates so that their weighted mean, using the fitted weights
+     from the model, is zero.  This heuristic criterion is improved
+     upon by 'ftrend()' which uses the same  minimum information
+     divergence criterion as used by Plummer (2003) for floating
+     variance calculations. 'ftrend()' calls 'nlm()' to do the
+     minimization and will pass optional arguments to control it.
+
+_V_a_l_u_e:
+
+     A list with the following components 
+
+    coef: coefficients for model with adjusted covariates.
+
+    vcov: Variance-covariance matrix of adjusted coefficients.
+
+_N_o_t_e:
+
+     The "floating trend" method is an alternative to the "floating
+     absolute risk" method, which is implemented in the function
+     'float()'.
+
+_A_u_t_h_o_r(_s):
+
+     Martyn Plummer
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Greenland S, Michels KB, Robins JM, Poole C and Willet WC (1999)
+     Presenting statistical uncertainty in trends and dose-response
+     relations, _American Journal of Epidemiology_, *149*, 1077-1086.
+
+_S_e_e _A_l_s_o:
+
+     'float'
+

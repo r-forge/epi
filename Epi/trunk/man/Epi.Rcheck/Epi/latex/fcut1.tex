@@ -1,0 +1,70 @@
+\HeaderA{fcut1}{Cut follow-up time at a failure time.}{fcut1}
+\keyword{manip}{fcut1}
+\keyword{datagen}{fcut1}
+\begin{Description}\relax
+This function cuts the follow-up time at a failure allowing a person
+to stay at risk after the failure. It is aimed at processing of
+recurrent events. Failure times outside the interval
+(\code{enter},\code{exit}) are ignored.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+fcut1( enter, exit, fail, dof, fail.value = 1, 
+         data = data.frame(enter, exit, fail, dof),
+       Expand = 1:nrow(data) )
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{enter}] Date of entry into the study. Numerical vector.
+\item[\code{exit}] Date of exit from the study. Numerical vector.
+\item[\code{fail}] Failure indicator for the exit date.
+\item[\code{dof}] Date of failure. Numerical vector. Missing for persons who
+do not have an event.
+\item[\code{fail.value}] Value for failure indicator \code{Fail} at the date
+\code{dof}.
+\item[\code{data}] Dataframe of variables to be carried unchanged to the
+output.
+\item[\code{Expand}] Variable identifying original records.
+\end{ldescription}
+\end{Arguments}
+\begin{Value}
+A dataframe with the same columns as in \code{data}, preceded by the columns:
+\begin{ldescription}
+\item[\code{Expand}] Identification of the rows from the input dataframe.
+\item[\code{Enter}] Entry date for the interval.
+\item[\code{Exit}] Exit date for the interval.
+\item[\code{Fail}] Failure indicator for the interval.
+\end{ldescription}
+\end{Value}
+\begin{Author}\relax
+Bendix Carstensen, Steno Diabetes Center,
+\email{bxc@steno.dk}, \url{www.biostat.ku.dk/~bxc}
+\end{Author}
+\begin{SeeAlso}\relax
+\code{\LinkA{Lexis}{Lexis}},
+\code{\LinkA{isec}{isec}},
+\code{\LinkA{fcut1}{fcut1}},
+\code{\LinkA{fcut}{fcut}},
+\code{\LinkA{ex1}{ex1}}
+\end{SeeAlso}
+\begin{Examples}
+\begin{ExampleCode}
+one <- round( runif( 15, 0, 10 ), 1 )
+two <- round( runif( 15, 0, 10 ), 1 )
+doe <- pmin( one, two )
+dox <- pmax( one, two )
+# Goofy data rows to test possibly odd behaviour
+doe[1:3] <- dox[1:3] <- 8
+dox[2] <- 6
+dox[3] <- 7.5
+# Some failure indicators and failure times
+fail <- sample( 0:1, 15, replace=TRUE, prob=c(0.7,0.3) )
+dof <- sample( c(one,two), 15 )
+# So what have we got
+data.frame( doe, dox, fail, dof )
+# Cut follow-up at dof
+fcut1( doe, dox, fail, dof )
+\end{ExampleCode}
+\end{Examples}
+

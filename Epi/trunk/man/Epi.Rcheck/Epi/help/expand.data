@@ -1,0 +1,63 @@
+expand.data               package:Epi               R Documentation
+
+_F_u_n_c_t_i_o_n _t_o _e_x_p_a_n_d _d_a_t_a _f_o_r _r_e_g_r_e_s_s_i_o_n _a_n_a_l_y_s_i_s _o_f _i_n_t_e_r_v_a_l _c_e_n_s_o_r_e_d
+_d_a_t_a.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     This is a utility function.
+
+     The original records with 'first.well', 'last.well' and
+     'first.ill' are expanded to multiple records; several for each
+     interval where the person is known to be well and one where the
+     person is known to fail. At the same time columns for the
+     covariates needed to estimate rates and the response variable are
+     generated.
+
+_U_s_a_g_e:
+
+     expand.data(fu, formula, breaks, data)
+
+_A_r_g_u_m_e_n_t_s:
+
+      fu: A 3-column matrix with 'first.well', 'last.well' and
+          'first.ill' in each row.
+
+ formula: Model fromula, used to derive the model matrix.
+
+  breaks: Defines the intervals in which the baseline rate is assumed
+          constant. All follow-up before the first and after the last
+          break is discarded.
+
+    data: Datafrem in which 'fu' and 'formula' is interpreted.
+
+_V_a_l_u_e:
+
+     Returns a list with three components 
+
+rates.frame: Dataframe of covariates for estimation of the baseline
+          rates - one per interval defined by 'breaks'.
+
+cov.frame: Dataframe for estimation of the covariate effects. A
+          data-framed version of the designmatrix from 'formula'.
+
+       y: Response vector.
+
+_A_u_t_h_o_r(_s):
+
+     Martyn Plummer, plummer@iarc.fr
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     B Carstensen: Regression models for interval censored survival
+     data: application to HIV infection in Danish homosexual men.
+     Statistics in Medicine, 15(20):2177-2189, 1996.
+
+_S_e_e _A_l_s_o:
+
+     'Icens' 'fit.mult' 'fit.add'
+
+_E_x_a_m_p_l_e_s:
+
+       
+

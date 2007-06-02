@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Reorder and combine levels of a factor</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for Relevel {Epi}"><tr><td>Relevel {Epi}</td><td align="right">R Documentation</td></tr></table>
+<h2>Reorder and combine levels of a factor</h2>
+
+
+<h3>Description</h3>
+
+<p>
+The levels of a factor are re-ordered so that the levels specified by
+<code>ref</code> is first and the others are moved down. This is useful for
+<code>contr.treatment</code> contrasts which take the first level as the
+reference. Levels may also be combined.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Relevel(f, ref, first = TRUE, collapse="+" )
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>f</code></td>
+<td>
+An unordered factor</td></tr>
+<tr valign="top"><td><code>ref</code></td>
+<td>
+The names or numbers of levels to be the first. If <code>ref</code>
+is a list, factor levels mentioned in each list element are
+combined. If the list is named the names are used as new factor levels.</td></tr>
+<tr valign="top"><td><code>first</code></td>
+<td>
+Should the levels mentioned in ref come before those not?</td></tr>
+<tr valign="top"><td><code>collapse</code></td>
+<td>
+String used when collapsing factor levels.</td></tr>
+</table>
+
+<h3>Value</h3>
+
+<p>
+An unordered factor.</p>
+
+<h3>Examples</h3>
+
+<pre>
+ff &lt;- factor( sample( letters[1:5], 100, replace=TRUE ) )
+table( ff, Relevel( ff, list( AB=1:2, "Dee"=4, c(3,5) ) ) )
+table( ff, rr=Relevel( ff, list( 5:4, Z=c("c","a") ), coll="-und-", first=FALSE ) )
+</pre>
+
+
+
+<hr><div align="center">[Package <em>Epi</em> version 0.8.0 <a href="00Index.html">Index]</a></div>
+
+</body></html>

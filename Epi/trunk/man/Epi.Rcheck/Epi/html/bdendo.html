@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: A case-control study of endometrial cancer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for bdendo {Epi}"><tr><td>bdendo {Epi}</td><td align="right">R Documentation</td></tr></table>
+<h2>A case-control study of endometrial cancer</h2>
+
+
+<h3>Description</h3>
+
+<p>
+The <code>bdendo</code> data frame has 315 rows and 13 columns.
+These data concern a study in which each case of endometrial cancer was
+matched with 4 controls. Matching was by date of birth (within one
+year), marital status, and residence.
+</p>
+
+
+<h3>Format</h3>
+
+<p>
+This data frame contains the following columns:
+<table summary="Rd table">
+<tr>
+  <td align="right"><code>set</code>: </td>  <td align="left"> Case-control set: a numeric vector  </td>
+</tr>
+<tr>
+  <td align="right"> <code>d</code>: </td>  <td align="left"> Case or control: a numeric vector (1=case, 0=control) </td>
+</tr>
+<tr>
+  <td align="right"> <code>gall</code>: </td>  <td align="left"> Gall bladder disease: a factor with levels <code>No</code>  <code>Yes</code>. </td>
+</tr>
+<tr>
+  <td align="right"> <code>hyp</code>: </td>  <td align="left"> Hypertension: a factor with levels <code>No</code>  <code>Yes</code>. </td>
+</tr>
+<tr>
+  <td align="right"> <code>ob</code>: </td>  <td align="left"> Obesity: a factor with levels <code>No</code>  <code>Yes</code>. </td>
+</tr>
+<tr>
+  <td align="right"> <code>est</code>: </td>  <td align="left"> A factor with levels <code>No</code>  <code>Yes</code>. </td>
+</tr>
+<tr>
+  <td align="right"> <code>dur</code>: </td>  <td align="left"> Duration of conjugated oestrogen therapy: an ordered factor with levels <code>0</code> &lt; <code>1</code> &lt; <code>2</code> &lt; <code>3</code> &lt; <code>4</code>. </td>
+</tr>
+<tr>
+  <td align="right"> <code>non</code>: </td>  <td align="left"> Use of non oestrogen drugs: a factor with levels <code>No</code>  <code>Yes</code>. </td>
+</tr>
+<tr>
+  <td align="right"> <code>duration</code>: </td>  <td align="left"> Months of oestrogen therapy: a numeric vector.  </td>
+</tr>
+<tr>
+  <td align="right"> <code>age</code>: </td>  <td align="left"> A numeric vector. </td>
+</tr>
+<tr>
+  <td align="right"> <code>cest</code>: </td>  <td align="left"> Conjugated oestrogen dose: an ordered factor with levels <code>0</code> &lt; <code>1</code> &lt; <code>2</code> &lt; <code>3</code>. </td>
+</tr>
+<tr>
+  <td align="right"> <code>agegrp</code>: </td>  <td align="left"> A factor with levels <code>55-59</code>  <code>60-64</code>  <code>65-69</code>  <code>70-74</code>  <code>75-79</code>  <code>80-84</code> </td>
+</tr>
+<tr>
+  <td align="right"> <code>age3</code>: </td>  <td align="left"> a factor with levels <code>&lt;64</code>  <code>65-74</code>  <code>75+</code>  </td>
+</tr>
+</table>
+
+
+<h3>Source</h3>
+
+<p>
+Breslow NE, and Day N, Statistical Methods in Cancer Research. Volume
+I: The Analysis of Case-Control Studies. IARC Scientific
+Publications, IARC:Lyon, 1980.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+data(bdendo)
+</pre>
+
+
+
+<hr><div align="center">[Package <em>Epi</em> version 0.8.0 <a href="00Index.html">Index]</a></div>
+
+</body></html>

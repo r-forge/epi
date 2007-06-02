@@ -1,0 +1,39 @@
+bdendo                  package:Epi                  R Documentation
+
+_A _c_a_s_e-_c_o_n_t_r_o_l _s_t_u_d_y _o_f _e_n_d_o_m_e_t_r_i_a_l _c_a_n_c_e_r
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The 'bdendo' data frame has 315 rows and 13 columns. These data
+     concern a study in which each case of endometrial cancer was
+     matched with 4 controls. Matching was by date of birth (within one
+     year), marital status, and residence.
+
+_F_o_r_m_a_t:
+
+     This data frame contains the following columns:
+
+            'set':  Case-control set: a numeric vector
+              'd':  Case or control: a numeric vector (1=case, 0=control)
+           'gall':  Gall bladder disease: a factor with levels 'No'  'Yes'.
+            'hyp':  Hypertension: a factor with levels 'No'  'Yes'.
+             'ob':  Obesity: a factor with levels 'No'  'Yes'.
+            'est':  A factor with levels 'No'  'Yes'.
+            'dur':  Duration of conjugated oestrogen therapy: an ordered factor with levels '0' < '1' < '2' < '3' < '4'.
+            'non':  Use of non oestrogen drugs: a factor with levels 'No'  'Yes'.
+       'duration':  Months of oestrogen therapy: a numeric vector.
+            'age':  A numeric vector.
+           'cest':  Conjugated oestrogen dose: an ordered factor with levels '0' < '1' < '2' < '3'.
+         'agegrp':  A factor with levels '55-59'  '60-64'  '65-69'  '70-74'  '75-79'  '80-84'
+           'age3':  a factor with levels '<64'  '65-74'  '75+'
+
+_S_o_u_r_c_e:
+
+     Breslow NE, and Day N, Statistical Methods in Cancer Research.
+     Volume I: The Analysis of Case-Control Studies. IARC Scientific
+     Publications, IARC:Lyon, 1980.
+
+_E_x_a_m_p_l_e_s:
+
+     data(bdendo)
+

@@ -1,0 +1,35 @@
+\HeaderA{births}{Births in a London Hospital}{births}
+\keyword{datasets}{births}
+\begin{Description}\relax
+Data from 500 singleton births in a London Hospital
+\end{Description}
+\begin{Usage}
+\begin{verbatim}data(births)\end{verbatim}
+\end{Usage}
+\begin{Format}\relax
+A data frame with 500 observations on the following 8 variables.
+\Tabular{rl}{
+\code{id}: & Identity number for mother and baby. \\
+\code{bweight}: & Birth weight of baby. \\
+\code{lowbw}: & Indicator for birth weight less than 2500 g. \\
+\code{gestwks}: & Gestation period. \\
+\code{preterm}: & Indicator for gestation period less than 37 weeks. \\
+\code{matage}: & Maternal age. \\
+\code{hyp}: & Indicator for maternal hypertension. \\
+\code{sex}: & Sex of baby: 1:Male, 2:Female. \\
+}
+\end{Format}
+\begin{Source}\relax
+Anonymous
+\end{Source}
+\begin{References}\relax
+Michael Hills and Bianca De Stavola (2002). A Short Introduction to
+Stata 8 for Biostatistics, Timberlake Consultants Ltd
+\url{http://www.timberlake.co.uk}
+\end{References}
+\begin{Examples}
+\begin{ExampleCode}
+data(births)
+\end{ExampleCode}
+\end{Examples}
+

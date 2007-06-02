@@ -1,0 +1,77 @@
+\HeaderA{effx.match}{Function to calculate effects for individually matched case-control studies}{effx.match}
+\keyword{models}{effx.match}
+\keyword{regression}{effx.match}
+\begin{Description}\relax
+The function calculates the effects of an exposure on a response,
+possibly stratified by a stratifying variable, and/or controlled for one
+of more confounding variables.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+effx.match(response,
+exposure,
+match,
+strata=NULL,
+control=NULL,
+base=1,
+sigdig=3,
+alpha=0.05,
+data=NULL) 
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{response}] The \code{response} variable - must be numeric
+\item[\code{exposure}] The \code{exposure} variable can be numeric or a factor
+\item[\code{match}] The variable which identifies the matched sets
+\item[\code{strata}] The \code{strata} stratifying variable - must be a factor
+\item[\code{control}] The \code{control} variable(s). These are passed as a
+list if there are more than one of them.
+\item[\code{base}] Baseline for the effects of a categorical exposure, default 1
+\item[\code{sigdig}] Number of significant digits for the effects, default 3
+\item[\code{alpha}] 1 - confidence level
+\item[\code{data}] \code{data} refers to the data used to evaluate the function
+\end{ldescription}
+\end{Arguments}
+\begin{Details}\relax
+Effects are calculated odds ratios.
+The function is a wrapper for clogit, from the survival package.
+The k-1 effects for a categorical  exposure with k levels are relative 
+to a baseline which, by default, is the first level. The effect of a metric (quantitative) 
+exposure is calculated per unit of exposure.
+The exposure variable can be numeric or a factor, but if it is an ordered factor the order will be ignored.
+\end{Details}
+\begin{Value}
+\begin{ldescription}
+\item[\code{comp1 }] Effects of exposure
+\item[\code{comp2 }] Tests of significance
+\end{ldescription}
+\end{Value}
+\begin{Section}{Warning}
+The function attaches the frame specified in the
+\code{data=} argument, so there is a possibility that a variable in the
+Global environment is masked by the attached frame. Watch out for this
+warning in the output!
+\end{Section}
+\begin{Author}\relax
+Michael Hills
+\end{Author}
+\begin{References}\relax
+www.mhills.pwp.blueyonder.co.uk
+\end{References}
+\begin{Examples}
+\begin{ExampleCode}
+library(Epi)
+library(survival)
+data(bdendo)
+
+# d is the case-control variable, set is the matching variable.
+# The variable est is a factor and refers to estrogen use (yes,no)
+# The variable age is numeric and refers to estrogen use (yes,no)
+# effect of est on the odds of being a case
+effx.match(d,exposure=est,match=set,data=bdendo)
+# effect of age on the odds of being a case
+effx.match(d,exposure=age,match=set,data=bdendo)
+\end{ExampleCode}
+\end{Examples}
+

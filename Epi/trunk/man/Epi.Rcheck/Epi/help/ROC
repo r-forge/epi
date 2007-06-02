@@ -1,0 +1,105 @@
+ROC                   package:Epi                   R Documentation
+
+_F_u_n_c_t_i_o_n _t_o _c_o_m_p_u_t_e _a_n_d _d_r_a_w _R_O_C-_c_u_r_v_e_s.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Computes sensitivity, specificity and positive and negative
+     predictive values for a test based on dichotomizing along the
+     variable 'test', for prediction of 'stat'. Alternatively a model
+     formula may given, in which case the the linear predictor is the
+     test variable and the response is taken as the true status
+     variable. Plots curves of these and a ROC-curve.
+
+_U_s_a_g_e:
+
+     ROC( test = NULL,
+          stat = NULL,
+          form = NULL,
+          plot = c("sp", "ROC"),
+            PS = is.null(test),    
+            PV = TRUE,             
+            MX = TRUE,             
+            MI = TRUE,             
+           AUC = TRUE,             
+          grid = seq(0,100,10),
+      col.grid = gray( 0.9 ),
+          cuts = NULL,
+           lwd = 2,
+          data = parent.frame(), 
+           ... )
+
+_A_r_g_u_m_e_n_t_s:
+
+    test: Numerical variable used for prediction. 
+
+    stat: Logical variable of true status. 
+
+    form: Formula used in a logistic regression. If this is given,
+          'test' and 'stat' are ignored. If not given then both 'test'
+          and 'stat' must be supplied. 
+
+    plot: Character variable. If "sp", the a plot of sensitivity,
+          specificity and predictive values against test is produced,
+          if "ROC" a ROC-curve is plotted. Both may be given.
+
+      PS: logical, if TRUE the x-axis in the plot "ps"-plot is the the
+          predicted probability for 'stat'==TRUE, otherwise it is the
+          scale of 'test' if this is given otherwise the scale of the
+          linear predictor from the logistic regression.
+
+      PV: Should sensitivity, specificity and predictive values at the
+          optimal cutpoint be given on the ROC plot? 
+
+      MX: Should the ``optimal cutpoint'' (i.e. where sens+spec is
+          maximal) be indicated on the ROC curve?
+
+      MI: Should model summary from the logistic regression model be
+          printed in the plot?
+
+     AUC: Should the area under the curve (AUC) be printed in the ROC
+          plot?
+
+    grid: Numeric or logical. If FALSE no background grid is drawn.
+          Otherwise a grid is drawn on both axes at 'grid' percent.
+
+col.grid: Colour of the grid lines drawn.
+
+    cuts: Points on the test-scale to be annotated on the ROC-curve. 
+
+     lwd: Thickness of the curves
+
+    data: Data frame in which to interpret the variables.
+
+     ...: Additional arguments for the plotting of the ROC-curve.
+          Passed on to 'plot'
+
+_V_a_l_u_e:
+
+     A list with two components: 
+
+     res: dataframe with variables sn, sp, pvp, pvn and fv. The latter
+          is the unique values of test (for PS==FALSE ) or linear
+          predictor from the logistic regression
+
+      lr: glm object with the logistic regression result used for
+          construction of the ROC curve
+
+     0, 1 or 2 plots are produced according to the setting of 'plot'.
+
+_A_u_t_h_o_r(_s):
+
+     Bendix Carstensen, Steno Diabetes Center & University of
+     Copenhagen, <URL: http://www.biostat.ku.dk/~bxc>
+
+_R_e_f_e_r_e_n_c_e_s:
+
+_E_x_a_m_p_l_e_s:
+
+     x <- rnorm( 100 )
+     z <- rnorm( 100 )
+     w <- rnorm( 100 )
+     tigol <- function( x ) 1 - ( 1 + exp( x ) )^(-1)
+     y <- rbinom( 100, 1, tigol( 0.3 + 3*x + 5*z + 7*w ) )
+     ROC( form = y ~ x + z, plot="ROC" )
+

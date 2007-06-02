@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: hivDK: seroconversion in a cohort of Danish men</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for hivDK {Epi}"><tr><td>hivDK {Epi}</td><td align="right">R Documentation</td></tr></table>
+<h2>hivDK: seroconversion in a cohort of Danish men</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Data from a survey of HIV-positivity of a cohort of Danish
+men followed by regular tests from 1983 to 1989.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+  data(hivDK)
+  </pre>
+
+
+<h3>Format</h3>
+
+<p>
+A data frame with 297 observations on the following 7 variables.
+<dl>
+<dt><code>id</code></dt><dd>ID of the person</dd>
+<dt><code>entry</code></dt><dd>Date of entry to the study. Date variable.</dd>
+<dt><code>well</code></dt><dd>Date last seen seronegative. Date variable.</dd>
+<dt><code>ill</code></dt><dd>Date first seen seroconverted. Date variable.</dd>
+<dt><code>bth</code></dt><dd>Year of birth minus 1950.</dd>
+<dt><code>pyr</code></dt><dd>Annual number of sexual partners.</dd>
+<dt><code>us</code></dt><dd>Indicator of wheter the person has visited the USA.</dd>
+</dl>
+
+<h3>Source</h3>
+
+<p>
+Mads Melbye, Statens Seruminstitut.
+</p>
+
+
+<h3>References</h3>
+
+<p>
+Becker N.G. and Melbye M.: Use of a log-linear model to
+compute the empirical survival curve from interval-censored data,
+with application to data on tests for HIV-positivity, Australian
+Journal of Statistics, 33, 125&ndash;133, 1990.
+</p>
+<p>
+Melbye M., Biggar R.J., Ebbesen P., Sarngadharan M.G., Weiss
+S.H., Gallo R.C. and Blattner W.A.: Seroepidemiology of HTLV-III
+antibody in Danish homosexual men: prevalence, transmission and
+disease outcome. British Medical Journal, 289, 573&ndash;575, 1984.
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+  data(hivDK)
+  str(hivDK) 
+  </pre>
+
+
+
+<hr><div align="center">[Package <em>Epi</em> version 0.8.0 <a href="00Index.html">Index]</a></div>
+
+</body></html>

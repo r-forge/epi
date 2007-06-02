@@ -1,0 +1,46 @@
+\HeaderA{merge.Lexis}{Merge a Lexis object with a data frame}{merge.Lexis}
+\keyword{array}{merge.Lexis}
+\keyword{manip}{merge.Lexis}
+\begin{Description}\relax
+Merge additional variables from a data frame into a Lexis object.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+## S3 method for class 'Lexis':
+merge(x, y, id, by, ...)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] an object of class \code{Lexis}
+\item[\code{y}] a data frame
+\item[\code{id}] the name of the variable in \code{y} to use for matching
+against the variable \code{lex.id} in \code{x}.
+
+\item[\code{by}] if matching is not done by id, a vector of variable names
+common to both \code{x} and \code{y}
+\item[\code{...}] optional arguments to be passed to \code{merge.data.frame}
+\end{ldescription}
+\end{Arguments}
+\begin{Details}\relax
+A \code{Lexis} object can be considered as an augmented data frame
+in which some variables are time-dependent variables representing
+follow-up. The \code{Lexis} function produces a minimal object
+containing only these time-dependent variables.  Additional variables
+may be added to a \code{Lexis} object using the \code{merge} method.
+\end{Details}
+\begin{Value}
+A \code{Lexis} object with additional columns taken from the
+merged data frame.
+\end{Value}
+\begin{Note}\relax
+The variable given as the \code{by.y} argument must not contain
+any duplicate values in the data frame \code{y}.
+\end{Note}
+\begin{Author}\relax
+Martyn Plummer
+\end{Author}
+\begin{SeeAlso}\relax
+\code{\LinkA{merge.data.frame}{merge.data.frame}}, \code{\LinkA{subset.Lexis}{subset.Lexis}}
+\end{SeeAlso}
+

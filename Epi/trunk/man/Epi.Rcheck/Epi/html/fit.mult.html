@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Fits a multiplicative relative risk model to interval censored data.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for fit.mult {Epi}"><tr><td>fit.mult {Epi}</td><td align="right">R Documentation</td></tr></table>
+<h2>Fits a multiplicative relative risk model to interval censored data.</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Utility function.
+</p>
+<p>
+The model fitted assumes a piecewise constant baseline rate in
+intervals specified by the argument <code>breaks</code>, and a
+multiplicative relative risk function.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+  fit.mult( y, rates.frame, cov.frame, start )
+  </pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+Binary vector of outcomes</td></tr>
+<tr valign="top"><td><code>rates.frame</code></td>
+<td>
+Dataframe expanded from the original data by
+<code><a href="expand.data.html">expand.data</a></code>, cooresponding to covariates for the rate
+parameters.</td></tr>
+<tr valign="top"><td><code>cov.frame</code></td>
+<td>
+do., but covariates corresponding to the
+<code>formula</code> argument of <code><a href="Icens.html">Icens</a></code></td></tr>
+<tr valign="top"><td><code>start</code></td>
+<td>
+Starting values for the rate parameters. If not supplied,
+then starting values are generated.</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+The model is fitted by alternating between two generalized linear
+models where one estimates the underlying rates in the intervals, and
+the other estimates the log-relative risks.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+A list with three components:
+</p>
+<table summary="R argblock">
+<tr valign="top"><td><code>rates</code></td>
+<td>
+A glm object from a binomial model with log-link,
+estimating the baseline rates.</td></tr>
+<tr valign="top"><td><code>cov</code></td>
+<td>
+A glm object from a binomial model with complementary
+log-log link, estimating the log-rate-ratios</td></tr>
+<tr valign="top"><td><code>niter</code></td>
+<td>
+Nuber of iterations, a scalar</td></tr>
+</table>
+
+<h3>Author(s)</h3>
+
+<p>
+Martyn Plummer, <a href="mailto:plummer@iarc.fr">plummer@iarc.fr</a>,
+Bendix Carstensen, <a href="mailto:bxc@steno.dk">bxc@steno.dk</a>
+</p>
+
+
+<h3>References</h3>
+
+<p>
+B Carstensen: Regression models for interval censored
+survival data: application to HIV infection in Danish homosexual
+men. Statistics in Medicine, 15(20):2177-2189, 1996.
+</p>
+<p>
+CP Farrington: Interval censored survival data: a generalized linear
+modelling approach. Statistics in Medicine, 15(3):283-292, 1996.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="Icens.html">Icens</a></code>
+<code><a href="fit.add.html">fit.add</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+  data( HIV.dk ) 
+  </pre>
+
+
+
+<hr><div align="center">[Package <em>Epi</em> version 0.8.0 <a href="00Index.html">Index]</a></div>
+
+</body></html>

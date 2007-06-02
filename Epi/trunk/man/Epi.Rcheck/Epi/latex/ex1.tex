@@ -1,0 +1,73 @@
+\HeaderA{ex1}{Split follow-up time along a timescale}{ex1}
+\keyword{manip}{ex1}
+\keyword{datagen}{ex1}
+\begin{Description}\relax
+Splits follow-up time at prespecified points of follow-up.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+ex1( enter, exit, fail, origin = 0, scale = 1, breaks,
+     data = data.frame(enter, exit, fail),
+     Expand = 1:nrow(data) )
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{enter}] Date of entry einto the study (start of follow-up). Numeric.
+\item[\code{exit}] Date of termination of follow-up. Numeric.
+\item[\code{fail}] Status at exit from the study.
+\item[\code{origin}] Origin of the timescale to split on. Specified on the
+input timescale, i.e. that of \code{enter} and \code{exit}.
+\item[\code{scale}] Scaling between input and analysis timescale.
+\item[\code{breaks}] Breakpoints on the analysis timescale. Follow-up before
+\code{min(breaks)} and and ater \code{max(breks)} is discarded.
+\item[\code{data}] Dataframe of variables to carry over to the output.
+\item[\code{Expand}] Variable identifying original records.
+\end{ldescription}
+\end{Arguments}
+\begin{Details}\relax
+If \code{entry} and \code{exit} are given in days (for example as
+\code{Date} variables, and we want follow-up cut at 5-year age
+intervals, the we should choose \code{origin} equal to bithdate, scale
+equal to 365.25 and breaks as \code{seq(0,100,5)}. Thus the input
+timescale is calendar tiem measured in days, and output timescale is
+age measured in years.
+\end{Details}
+\begin{Value}
+A dataframe with one row per follow-up interval, and variables as in
+\code{data}, preceded by the variables:
+\begin{ldescription}
+\item[\code{Expand}] Identification of the rows from the input dataframe.
+\item[\code{Enter}] Entry date for the interval.
+\item[\code{Exit}] Exit date for the interval.
+\item[\code{Fail}] Failure indicator for end of the current interval.
+\end{ldescription}
+\end{Value}
+\begin{Author}\relax
+Bendix Carstensen, Steno Diabetes Center,
+\email{bxc@steno.dk}, \url{www.biostat.ku.dk/~bxc}
+\end{Author}
+\begin{SeeAlso}\relax
+\code{\LinkA{Lexis}{Lexis}},
+\code{\LinkA{isec}{isec}},
+\code{\LinkA{icut}{icut}},
+\code{\LinkA{fcut1}{fcut1}},
+\code{\LinkA{ex1}{ex1}}
+\end{SeeAlso}
+\begin{Examples}
+\begin{ExampleCode}
+one <- round( runif( 15, 0, 10 ), 1 )
+two <- round( runif( 15, 0, 10 ), 1 )
+doe <- pmin( one, two )
+dox <- pmax( one, two )
+# Goofy data rows to test possibly odd behaviour
+doe[1:3] <- dox[1:3] <- 8
+dox[2] <- 6
+dox[3] <- 7.5
+# Some failure indicators
+fail <- sample( 0:1, 15, replace=TRUE, prob=c(0.7,0.3) )
+# Split follow-up:
+ex1( doe, dox, fail, breaks=0:10 )
+\end{ExampleCode}
+\end{Examples}
+

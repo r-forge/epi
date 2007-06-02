@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Compute cumulative sum of estimates.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for ci.cum {Epi}"><tr><td>ci.cum {Epi}</td><td align="right">R Documentation</td></tr></table>
+<h2>Compute cumulative sum of estimates.</h2>
+
+
+<h3>Description</h3>
+
+<p>
+Computes the cumulative sum of parameter functions and the
+standard error of it. Optionally the exponential is applied to the
+parameter functions before it is cumulated.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+ci.cum( obj,
+    ctr.mat = NULL,
+     subset = NULL,
+       intl = 1,
+      alpha = 0.05,
+        Exp = TRUE )
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+A model object. </td></tr>
+<tr valign="top"><td><code>ctr.mat</code></td>
+<td>
+Contrast matrix defining the parameter functions from
+the parameters of the model. </td></tr>
+<tr valign="top"><td><code>subset</code></td>
+<td>
+Subset of the parameters of the model to which
+<code>ctr.mat</code> should be applied. </td></tr>
+<tr valign="top"><td><code>intl</code></td>
+<td>
+Interval length for the cumulation. Either a constant or
+a numerical vector of length <code>nrow(ctr.mat)</code>. </td></tr>
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+Significance level used when computing confidence limits. </td></tr>
+<tr valign="top"><td><code>Exp</code></td>
+<td>
+Should the parameter function be exponentiated before it is
+cumulated? </td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+The purpose of this function is to compute cumulative rate based on a
+model for the rates. If the model is a multiplicative model for the
+rates, the purpose of <code>ctr.mat</code> is to return a vector of rates or
+log-rates when applied to the coefficients of the model. If log-rates
+are returned, the they should be exponentiated before cumulated, and
+the variances computed accordingly. Since log-linear models are the most
+common the <code>Exp</code> parameter defaults to TRUE.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+A matrix with 4 columns: Estimate, lower and upper c.i. and standard
+error. The numebr of rows equals <code>nrow(ctr.mat)</code> if <code>zero</code> if
+FALSE, otherwise <code>nrow(ctr.mat)+1</code>, because an initial row of 0s
+is added.</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Bendix Carstensen,
+<a href="http://www.pubhealth.ku.dk/~bxc">http://www.pubhealth.ku.dk/~bxc</a>
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+See also <code><a href="ci.lin.html">ci.lin</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# Packages required for this example
+library( splines )
+library( survival )
+data( lung )
+par( mfrow=c(1,2) )
+
+# Plot the Kaplan-meier-estimator
+#
+plot( survfit( Surv( time, status==2 ), data=lung ) )
+
+# Cut the follow-up every 10 days
+#
+dx &lt;- W.Lexis( exit=time, fail=(status==2), breaks=seq(0,1100,10), data=lung )
+str( dx )
+
+# Fit a Poisson model with a natural spline for the effect of time.
+# Note that "Time" is the left endpoint of the interval in the dataframe dx.
+#
+MM &lt;- ns( dx$Time, knots=c(50,100,200,400,700), intercept=TRUE )
+mp &lt;- glm( Fail ~ MM - 1 + offset(log(Exit-Entry)),
+                  family=poisson, data=dx, eps=10^-8, maxit=25 )
+
+# Contrast matrix to extract effects, i.e. matrix to multiply with the
+# coefficients to produce the log-rates: unique rows of MM, in time order.
+#
+T.pt &lt;- sort( unique( dx$Time ) )
+T.wh &lt;- match( T.pt, dx$Time )
+Lambda &lt;- ci.cum( mp, ctr.mat=MM[T.wh,], intl=diff(c(0,T.pt)) )
+
+# Put the estimated survival function on top of the KM-estimator
+#
+matlines( c(0,T.pt[-1]), exp(-Lambda[,1:3]), lwd=c(3,1,1), lty=1, col="Red" )
+
+# Extract and plot the fitted intensity function
+#
+lambda &lt;- ci.lin( mp, ctr.mat=MM[T.wh,], Exp=TRUE )
+matplot( T.pt, lambda[,5:7]*10^3, type="l", lwd=c(3,1,1), col="black", lty=1,
+         log="y", ylim=c(0.2,20) )
+</pre>
+
+
+
+<hr><div align="center">[Package <em>Epi</em> version 0.8.0 <a href="00Index.html">Index]</a></div>
+
+</body></html>

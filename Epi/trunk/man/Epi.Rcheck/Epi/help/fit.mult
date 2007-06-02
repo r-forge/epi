@@ -1,0 +1,72 @@
+fit.mult                 package:Epi                 R Documentation
+
+_F_i_t_s _a _m_u_l_t_i_p_l_i_c_a_t_i_v_e _r_e_l_a_t_i_v_e _r_i_s_k _m_o_d_e_l _t_o _i_n_t_e_r_v_a_l _c_e_n_s_o_r_e_d _d_a_t_a.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Utility function.
+
+     The model fitted assumes a piecewise constant baseline rate in
+     intervals specified by the argument 'breaks', and a multiplicative
+     relative risk function.
+
+_U_s_a_g_e:
+
+       fit.mult( y, rates.frame, cov.frame, start )
+       
+
+_A_r_g_u_m_e_n_t_s:
+
+       y: Binary vector of outcomes
+
+rates.frame: Dataframe expanded from the original data by
+          'expand.data', cooresponding to covariates for the rate
+          parameters.
+
+cov.frame: do., but covariates corresponding to the 'formula' argument
+          of 'Icens'
+
+   start: Starting values for the rate parameters. If not supplied,
+          then starting values are generated.
+
+_D_e_t_a_i_l_s:
+
+     The model is fitted by alternating between two generalized linear
+     models where one estimates the underlying rates in the intervals,
+     and the other estimates the log-relative risks.
+
+_V_a_l_u_e:
+
+     A list with three components: 
+
+   rates: A glm object from a binomial model with log-link, estimating
+          the baseline rates.
+
+     cov: A glm object from a binomial model with complementary log-log
+          link, estimating the log-rate-ratios
+
+   niter: Nuber of iterations, a scalar
+
+_A_u_t_h_o_r(_s):
+
+     Martyn Plummer, plummer@iarc.fr, Bendix Carstensen, bxc@steno.dk
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     B Carstensen: Regression models for interval censored survival
+     data: application to HIV infection in Danish homosexual men.
+     Statistics in Medicine, 15(20):2177-2189, 1996.
+
+     CP Farrington: Interval censored survival data: a generalized
+     linear modelling approach. Statistics in Medicine, 15(3):283-292,
+     1996.
+
+_S_e_e _A_l_s_o:
+
+     'Icens' 'fit.add'
+
+_E_x_a_m_p_l_e_s:
+
+       data( HIV.dk ) 
+       
+

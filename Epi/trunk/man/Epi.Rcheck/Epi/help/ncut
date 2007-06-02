@@ -1,0 +1,58 @@
+ncut                   package:Epi                   R Documentation
+
+_F_u_n_c_t_i_o_n _t_o _g_r_o_u_p _a _v_a_r_i_a_b_l_e _i_n _i_n_t_e_r_v_a_l_s.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Cuts a continuous variable in intervals. As opposed to 'cut' which
+     returns a factor, 'ncut' returns a numeric variable.
+
+_U_s_a_g_e:
+
+     ncut(x, breaks, type="left" )
+
+_A_r_g_u_m_e_n_t_s:
+
+       x: A numerical vector.
+
+  breaks: Vector of breakpoints. 'NA' will results for values below
+          'min(x)' if 'type="left"', for values above 'max(x)' if
+          'type="right"' and for values outside 'range(x)' if
+          'type="mid"'
+
+    type: Character: one of 'c("left","right","mid")', indicating
+          whether the left, right or midpoint of the intervals defined
+          in breaks is returned.
+
+_D_e_t_a_i_l_s:
+
+     The function uses the base function 'findInterval'.
+
+_V_a_l_u_e:
+
+     A numerical vector of the same length as 'x'.
+
+_A_u_t_h_o_r(_s):
+
+     Bendix Carstensen, Steno Diabetes Center, bxc@steno.dk, <URL:
+     http://www.biostat.ku.dk/~bxc/>, with essential input from Martyn
+     Plummer, IARC.
+
+_S_e_e _A_l_s_o:
+
+     'cut', 'findInterval'
+
+_E_x_a_m_p_l_e_s:
+
+     br <- c(-2,0,1,2.5)
+     x <- c( rnorm( 10 ), br, -3, 3 )
+     cbind( x, l=ncut( x, breaks=br, type="l" ),
+               m=ncut( x, breaks=br, type="m" ),
+               r=ncut( x, breaks=br, type="r" ) )[order(x),]
+     x <- rnorm( 200 )
+     plot( x, ncut( x, breaks=br, type="l" ), pch=16, col="blue", ylim=range(x) )
+     abline( 0, 1 )
+     abline( v=br )
+     points( x, ncut( x, breaks=br, type="r" ), pch=16, col="red" )
+     points( x, ncut( x, breaks=br, type="m" ), pch=16, col="green" )
+

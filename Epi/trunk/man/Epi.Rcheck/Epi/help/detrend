@@ -1,0 +1,44 @@
+detrend                 package:Epi                 R Documentation
+
+_P_r_o_j_e_c_t_i_o_n _o_f _a _m_o_d_e_l _m_a_t_r_i_x _o_n _t_o _t_h_e _o_r_t_h_o_g_o_n_a_l
+_c_o_m_p_l_e_m_e_n_t _o_f _a _t_r_e_n_d.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The columns of the model matrix 'M' is projected on the orthogonal
+     complement to the matrix '(1,t)'. Orthogonality  is defined w.r.t.
+     an inner product defined by the weights 'weight'.
+
+_U_s_a_g_e:
+
+       detrend( M, t, weight = rep(1, nrow(M)) )
+
+_A_r_g_u_m_e_n_t_s:
+
+       M: A model matrix. 
+
+       t: The trend defining a subspace. A numerical vector of length
+          'nrow(M)' 
+
+  weight: Weights defining the inner product of vectors 'x' and 'y' as
+          'sum(x*w*y)'. A numerical vector of length 'nrow(M)',
+          defaults to a vector of '1's.
+
+_D_e_t_a_i_l_s:
+
+     The functions is intended to be used in parametrization of
+     age-period-cohort models.
+
+_V_a_l_u_e:
+
+     A full-rank matrix with columns orthogonal to '(1,t)'.
+
+_A_u_t_h_o_r(_s):
+
+     Bendix Carstensen, Steno Diabetes Center, <URL:
+     http://www.pubhealth.ku.dk/~bxc>, with help from Peter Dalgaard.
+
+_S_e_e _A_l_s_o:
+
+     'projection.ip'
+

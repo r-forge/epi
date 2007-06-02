@@ -1,0 +1,64 @@
+time.band                package:Epi                R Documentation
+
+_E_x_t_r_a_c_t _t_i_m_e _b_a_n_d _d_a_t_a _f_r_o_m _a _s_p_l_i_t _L_e_x_i_s _o_b_j_e_c_t
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The break points of a 'Lexis' object (created by a call to
+     'splitLexis') divide the follow-up intervals into time bands along
+     a given time scale. The 'breaks' function returns the break
+     points, for a given time scale, and the 'timeBand' classifies each
+     row into one of the time bands.
+
+_U_s_a_g_e:
+
+     timeBand(lex, time.scale, type)
+     breaks(lex, time.scale)
+
+_A_r_g_u_m_e_n_t_s:
+
+     lex: an object of class 'Lexis'
+
+time.scale: a character or integer vector of length 1 identifying the
+          time scale of interest
+
+    type: a string that determines how the time bands are labelled. See
+          Details below
+
+_D_e_t_a_i_l_s:
+
+     Time bands may be labelled in various ways according to the 'type'
+     argument. The permitted values of the 'type' argument, and the
+     corresponding return values are:
+
+"_f_a_c_t_o_r" a factor (unordered) with labels "(left,right]"
+
+"_i_n_t_e_g_e_r" a numeric vector with integer codes starting from 0
+
+"_l_e_f_t" the left-hand limit of the time band
+
+"_m_i_d_d_l_e" the middle of the time band
+
+"_r_i_g_h_t" the right-hand limit of the time band
+
+_V_a_l_u_e:
+
+     The 'breaks' function returns a vector of break points for the
+     'Lexis' object, or NULL if no break points have been defined by a
+     call to 'splitLexis'.  The 'timeBand' function returns a numeric
+     vector or factor, depending on the value of the 'type' argument.
+
+_N_o_t_e:
+
+     A newly created 'Lexis' object has no break points defined. In
+     this case, 'breaks' will return NULL, and 'timeBand' will return a
+     degenerate factor with one level labelled "(-Inf,Inf]".
+
+_A_u_t_h_o_r(_s):
+
+     Martyn Plummer
+
+_S_e_e _A_l_s_o:
+
+     'Lexis'
+

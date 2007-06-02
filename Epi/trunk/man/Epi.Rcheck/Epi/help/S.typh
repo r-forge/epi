@@ -1,0 +1,58 @@
+S.typh                  package:Epi                  R Documentation
+
+_S_a_l_m_o_n_e_l_l_a _T_y_p_h_i_m_u_r_i_u_m _o_u_t_b_r_e_a_k _1_9_9_6 _i_n _D_e_n_m_a_r_k.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Matched case-control study of food poisoning.
+
+_F_o_r_m_a_t:
+
+     A data frame with 136 observations on the following 15 variables:
+
+            'id':  Person identification
+           'set':  Matched set indicator
+          'case':  Case-control status (1:case, 0:control
+           'age':  Age of individual
+           'sex':  Sex of individual (1:male, 2:female)
+        'abroad':  Within the last two weeks visited abroad (1:yes, 0:no)
+          'beef':  Within the last two weeks eaten beef
+          'pork':  Within the last two weeks eaten pork
+          'veal':  Within the last two weeks eaten veal
+       'poultry':  Within the last two weeks eaten poultry
+        'liverp':  Within the last two weeks eaten liverpaste
+           'veg':  Within the last two weeks eaten vegetables
+         'fruit':  Within the last two weeks eaten fruit
+           'egg':  Within the last two weeks eaten eggs
+        'plant7':  Within the last two weeks eaten meat from plant no. 7
+
+_D_e_t_a_i_l_s:
+
+     In the fall of 1996 an unusually large number of Salmonella
+     Typhimurium cases were recorded in Fyn county in Denmark. The
+     Danish Zoonosis Centre set up a matched case-control study to find
+     the sources. Cases and two age-, sex- and residency-matched
+     controls were telephone interviewed about their food intake during
+     the last two weeks.
+
+     The participants were asked at which retailer(s) they had
+     purchased meat. Retailers were independently of this linked to
+     meat processing plants, and thus participants were linked to meat
+     processing plants. This way persons could be linked to (amongst
+     other) plant no 7.
+
+_S_o_u_r_c_e:
+
+     Tine Hald.
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     Mølbak K and Hald T: Salmonella Typhimurium outbreak in late
+     summer 1996. A Case-control study. (In Danish: Salmonella
+     typhimurium udbrud på Fyn sensommeren 1996. En case-kontrol
+     undersøgelse.) Ugeskrift for Læger., 159(36):5372-7, 1997.
+
+_E_x_a_m_p_l_e_s:
+
+     data(S.typh)
+

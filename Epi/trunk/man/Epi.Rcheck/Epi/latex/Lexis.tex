@@ -1,0 +1,79 @@
+\HeaderA{Lexis}{Create a Lexis object}{Lexis}
+\keyword{survival}{Lexis}
+\begin{Description}\relax
+Create an object of class \code{Lexis} to represent follow-up on
+multiple time scales.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
+      merge=TRUE)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{entry}] a named list of entry times. Each element of the list is
+a numeric variable representing the entry time on the named time
+scale. All time scales must have the same units (e.g. years)
+\item[\code{exit}] a named list of exit times
+\item[\code{duration}] a numeric vector giving the duration of follow-up
+\item[\code{entry.status}] a vector giving the status at entry
+\item[\code{exit.status}] a vector giving status at exit. Any change in
+status during follow-up is assumed to take place exactly at the exit time
+\item[\code{id}] a vector giving a unique identity value for each row of the
+Lexis object
+\item[\code{data}] an optional data frame, list, or environment containing
+the variables. If  not found in \code{data}, the variables are
+taken from the environment from which \code{Lexis} was called
+\item[\code{merge}] a logical flag. If \code{TRUE} then the \code{data} 
+argument will be coerced to a data frame and then merged with
+the resulting \code{Lexis} object
+\end{ldescription}
+\end{Arguments}
+\begin{Details}\relax
+The analysis of long-term population-based follow-up studies typically
+requires multiple time scales to be taken into account, such as
+age, calender time, or time since an event. A \code{Lexis} object is
+a data frame with additional attributes that allows these multiple time
+dimensions of follow-up to be managed.
+
+Lexis objects are named after the German gemographer Wilhelm
+Lexis (1837-1914), who is credited with the invention of the
+"Lexis diagram" for representing population dynamics simultaneously
+by age, period and cohort.
+
+The \code{Lexis} function creates a minimal \code{Lexis} object with
+only those variables required to define the follow-up history in each
+row. Additional variables can be merged into the \code{Lexis} object
+using the \code{merge} method for \code{Lexis} objects.
+\end{Details}
+\begin{Value}
+An object of class \code{Lexis}. This is represented as a data frame
+with a column for each time scale, and additional columns with the
+following names:
+\begin{ldescription}
+\item[\code{lex.id}] Identification of the inidvidual
+\item[\code{lex.deltat}] Duration of follow-up
+\item[\code{lex.status1}] Entry status
+\item[\code{lex.status2}] Exit status
+\end{ldescription}
+
+If \code{merge=TRUE} then the \code{Lexis} object will also contain
+all variables from the \code{data} argument.
+\end{Value}
+\begin{Note}\relax
+Only two of the three arguments \code{entry}, \code{exit} and
+\code{duration} need to be given.  If the third parameter is missing,
+it is imputed. If duration is imputed, it must be the same on
+all time scales.
+\end{Note}
+\begin{Author}\relax
+Martyn Plummer
+\end{Author}
+\begin{SeeAlso}\relax
+\code{\LinkA{plot.Lexis}{plot.Lexis}}, \code{\LinkA{splitLexis}{splitLexis}},
+\code{\LinkA{merge.Lexis}{merge.Lexis}}, \code{\LinkA{entry}{entry}},
+\code{\LinkA{timeScales}{timeScales}},
+\code{\LinkA{timeBand}{timeBand}}
+\end{SeeAlso}
+

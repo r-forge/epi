@@ -1,0 +1,49 @@
+\HeaderA{apc.plot}{Plot the estimates from a fitted Age-Period-Cohort model}{apc.plot}
+\keyword{hplot}{apc.plot}
+\begin{Description}\relax
+This function plots the estimates created by \code{\LinkA{apc.fit}{apc.fit}} in a single 
+graph. It just calls \code{\LinkA{apc.frame}{apc.frame}} after computing some sensible 
+values of the parameters, and subsequently plots the estimates using 
+\code{\LinkA{apc.lines}{apc.lines}}.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+apc.plot(obj, r.txt = "Rate", ...)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{obj}] An object of class \code{apc}. 
+\item[\code{r.txt}] The text to put on the vertical rate axis. 
+\item[\code{...}] Additional arguments passed on to \code{\LinkA{apc.lines}{apc.lines}}. 
+\end{ldescription}
+\end{Arguments}
+\begin{Value}
+A numerical vector of length two, with names
+\code{c("cp.offset","RR.fac")}. The first is the offset for the cohort
+period-axis, the second the multiplication factor for the rate-ratio
+scale. Therefore, if you want to plot at \code{(x,y)} in the right panel,
+use \code{(x-res["cp.offset"],y/res["RR.fac"])=(x-res[1],y/res[2])}.
+This vector should be supplied for the parameter \code{frame.par} to
+\code{\LinkA{apc.lines}{apc.lines}} if more sets of estimates is plotted in the
+same graph.
+\end{Value}
+\begin{Author}\relax
+Bendix Carstensen, Steno Diabetes Center,
+\url{http://www.pubhealth.ku.dk/~bxc}
+\end{Author}
+\begin{SeeAlso}\relax
+\code{\LinkA{apc.lines}{apc.lines},\LinkA{apc.lines}{apc.lines},\LinkA{apc.lines}{apc.lines}}
+\end{SeeAlso}
+\begin{Examples}
+\begin{ExampleCode}
+data( lungDK )
+attach( lungDK )
+apc1 <- apc.fit( A=Ax, P=Px, D=D, Y=Y/10^5 )
+fp <- apc.plot( apc1 )
+apc.lines( apc1, frame.par=fp, drift=1.01, col="red" )
+for( i in 1:11 )
+  apc.lines( apc1, frame.par=fp, drift=1+(i-6)/100, col=rainbow(12)[i] )
+\end{ExampleCode}
+\end{Examples}
+

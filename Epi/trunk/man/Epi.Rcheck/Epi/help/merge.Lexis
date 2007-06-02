@@ -1,0 +1,54 @@
+merge.Lexis               package:Epi               R Documentation
+
+_M_e_r_g_e _a _L_e_x_i_s _o_b_j_e_c_t _w_i_t_h _a _d_a_t_a _f_r_a_m_e
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Merge additional variables from a data frame into a Lexis object.
+
+_U_s_a_g_e:
+
+     ## S3 method for class 'Lexis':
+     merge(x, y, id, by, ...)
+
+_A_r_g_u_m_e_n_t_s:
+
+       x: an object of class 'Lexis'
+
+       y: a data frame
+
+      id: the name of the variable in 'y' to use for matching against
+          the variable 'lex.id' in 'x'. 
+
+      by: if matching is not done by id, a vector of variable names
+          common to both 'x' and 'y'
+
+     ...: optional arguments to be passed to 'merge.data.frame'
+
+_D_e_t_a_i_l_s:
+
+     A 'Lexis' object can be considered as an augmented data frame in
+     which some variables are time-dependent variables representing
+     follow-up. The 'Lexis' function produces a minimal object
+     containing only these time-dependent variables.  Additional
+     variables may be added to a 'Lexis' object using the 'merge'
+     method.
+
+_V_a_l_u_e:
+
+     A 'Lexis' object with additional columns taken from the merged
+     data frame.
+
+_N_o_t_e:
+
+     The variable given as the 'by.y' argument must not contain any
+     duplicate values in the data frame 'y'.
+
+_A_u_t_h_o_r(_s):
+
+     Martyn Plummer
+
+_S_e_e _A_l_s_o:
+
+     'merge.data.frame', 'subset.Lexis'
+

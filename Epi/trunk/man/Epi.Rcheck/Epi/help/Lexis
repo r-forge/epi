@@ -1,0 +1,93 @@
+Lexis                  package:Epi                  R Documentation
+
+_C_r_e_a_t_e _a _L_e_x_i_s _o_b_j_e_c_t
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     Create an object of class 'Lexis' to represent follow-up on
+     multiple time scales.
+
+_U_s_a_g_e:
+
+     Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
+           merge=TRUE)
+
+_A_r_g_u_m_e_n_t_s:
+
+   entry: a named list of entry times. Each element of the list is a
+          numeric variable representing the entry time on the named
+          time scale. All time scales must have the same units (e.g.
+          years)
+
+    exit: a named list of exit times
+
+duration: a numeric vector giving the duration of follow-up
+
+entry.status: a vector giving the status at entry
+
+exit.status: a vector giving status at exit. Any change in status
+          during follow-up is assumed to take place exactly at the exit
+          time
+
+      id: a vector giving a unique identity value for each row of the
+          Lexis object
+
+    data: an optional data frame, list, or environment containing the
+          variables. If  not found in 'data', the variables are taken
+          from the environment from which 'Lexis' was called
+
+   merge: a logical flag. If 'TRUE' then the 'data'  argument will be
+          coerced to a data frame and then merged with the resulting
+          'Lexis' object
+
+_D_e_t_a_i_l_s:
+
+     The analysis of long-term population-based follow-up studies
+     typically requires multiple time scales to be taken into account,
+     such as age, calender time, or time since an event. A 'Lexis'
+     object is a data frame with additional attributes that allows
+     these multiple time dimensions of follow-up to be managed.
+
+     Lexis objects are named after the German gemographer Wilhelm Lexis
+     (1837-1914), who is credited with the invention of the "Lexis
+     diagram" for representing population dynamics simultaneously by
+     age, period and cohort.
+
+     The 'Lexis' function creates a minimal 'Lexis' object with only
+     those variables required to define the follow-up history in each
+     row. Additional variables can be merged into the 'Lexis' object
+     using the 'merge' method for 'Lexis' objects.
+
+_V_a_l_u_e:
+
+     An object of class 'Lexis'. This is represented as a data frame
+     with a column for each time scale, and additional columns with the
+     following names: 
+
+  lex.id: Identification of the inidvidual
+
+lex.deltat: Duration of follow-up
+
+lex.status1: Entry status
+
+lex.status2: Exit status
+
+     If 'merge=TRUE' then the 'Lexis' object will also contain all
+     variables from the 'data' argument.
+
+_N_o_t_e:
+
+     Only two of the three arguments 'entry', 'exit' and 'duration'
+     need to be given.  If the third parameter is missing, it is
+     imputed. If duration is imputed, it must be the same on all time
+     scales.
+
+_A_u_t_h_o_r(_s):
+
+     Martyn Plummer
+
+_S_e_e _A_l_s_o:
+
+     'plot.Lexis', 'splitLexis', 'merge.Lexis', 'entry', 'timeScales',
+     'timeBand'
+

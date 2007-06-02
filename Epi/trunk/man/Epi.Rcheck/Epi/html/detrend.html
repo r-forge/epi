@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>R: Projection of a model matrix on to the orthogonal
+complement of a trend.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" type="text/css" href="../../R.css">
+</head><body>
+
+<table width="100%" summary="page for detrend {Epi}"><tr><td>detrend {Epi}</td><td align="right">R Documentation</td></tr></table>
+<h2>Projection of a model matrix on to the orthogonal
+complement of a trend.</h2>
+
+
+<h3>Description</h3>
+
+<p>
+The columns of the model matrix <code>M</code> is projected on the
+orthogonal complement to the matrix <code>(1,t)</code>. Orthogonality 
+is defined w.r.t. an inner product defined by the weights <code>weight</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+  detrend( M, t, weight = rep(1, nrow(M)) )
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>M</code></td>
+<td>
+A model matrix. </td></tr>
+<tr valign="top"><td><code>t</code></td>
+<td>
+The trend defining a subspace. A numerical vector of length
+<code>nrow(M)</code> </td></tr>
+<tr valign="top"><td><code>weight</code></td>
+<td>
+Weights defining the inner product of vectors <code>x</code>
+and <code>y</code> as <code>sum(x*w*y)</code>.
+A numerical vector of length <code>nrow(M)</code>, defaults to a vector of
+<code>1</code>s.</td></tr>
+</table>
+
+<h3>Details</h3>
+
+<p>
+The functions is intended to be used in parametrization of
+age-period-cohort models.
+</p>
+
+
+<h3>Value</h3>
+
+<p>
+A full-rank matrix with columns orthogonal to <code>(1,t)</code>.</p>
+
+<h3>Author(s)</h3>
+
+<p>
+Bendix Carstensen, Steno Diabetes Center,
+<a href="http://www.pubhealth.ku.dk/~bxc">http://www.pubhealth.ku.dk/~bxc</a>, with help from Peter Dalgaard.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>
+<code><a href="projection.ip.html">projection.ip</a></code>
+</p>
+
+
+
+<hr><div align="center">[Package <em>Epi</em> version 0.8.0 <a href="00Index.html">Index]</a></div>
+
+</body></html>

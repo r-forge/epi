@@ -1,0 +1,39 @@
+\HeaderA{detrend}{Projection of a model matrix on to the orthogonal
+complement of a trend.}{detrend}
+\keyword{array}{detrend}
+\begin{Description}\relax
+The columns of the model matrix \code{M} is projected on the
+orthogonal complement to the matrix \code{(1,t)}. Orthogonality 
+is defined w.r.t. an inner product defined by the weights \code{weight}.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+  detrend( M, t, weight = rep(1, nrow(M)) )
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{M}] A model matrix. 
+\item[\code{t}] The trend defining a subspace. A numerical vector of length
+\code{nrow(M)} 
+\item[\code{weight}] Weights defining the inner product of vectors \code{x}
+and \code{y} as \code{sum(x*w*y)}.
+A numerical vector of length \code{nrow(M)}, defaults to a vector of
+\code{1}s.
+\end{ldescription}
+\end{Arguments}
+\begin{Details}\relax
+The functions is intended to be used in parametrization of
+age-period-cohort models.
+\end{Details}
+\begin{Value}
+A full-rank matrix with columns orthogonal to \code{(1,t)}.
+\end{Value}
+\begin{Author}\relax
+Bendix Carstensen, Steno Diabetes Center,
+\url{http://www.pubhealth.ku.dk/~bxc}, with help from Peter Dalgaard.
+\end{Author}
+\begin{SeeAlso}\relax
+\code{\LinkA{projection.ip}{projection.ip}}
+\end{SeeAlso}
+

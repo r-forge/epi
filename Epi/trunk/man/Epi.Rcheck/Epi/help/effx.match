@@ -1,0 +1,88 @@
+effx.match                package:Epi                R Documentation
+
+_F_u_n_c_t_i_o_n _t_o _c_a_l_c_u_l_a_t_e _e_f_f_e_c_t_s _f_o_r _i_n_d_i_v_i_d_u_a_l_l_y _m_a_t_c_h_e_d _c_a_s_e-_c_o_n_t_r_o_l _s_t_u_d_i_e_s
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     The function calculates the effects of an exposure on a response,
+     possibly stratified by a stratifying variable, and/or controlled
+     for one of more confounding variables.
+
+_U_s_a_g_e:
+
+     effx.match(response,
+     exposure,
+     match,
+     strata=NULL,
+     control=NULL,
+     base=1,
+     sigdig=3,
+     alpha=0.05,
+     data=NULL) 
+
+_A_r_g_u_m_e_n_t_s:
+
+response: The 'response' variable - must be numeric
+
+exposure: The 'exposure' variable can be numeric or a factor
+
+   match: The variable which identifies the matched sets
+
+  strata: The 'strata' stratifying variable - must be a factor
+
+ control: The 'control' variable(s). These are passed as a list if
+          there are more than one of them.
+
+    base: Baseline for the effects of a categorical exposure, default 1
+
+  sigdig: Number of significant digits for the effects, default 3
+
+   alpha: 1 - confidence level
+
+    data: 'data' refers to the data used to evaluate the function
+
+_D_e_t_a_i_l_s:
+
+     Effects are calculated odds ratios. The function is a wrapper for
+     clogit, from the survival package. The k-1 effects for a
+     categorical  exposure with k levels are relative  to a baseline
+     which, by default, is the first level. The effect of a metric
+     (quantitative)  exposure is calculated per unit of exposure. The
+     exposure variable can be numeric or a factor, but if it is an
+     ordered factor the order will be ignored.
+
+_V_a_l_u_e:
+
+  comp1 : Effects of exposure
+
+  comp2 : Tests of significance
+
+_W_a_r_n_i_n_g:
+
+     The function attaches the frame specified in the 'data=' argument,
+     so there is a possibility that a variable in the Global
+     environment is masked by the attached frame. Watch out for this
+     warning in the output!
+
+_A_u_t_h_o_r(_s):
+
+     Michael Hills
+
+_R_e_f_e_r_e_n_c_e_s:
+
+     www.mhills.pwp.blueyonder.co.uk
+
+_E_x_a_m_p_l_e_s:
+
+     library(Epi)
+     library(survival)
+     data(bdendo)
+
+     # d is the case-control variable, set is the matching variable.
+     # The variable est is a factor and refers to estrogen use (yes,no)
+     # The variable age is numeric and refers to estrogen use (yes,no)
+     # effect of est on the odds of being a case
+     effx.match(d,exposure=est,match=set,data=bdendo)
+     # effect of age on the odds of being a case
+     effx.match(d,exposure=age,match=set,data=bdendo)
+

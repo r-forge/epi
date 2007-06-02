@@ -1,0 +1,105 @@
+apc.lines                package:Epi                R Documentation
+
+_P_l_o_t _A_P_C-_e_s_t_i_m_a_t_e_s _i_n _a_n _A_P_C-_f_r_a_m_e.
+
+_D_e_s_c_r_i_p_t_i_o_n:
+
+     When an APC-frame has been produced by 'apc.frame', this function
+     draws a set of estimates from an APC-fit in the frame. An optional
+     drift parameter can be added to the period parameters and
+     subtracted from the cohort and age parameters.
+
+_U_s_a_g_e:
+
+      apc.lines( A, P, C,
+             scale = c("log","ln","rates","inc","RR"),
+         frame.par = NULL,
+             drift = 0,
+                c0 = median( C[,1] ),
+                a0 = median( A[,1] ),
+                p0 = c0 + a0,
+                ci = rep( FALSE, 3 ),
+               lwd = c(3,1,1),
+               lty = 1,
+               col = "black",
+              type = "l",
+             knots = FALSE,
+               ... )
+
+_A_r_g_u_m_e_n_t_s:
+
+       A: Age effects. A 4-column matrix with columns age, age-specific
+          rates, lower and upper c.i. If A is of class 'apc' (see
+          'apc.fit', 'P', 'C', 'c0', 'a0' and 'p0' are ignored, and the
+          estimates from there plotted.
+
+       P: Period effects. Rate-ratios. Same form as for the
+          age-effects.
+
+       C: Cohort effects. Rate-ratios. Same form as for the
+          age-effects.
+
+   scale: Are effects given on a log-scale? Character variable, one of
+          '"log"', '"ln"', '"rates"', '"inc"', '"RR"'. If '"log"' or
+          '"ln"' it is assumed that effects are log(rates) and log(RRs)
+          otherwise the actual effects are assumed given in 'A', 'P'
+          and 'C'. If 'A' is of class 'apc', it is assumed to be
+          '"rates"'.
+
+frame.par: 2-element vector with the cohort-period offset and RR
+          multiplicator. This will typically be the result from the
+          call of 'apc.frame'. See this for details.
+
+   drift: The drift parameter to be added to the period effect. If
+          'scale="log"' this is assumed to be on the log-scale,
+          otherwise it is assumed to be a multiplicative factor per
+          unit of the first columns of  'A', 'P' and 'C' 
+
+      c0: The cohort where the drift is assumed to be 0; the subtracted
+          drift effect is 'drift*(C[,1]-c0)'.
+
+      a0: The age where the drift is assumed to be 0.
+
+      p0: The period where the drift is assumed to be 0.
+
+      ci: Should confidence interval be drawn. Logical or character. If
+          character, any occurrence of '"a"' or '"A"' produces
+          confidence intervals for the age-effect. Similarly for period
+          and cohort.
+
+     lwd: Line widths for estimates, lower and upper confidence limits.
+
+     lty: Linetypes for the three effects.
+
+     col: Colours for the three effects.
+
+    type: What type of lines / points should be used.
+
+   knots: Should knots from the model be shown?
+
+     ...: Further parameters to be transmitted to 'matlines' used for
+          plotting the three sets of curves.
+
+_D_e_t_a_i_l_s:
+
+     The drawing of three effects in an APC-frame is a rather trivial
+     task, and the main purpose of the utility is to provide a function
+     that easily adds the functionality of adding a drift so that
+     several sets of lines can be easily produced in the same frame.
+
+_V_a_l_u_e:
+
+     A list of three matrices with the effects plotted is returned
+     invisibly.
+
+_A_u_t_h_o_r(_s):
+
+     Bendix Carstensen, Steno Diabetes Center, <URL:
+     http://www.pubhealth.ku.dk/~bxc>
+
+_R_e_f_e_r_e_n_c_e_s:
+
+_S_e_e _A_l_s_o:
+
+     'apc.frame, \code{apc.fit}'
+

@@ -1,0 +1,64 @@
+\HeaderA{plot.Lexis}{Lexis diagrams}{plot.Lexis}
+\aliasA{lines.Lexis}{plot.Lexis}{lines.Lexis}
+\aliasA{points.Lexis}{plot.Lexis}{points.Lexis}
+\keyword{hplot}{plot.Lexis}
+\keyword{aplot}{plot.Lexis}
+\begin{Description}\relax
+The follow-up histories represented by a Lexis object can be plotted
+using one or two dimensions.  The two dimensional plot is a Lexis
+diagram showing follow-up time simultaneously on two time scales.
+\end{Description}
+\begin{Usage}
+\begin{verbatim}
+## S3 method for class 'Lexis':
+plot(x, time.scale = NULL, breaks="lightgray", ...)
+## S3 method for class 'Lexis':
+points(x, time.scale = NULL, ...)
+## S3 method for class 'Lexis':
+lines(x, time.scale = NULL, ...)
+\end{verbatim}
+\end{Usage}
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{x}] An object of class \code{Lexis}
+\item[\code{time.scale}] A vector of length 1 or 2 giving the time scales to
+be plotted either by name or numerical order
+\item[\code{breaks}] a string giving the colour of grid lines to be drawn
+when plotting a split Lexis object. Grid lines can be suppressed by
+supplying the value \code{NULL} to the \code{breaks} argument
+\item[\code{...}] Further graphical parameters to be passed to the plotting
+methods. Grids can be drawn using the followin parameters in \code{plot}:
+\Itemize{
+\item \code{grid} If logical, a background grid is set up
+using the axis ticks. If a list, the first component is used as
+positions for the vertical lines and the last as positions for the
+horizontal. If a nunerical vector, grids on both axes are set up
+using the distance between the numbers.
+\item \code{col.grid="lightgray"} Color of the background grid.
+\item \code{lty.grid=2} Line type for the grid.
+\item \code{coh.grid=FALSE} Should a 45 degree grid be plotted?}
+
+\end{ldescription}
+\end{Arguments}
+\begin{Details}\relax
+The plot method for \code{Lexis} objects traces ``life lines'' from
+the start to the end of follow-up.  The \code{points} method plots
+points at the end of the life lines.
+
+If \code{time.scale} is of length 1, the life lines are drawn
+horizontally, with the time scale on the X axis and the id value on the Y
+axis. If \code{time.scale} is of length 2, a Lexis diagram is
+produced, with diagonal life lines plotted against both time scales
+simultaneously.
+
+If \code{lex} has been split along one of the time axes by a call to
+\code{splitLexis}, then vertical or horizontal grid lines are plotted
+at the break points.
+\end{Details}
+\begin{Author}\relax
+Martyn Plummer
+\end{Author}
+\begin{SeeAlso}\relax
+\code{\LinkA{Lexis}{Lexis}}, \code{\LinkA{splitLexis}{splitLexis}}
+\end{SeeAlso}
+
