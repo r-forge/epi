@@ -14,29 +14,37 @@ base=1,
 digits=3,
 data=NULL)
 {
-  ## sorts out list of control variables
-
-  if(!is.null(control)) {
-    control.arg <- substitute(control)
-    control.names <-  if (length(control.arg) > 1) {
-      sapply(control.arg, deparse)[-1]
-    }
-    else {
-      deparse(control.arg)
-    }
-  }
-
-
   ## stores the variable names for response, etc.
-
+  
   rname<-deparse(substitute(response))
-  tname<-deparse(substitute(type))
   ename<-deparse(substitute(exposure))
   sname<-deparse(substitute(strata))
 
+  ## The control argument is more complex, as it may be a name or
+  ## list of names
+  
+  if(!missing(control)) {
+    control.arg <- substitute(control)
+    if (!all(sapply(control.arg, is.name))) {
+      stop("control must be a variable name, or list of variable names")
+    }
+    if (length(control.arg) > 1) {
+      if (deparse(control.arg[[1]]) != "list") {
+        stop("Invalid control argument: must be a name or list of names")
+      }
+      control.names <- sapply(control.arg, deparse)[-1]
+    }
+    else {
+      control.names <- deparse(control.arg)
+    }
+  }
+
+  ## Match the type argument
+  
+  type <- match.arg(type, c("metric", "failure", "count", "binary"))
+
   ## performs a few checks
 
-  if(!is.numeric(response))stop("Response must be numeric, not a factor")
   if(rname==ename)stop("Same variable specified as response and exposure")
   if(rname==sname)stop("Same variable specified as response and strata")
   if(sname==ename)stop("Same variable specified as strata and exposure")
@@ -48,8 +56,6 @@ data=NULL)
   if (missing(exposure))
     stop("Must specify the exposure","\n")
   
-  type <- match.call(type, c("metric", "failure", "count", "binary"))
-  
   if (type == "failure" && missing(fup)) {
     stop("Must specify a follow-up variable when type is failure")  
   }
@@ -58,26 +64,31 @@ data=NULL)
   ## data frame.
 
   if (!missing(data)) {
-    exposure <- with(data, exposure)
-    response <- with(data, response)
+    exposure <- eval(substitute(exposure), data)
+    response <- eval(substitute(response), data)
     if (!missing(strata))
-      strata <- with(data, strata)
+      strata <- eval(substitute(strata), data)
     if (!missing(control))
-      control <- with(data, control)
+      control <- eval(substitute(control), data)
     if (!missing(fup))
-      fup <- with(data, fup)
+      fup <- eval(substitute(fup), data)
     if (!missing(weights)) {
-      weights <- with(data, weights)
+      weights <- eval(substitute(weights), data)
     }
   }
+
+  ## Now check validity of evaluated arguments
+  
+  if(!is.numeric(response))
+    stop("Response must be numeric, not a factor")
 
   if (!is.null(weights) && type != "binary") {
     stop("weights only allowed for a binary response")
   }
   
-
   if (!is.null(strata) && !is.factor(strata))
     stop("Stratifying variable must be a factor")
+
   if(type=="binary") {
     tmp<-(response==0 | response==1)
     if(all(tmp,na.rm=TRUE)==FALSE)
@@ -97,12 +108,13 @@ data=NULL)
   }
 
   ## Fix up the control argument as a named list
-  
-  if (is.list(control)) {
-    names(control) <- control.names
-  }
-  else {
-    control <- list(control.names = control)
+  if (!is.null(control)) {
+    if (is.list(control)) {
+      names(control) <- control.names
+    }
+    else {
+      control <- list(control.names = control)
+    }
   }
   
   ## prints out some information about variables
@@ -110,7 +122,7 @@ data=NULL)
 
   cat("---------------------------------------------------------------------------","\n")
   cat("response      : ", rname, "\n")
-  cat("type          : ", tname, "\n")
+  cat("type          : ", type, "\n")
   cat("exposure      : ", ename, "\n")
   if(!is.null(control))cat("control vars  : ",names(control),"\n")
   if(!is.null(strata)) {
