@@ -15,11 +15,28 @@ digits=3,
 data=NULL)
 {
   ## stores the variable names for response, etc.
-  
-  rname<-deparse(substitute(response))
-  ename<-deparse(substitute(exposure))
-  sname<-deparse(substitute(strata))
 
+  if (is.name(substitute(response))) {
+    rname<-deparse(substitute(response))
+  }
+  else {
+    stop("response must be a variable name")
+  }
+
+  if (is.name(substitute(exposure))) {
+    ename<-deparse(substitute(exposure))
+  }
+  else {
+    stop("exposure must be a variable name")
+  }
+  
+  if (is.name(substitute(strata))) {
+    sname<-deparse(substitute(strata))
+  }
+  else {
+    stop("strata must be a variable name")
+  }
+  
   ## The control argument is more complex, as it may be a name or
   ## list of names
   
