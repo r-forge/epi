@@ -4,7 +4,7 @@
 \description{
 The function calculates the effects of an exposure on a response,
 possibly stratified by a stratifying variable, and/or controlled for one
-of more confounding variables. 
+or more confounding variables. 
 }
 \usage{
 effx( response, type = "metric",
@@ -28,8 +28,8 @@ effx( response, type = "metric",
 \item{exposure}{The \code{exposure} variable can be numeric or a factor}
 \item{strata}{The \code{strata} stratifying variable - must be a factor}
 \item{control}{ The \code{control} variable(s) - these are passed as a
-  list of there are more than one.} 
-\item{weights}{Weights}
+  list if there are more than one.} 
+\item{weights}{Frequency weights for binary response only}
 \item{base}{Baseline for the effects of a categorical exposure, default 1}
 \item{digits}{Number of significant digits for the effects, default 3}
 \item{alpha}{1 - confidence level}
@@ -56,12 +56,9 @@ effx( response, type = "metric",
 \author{Michael Hills}
 %\note{ ~~further notes~~ }
 
-\section{Warning }{The function attaches the frame specified in the
-  \code{data=} argument, so there is a possibility that a variable in the
-  Global environment is masked by the attached frame. Watch out for this
-  warning in the output!} 
 %\seealso{ ~~objects to See Also as \code{\link{~~fun~~}}, ~~~ }
 \examples{
+library(Epi)
 data(births)
 births$hyp <- factor(births$hyp,labels=c("normal","hyper"))
 births$sex <- factor(births$sex,labels=c("M","F"))

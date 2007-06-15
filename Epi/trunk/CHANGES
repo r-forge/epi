@@ -1,3 +1,9 @@
+Changes in 0.9.0
+
+o effx and effx.match updated following Tartu 2007 to avoid attaching 
+  the data, and to correct the parsing of the list of control variables.
+  
+
 Changes in 0.8.0
 
 o A new function Lexis() to define follow-up on multiple timescales has

@@ -1,6 +1,7 @@
 ## Program to calculate effects
-## Michael Hills May 8 2007
-## Tampered by BxC
+## Michael Hills 
+## Improved by Bendix Carstensen and Martyn Plummer
+## Post Tartu 2007 version June 2007
 
 effx<-function(response,
 type="metric",
@@ -16,39 +17,18 @@ data=NULL)
 {
   ## stores the variable names for response, etc.
 
-  if (is.name(substitute(response))) {
     rname<-deparse(substitute(response))
-  }
-  else {
-    stop("response must be a variable name")
-  }
-
-  if (is.name(substitute(exposure))) {
     ename<-deparse(substitute(exposure))
-  }
-  else {
-    stop("exposure must be a variable name")
-  }
-  
-  if (is.name(substitute(strata))) {
-    sname<-deparse(substitute(strata))
-  }
-  else {
-    stop("strata must be a variable name")
-  }
-  
+    if (!missing(strata)) {
+      sname<-deparse(substitute(strata))
+    }
+
   ## The control argument is more complex, as it may be a name or
   ## list of names
   
   if(!missing(control)) {
     control.arg <- substitute(control)
-    if (!all(sapply(control.arg, is.name))) {
-      stop("control must be a variable name, or list of variable names")
-    }
     if (length(control.arg) > 1) {
-      if (deparse(control.arg[[1]]) != "list") {
-        stop("Invalid control argument: must be a name or list of names")
-      }
       control.names <- sapply(control.arg, deparse)[-1]
     }
     else {
@@ -60,22 +40,24 @@ data=NULL)
   
   type <- match.arg(type, c("metric", "failure", "count", "binary"))
 
-  ## performs a few checks
-
-  if(rname==ename)stop("Same variable specified as response and exposure")
-  if(rname==sname)stop("Same variable specified as response and strata")
-  if(sname==ename)stop("Same variable specified as strata and exposure")
-
   ## Check for missing arguments
   
   if (missing(response))
     stop("Must specify the response","\n")
   if (missing(exposure))
-    stop("Must specify the exposure","\n")
-  
+    stop("Must specify the exposure","\n")  
   if (type == "failure" && missing(fup)) {
     stop("Must specify a follow-up variable when type is failure")  
   }
+
+  ## performs a few other checks
+
+  if(rname==ename)stop("Same variable specified as response and exposure")
+  if (!missing(strata)) {
+    if(rname==sname)stop("Same variable specified as response and strata")
+    if(sname==ename)stop("Same variable specified as strata and exposure")
+  }
+
 
   ## If data argument is supplied, evaluate the arguments in that
   ## data frame.
@@ -83,8 +65,9 @@ data=NULL)
   if (!missing(data)) {
     exposure <- eval(substitute(exposure), data)
     response <- eval(substitute(response), data)
-    if (!missing(strata))
+    if (!missing(strata)) {
       strata <- eval(substitute(strata), data)
+    }
     if (!missing(control))
       control <- eval(substitute(control), data)
     if (!missing(fup))
@@ -99,11 +82,11 @@ data=NULL)
   if(!is.numeric(response))
     stop("Response must be numeric, not a factor")
 
-  if (!is.null(weights) && type != "binary") {
+  if (!missing(weights) && type != "binary") {
     stop("weights only allowed for a binary response")
   }
   
-  if (!is.null(strata) && !is.factor(strata))
+  if (!missing(strata) && !is.factor(strata))
     stop("Stratifying variable must be a factor")
 
   if(type=="binary") {
@@ -125,12 +108,13 @@ data=NULL)
   }
 
   ## Fix up the control argument as a named list
-  if (!is.null(control)) {
+  if (!missing(control)) {
     if (is.list(control)) {
       names(control) <- control.names
     }
     else {
-      control <- list(control.names = control)
+      control <- list(control)
+      names(control) <- control.names
     }
   }
   
@@ -141,8 +125,8 @@ data=NULL)
   cat("response      : ", rname, "\n")
   cat("type          : ", type, "\n")
   cat("exposure      : ", ename, "\n")
-  if(!is.null(control))cat("control vars  : ",names(control),"\n")
-  if(!is.null(strata)) {
+  if(!missing(control))cat("control vars  : ",names(control),"\n")
+  if(!missing(strata)) {
     cat("stratified by : ",sname,"\n")
   }
   cat("\n")
@@ -155,7 +139,7 @@ data=NULL)
   else {
     cat(ename,"is numeric","\n")
   }
-  if(!is.null(strata)) {
+  if(!missing(strata)) {
     cat(sname,"is a factor with levels: ")
     cat(paste(levels(strata),collapse="/"),"\n")
   }
@@ -185,19 +169,19 @@ data=NULL)
   else {
     cat("effect of an increase of 1 unit in",ename,"on",rname,"\n")
   }
-  if(!is.null(control)) {
+  if(!missing(control)) {
     cat("controlled for",names(control),"\n\n")
   }
-  if(!is.null(strata)) {
+  if(!missing(strata)) {
     cat("stratified by",sname,"\n\n")
   }
 
 
   ## no stratifying variable
 
-  if(is.null(strata)) {
+  if(missing(strata)) {
     if(type=="metric") {    
-      if(is.null(control)) {            
+      if(missing(control)) {            
         m<-glm(response~exposure,family=family)
         cat("number of observations ",m$df.null+1,"\n\n")
         mm<-glm(response~1,family=family,subset=!is.na(exposure))
@@ -213,7 +197,7 @@ data=NULL)
       res<-res[,c(1,5,6)]
     }
     if(type=="binary") {
-      if(is.null(control)) {            
+      if(missing(control)) {            
         m<-glm(response~exposure,family=family,weights=weights)
         cat("number of observations ",m$df.null+1,"\n\n")
         mm<-glm(response~1,family=family,subset=!is.na(exposure),weights=weights)
@@ -229,7 +213,7 @@ data=NULL)
       res<-res[,c(5,6,7)]
     }
     if (type=="failure" | type=="count") {
-      if (is.null(control)) {
+      if (missing(control)) {
         m<-glm(response~exposure+offset(log(fup)),family=family)
         cat("number of observations ",m$df.null+1,"\n\n")
         mm<-glm(response~1+offset(log(fup)),family=family,
@@ -255,18 +239,17 @@ data=NULL)
     print( res[-1,] )
     cat("\nTest for no effects of exposure on",
         aov[2,3],"df:",
-        "p=",format.pval(aov[2,5],digits=3),"\n")
+        "p-value=",format.pval(aov[2,5],digits=3),"\n")
     invisible(list(res,paste("Test for no effects of exposure on",
-                             aov[2,3],"df:","p=",format.pval(aov[2,5],digits=3))))
+                             aov[2,3],"df:","p-value=",format.pval(aov[2,5],digits=3))))
 
   }      
-  ## stratifying variable
-
-  if(!is.null(strata)) {
+  ## stratifying variable
+  if(!missing(strata)) {
     sn <- levels(strata)
     nlevS<-length(levels(strata))
     if(type=="metric") {      
-      if(is.null(control)) {
+      if(missing(control)) {
         m<-glm(response~strata/exposure,family=family)
         cat("number of observations ",m$df.null+1,"\n\n")
         mm<-glm(response~strata+exposure,family=family)
@@ -281,7 +264,7 @@ data=NULL)
       res<-ci.lin(m,subset=c("strata"),alpha=alpha)[c(-1:-(nlevS-1)),c(1,5,6)]
     }
     if(type=="binary") {      
-      if(is.null(control)) {
+      if(missing(control)) {
         m<-glm(response~strata/exposure,family=family,weights=weights)
         cat("number of observations ",m$df.null+1,"\n\n")
         mm<-glm(response~strata+exposure,family=family,weights=weights)
@@ -296,7 +279,7 @@ data=NULL)
       res<-ci.lin(m,subset=c("strata"),Exp=TRUE,alpha=alpha)[c(-1:-(nlevS-1)),c(5,6,7)]
     }
     if (type=="failure" | type=="count") {      
-      if(is.null(control)) {
+      if(missing(control)) {
         m<-glm(response~strata/exposure+offset(log(fup)),
                family=family)
         cat("number of observations ",m$df.null+1,"\n\n")
@@ -330,9 +313,9 @@ data=NULL)
     aov<-anova(mm,m,test="Chisq")
     print( res )
     cat("\nTest for effect modification on",
-        aov[2,3],"df:","p=",format.pval(aov[2,5],digits=3),"\n")
+        aov[2,3],"df:","p-value=",format.pval(aov[2,5],digits=3),"\n")
     invisible(list(res,paste("Test for effect modification on",
-                             aov[2,3],"df:","p=",format.pval(aov[2,5],digits=3))))
+                             aov[2,3],"df:","p-value=",format.pval(aov[2,5],digits=3))))
 
   }
 }
