@@ -97,7 +97,7 @@ stat.table <- function(index, contents=count(), data, margins=FALSE)
     tapply(..., INDEX=subindex, FUN = base::sum, na.rm=na.rm)
   }
   quantile <- function(x, probs, na.rm=TRUE,names=TRUE,type=7,...) {
-    if (length(probs > 1))
+    if (length(probs) > 1)
       stop("The quantile function only accepts scalar prob values within stat.table")
     tapply(x, INDEX=subindex, FUN = stats::quantile, probs=prob,
            na.rm=na.rm,names=names,type=type,...)
