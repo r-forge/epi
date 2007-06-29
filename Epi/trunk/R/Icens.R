@@ -16,7 +16,7 @@ Icens <- function(first.well, last.well, first.ill, formula,
   if (any(missing.f1 & missing.f2)) {
     stop("You must supply at least one of \"first.well\" and \"last.well\"")
   }
-  if (any(first.well>last.well) | any(last.well>first.ill)) {
+  if (any(fu[,1] > fu[,2], na.rm=TRUE) | any(fu[,2] > fu[,3], na.rm=TRUE)) {
     stop("Some units do not meet: first.well < last.well < first.ill" )
   }
   ## Fill in any gaps
