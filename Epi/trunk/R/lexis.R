@@ -441,7 +441,7 @@ timeScales <- function(x)
 }
 
 
-timeBand <- function(lex, time.scale,  type)
+timeBand <- function(lex, time.scale, type="integer")
 {
   time.scale <- check.time.scale(lex, time.scale)[1]
   breaks <- attr(lex, "breaks")[[time.scale]]
@@ -455,7 +455,7 @@ timeBand <- function(lex, time.scale,  type)
     stop("Intervals spanning multiple time bands in Lexis object")
   }
 
-  type <- match.arg(type, choices = c("factor","integer","left","middle",
+  type <- match.arg(type, choices = c("integer","factor","left","middle",
                     "right"))
   if (type=="integer") {
      return(band)

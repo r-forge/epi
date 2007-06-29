@@ -53,23 +53,12 @@ function(lex, breaks, time.scale)
 }
 
 
-splitLexis <- function(lex, breaks)
+splitLexis <- function(lex, breaks, time.scale)
 {
   ## Time splitting for lexis objects
   ## lexis - a Lexis object
   ## breaks - a named list of break points. Each name must correspond
   ##          to a time dimension in the Lexis object
-
-  if(is.vector(breaks, "numeric")) {
-    breaks <- list(breaks)
-    names(breaks) <- timeScales(lex)[1]
-  }
-  else if (!is.list(breaks)) {
-    stop("breaks must be a numeric vector or a list")
-  }
-
-  if (is.null(names(breaks)))
-    stop("breaks must have names")
 
   ## Set temporary, unique, id variable
   lex$lex.tempid <- lex$lex.id
@@ -81,10 +70,7 @@ splitLexis <- function(lex, breaks)
   aux.data <- lex[, c("lex.id","lex.tempid", aux.data.names), drop=FALSE]
 
   ## Split the data
-  time.scales <- names(breaks)
-  for (i in seq(along=time.scales)) {
-    lex <- split.lexis.1D(lex, breaks[[i]], time.scales[i])
-  }
+  lex <- split.lexis.1D(lex, breaks, time.scale)
 
   ## Save attributes
   lex.attr <- attributes(lex)

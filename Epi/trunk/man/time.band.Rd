@@ -10,7 +10,7 @@
   classifies each row (=follow-up interval) into one of the time bands.
 }
 \usage{
-timeBand(lex, time.scale, type)
+timeBand(lex, time.scale, type="integer")
 breaks(lex, time.scale)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -25,8 +25,8 @@ breaks(lex, time.scale)
   Time bands may be labelled in various ways according to the
   \code{type} argument. The permitted values of the \code{type}
   argument, and the corresponding return values are:
+  \item{"integer"}{a numeric vector with integer codes starting from 0.}
   \item{"factor"}{a factor (unordered) with labels "(left,right]"}
-  \item{"integer"}{a numeric vector with integer codes starting from 0}
   \item{"left"}{the left-hand limit of the time band}
   \item{"middle"}{the midpoint of the time band}
   \item{"right"}{the right-hand limit of the time band}
@@ -42,8 +42,7 @@ breaks(lex, time.scale)
 \note{
   A newly created \code{Lexis} object has no break points defined.
   In this case, \code{breaks} will return NULL, and
-  \code{timeBand} will return a degenerate factor with one level
-  labelled "(-Inf,Inf]". 
+  \code{timeBand} will a vector of zeros.
 }  
 \seealso{\code{\link{Lexis}}}
 \keyword{attribute}

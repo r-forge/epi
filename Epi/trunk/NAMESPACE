@@ -69,5 +69,6 @@ S3method(lines, Lexis)
 S3method(deltat, Lexis)
 S3method(merge, Lexis)
 S3method(subset, Lexis)
+#S3method{cut, Lexis}
 S3method(merge, data.frame)
 S3method(print, stat.table)

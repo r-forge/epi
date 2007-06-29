@@ -7,14 +7,12 @@
   break points.
 }
 \usage{
-splitLexis(lex, breaks)
+splitLexis(lex, breaks, time.scale)
 }
 \arguments{
   \item{lex}{an object of class \code{Lexis}}
-  \item{breaks}{a named list of numeric vectors giving the break points
-    on one or more time scales. Optionally, a single vector of
-    break points may be given, in which case the first time scale is assumed.
-  }
+  \item{breaks}{a vector of break points}
+  \item{time.scale}{the name or number of the time scale to be split}
 }
 \value{
   An object of class \code{Lexis} with multiple rows for each row of
@@ -28,6 +26,12 @@ splitLexis(lex, breaks)
   is retained until the end of follow-up. All other variables are
   considered to represent variables that are constant in time, and so
   are replicated across all rows having the same id value.
+}
+\note{
+  The \code{splitLexis()} function divides follow-up time into intervals
+  using breakpoints that are common to all rows of the \code{Lexis} object.
+  To split a \code{Lexis} object by break points that are unique to each
+  row, use the \code{cut.Lexis} function.
 }
 \author{Martyn Plummer}
 \examples{
@@ -66,15 +70,14 @@ plot( Lcoh, grid=0:20*5, col="black", xaxs="i", yaxs="i",
 points( Lcoh, pch=c(NA,16)[Lcoh$lex.status2+1], col="red", cex=1.5 )
 
 # Split time along two time-axes
-( x2 <-
-splitLexis( Lcoh, breaks = list( per = seq(1900,2000,5),
-                                 age = seq(0,80,5) ) ) )
+( x2 <- splitLexis( Lcoh, breaks = seq(1900,2000,5), time.scale="per") )
+( x2 <- splitLexis( x2, breaks = seq(0,80,5), time.scale="age" ) ) 
 
 # Tabulate the cases and the person-years
-tapply( x2$lex.status2, list( timeBand(x2,"age","left"),
-                              timeBand(x2,"per","left") ), sum )
-tapply( x2$lex.deltat,  list( timeBand(x2,"age","left"),
-                              timeBand(x2,"per","left") ), sum )
+tapply( status(x2), list( timeBand(x2,"age","left"),
+                          timeBand(x2,"per","left") ), sum )
+tapply( deltat(x2),  list( timeBand(x2,"age","left"),
+                           timeBand(x2,"per","left") ), sum )
 }
-\seealso{\code{\link{timeBand}}}
+\seealso{\code{\link{timeBand}}, \code{\link{cut.Lexis}}}
 \keyword{manip}
