@@ -1,3 +1,14 @@
+Changes in 0.9.3 (since 0.9.0)
+
+o New function cutLexis() to allow cutting of follow-up time at a
+  specific date for eaqch person, where a new state is assumed.
+
+o New function tab.Lexis() which tabulates records as well as events 
+  and person-years from a Lexis object.
+
+o splitLexis got state information wrong if breaks were not unique.
+  Fixed.
+
 Changes in 0.9.0
 
 o effx and effx.match updated following Tartu 2007 to avoid attaching 

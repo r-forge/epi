@@ -23,13 +23,13 @@ export(
   Icens,
   print.Icens,
   plotevent,
-  W.Lexis,
   ex1,
   fcut,
   fcut1,
   ftrend,
   icut,
   isec,
+  W.Lexis,
   Lexis.diagram,
   Lexis.lines,
   Life.lines,
@@ -38,6 +38,8 @@ export(
   plot.Lexis,
   subset.Lexis,
   splitLexis,
+  cutLexis,
+  tab.Lexis,
   entry,
   exit,
   merge.data.frame,
@@ -70,5 +72,6 @@ S3method(deltat, Lexis)
 S3method(merge, Lexis)
 S3method(subset, Lexis)
 #S3method{cut, Lexis}
+#S3method{split, Lexis}
 S3method(merge, data.frame)
 S3method(print, stat.table)
