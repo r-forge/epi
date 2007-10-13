@@ -1,7 +1,34 @@
+Changes in 0.9.4
+
+o The lex.-variables in Lexis objects are now called 
+  lex.dur, lex.Cst, lex.Xst, lex.id (duration, Current state, eXit
+  state and identification)
+
+o An extra option states= added to Lexis. If used the state variables are
+  returned as factors.
+
+o The utility function deltat.Lexis() has been renamed to dur().
+
+o state() now returns a dataframe of both (entry,exit) states a
+  default. The reason for this is that lex.Cst and lex.Xst may be
+  factors (which actually would be the logical thing to have by default,
+  but it is not enforced only allowed).
+
+o entry() and exit() now by default returns matrices with entry and 
+  exit times on all timescales. If only one timescale is requested,
+  they return a 1-column matrix.
+  
+o A minor typo in stat.table corrected: in the definition of the
+  quantile function prob=probs changed to probs=probs.
+
+o cutLexis() bugs corrected. Now works with split data too, but
+  requires specification of censoring states --- i.e. states that
+  will be replaced by the new state obtained at the cut date.
+
 Changes in 0.9.3 (since 0.9.0)
 
 o New function cutLexis() to allow cutting of follow-up time at a
-  specific date for eaqch person, where a new state is assumed.
+  specific date for each person, where a new state is assumed.
 
 o New function tab.Lexis() which tabulates records as well as events 
   and person-years from a Lexis object.
@@ -14,7 +41,6 @@ Changes in 0.9.0
 o effx and effx.match updated following Tartu 2007 to avoid attaching 
   the data, and to correct the parsing of the list of control variables.
   
-
 Changes in 0.8.0
 
 o A new function Lexis() to define follow-up on multiple timescales has

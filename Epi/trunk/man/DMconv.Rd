@@ -24,7 +24,7 @@
   }
 }
 \source{
-  Signe Sætre Rasmussen, Steno Diabetes Center. The Addition Study.
+  Signe Saetre Rasmussen, Steno Diabetes Center. The Addition Study.
 }
 \examples{
 data(DMconv)

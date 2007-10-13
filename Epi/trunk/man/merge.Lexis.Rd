@@ -29,9 +29,10 @@
   merged data frame.
 }
 \author{Martyn Plummer}
-\note{The variable given as the \code{by.y} argument must not contain
-  any duplicate values in the data frame \code{y}.}
-}
+\note{
+  The variable given as the \code{by.y} argument must not contain
+  any duplicate values in the data frame \code{y}.
+  }
 \seealso{\code{\link{merge.data.frame}}, \code{\link{subset.Lexis}}}
 \keyword{array}
 \keyword{manip}

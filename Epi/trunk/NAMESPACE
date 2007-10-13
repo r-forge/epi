@@ -1,4 +1,3 @@
-importFrom(stats, deltat)
 export(
   as.Date.cal.yr,
   as.Date.numeric,
@@ -36,12 +35,19 @@ export(
   Lexis,
   merge.Lexis,
   plot.Lexis,
+  points.Lexis,
+  lines.Lexis,
   subset.Lexis,
+  tab.Lexis,
   splitLexis,
   cutLexis,
-  tab.Lexis,
   entry,
   exit,
+  dur,
+  status,
+  timeBand,
+  timeScales,
+  breaks,
   merge.data.frame,
   mh,
   ncut,
@@ -59,16 +65,12 @@ export(
   ROC,
   tabplot,
   twoby2,
-  stat.table,
-  timeBand,
-  timeScales,
-  status,
-  breaks)
+  stat.table)
 # register S3 methods
 S3method(plot, Lexis)
 S3method(points, Lexis)
 S3method(lines, Lexis)
-S3method(deltat, Lexis)
+S3method(tab, Lexis)
 S3method(merge, Lexis)
 S3method(subset, Lexis)
 #S3method{cut, Lexis}

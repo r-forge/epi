@@ -58,6 +58,5 @@ isec( doe, dox, fail, int=c(4,8) )
 merge( data.frame( Expand=1:15, doe, dox, fail ),
        data.frame( isec( doe, dox, fail, int=c(4,8) ) ), all=TRUE )
   }
-}
 \keyword{manip}
 \keyword{datagen}

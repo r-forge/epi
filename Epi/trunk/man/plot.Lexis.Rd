@@ -80,11 +80,11 @@ Lcoh <- Lexis( entry = list( per=en ),
 plot( Lcoh )
 # With a grid and deaths as endpoints
 plot( Lcoh, grid=0:10*10, col="black" )
-points( Lcoh, pch=c(NA,16)[Lcoh$lex.status2+1] )
+points( Lcoh, pch=c(NA,16)[Lcoh$lex.Xst+1] )
 # With a lot of bells and whistles:
 plot( Lcoh, grid=0:20*5, col="black", xaxs="i", yaxs="i",
       xlim=c(1960,2010), ylim=c(0,50), lwd=3, las=1 )
-points( Lcoh, pch=c(NA,16)[Lcoh$lex.status2+1], col="red", cex=1.5 )
+points( Lcoh, pch=c(NA,16)[Lcoh$lex.Xst+1], col="red", cex=1.5 )
 }
 \seealso{\code{\link{Lexis}}, \code{\link{splitLexis}}}
 \keyword{hplot}

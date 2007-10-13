@@ -2,7 +2,7 @@
 \alias{entry}
 \alias{exit}
 \alias{status}
-\alias{deltat.Lexis}
+\alias{dur}
 \title{Time series methods for Lexis objects}
 \description{
   Extract the entry time, exit time, status, or duration of follow-up from a
@@ -11,23 +11,24 @@
 \usage{
 entry(x, time.scale = NULL)
 exit(x, time.scale = NULL)
-status(x, at=c("exit","entry"))
-\method{deltat}{Lexis}(x, ...)
+status(x, at=c("entry","exit"))
+dur(x)
 }
 \arguments{
-  \item{x}{an object of class \code{Lexis}}
+  \item{x}{an object of class \code{Lexis}.}
   \item{time.scale}{a string or integer indicating the time scale. If
-    omitted, the first time scale is used as a default}
-  \item{at}{string indicating the time point at which status is to be measured}
-  \item{\dots}{optional arguments to the \code{deltat} method}
+    omitted, all times scales are used.}
+  \item{at}{string indicating the time point(s) at which status is to be
+    measured.}
 }
 \value{
-  The \code{entry} and \code{exit} functions return a vector containing
+  The \code{entry} and \code{exit} functions return a matrix containing
   the entry times and exit times, respectively, on the requested time
-  scale. The \code{status} function returns the status either at entry
-  or (by default) at exit, and the \code{deltat} method returns the length
-  of the follow-up interval.
+  scales. The \code{status} function returns a dataframe with the status
+  at entry and/or exit and \code{dur} returns a vector with the lengths
+  of the follow-up intervals.
 }
 \author{Martyn Plummer}
 \seealso{\code{\link{Lexis}}}
+\keyword{survival}
 \keyword{ts}

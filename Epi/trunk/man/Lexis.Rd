@@ -7,25 +7,28 @@
 }  
 \usage{
 Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
-      merge=TRUE)
+      merge=TRUE, states )
 }
 \arguments{
   \item{entry}{a named list of entry times. Each element of the list is
     a numeric variable representing the entry time on the named time
-    scale. All time scales must have the same units (e.g. years)}
-  \item{exit}{a named list of exit times}
-  \item{duration}{a numeric vector giving the duration of follow-up}
-  \item{entry.status}{a vector giving the status at entry}
+    scale. All time scales must have the same units (e.g. years).}
+  \item{exit}{a named list of exit times.}
+  \item{duration}{a numeric vector giving the duration of follow-up.}
+  \item{entry.status}{a vector giving the status at entry.}
   \item{exit.status}{a vector giving status at exit. Any change in
-    status during follow-up is assumed to take place exactly at the exit time}
+    status during follow-up is assumed to take place exactly at the exit time.}
   \item{id}{a vector giving a unique identity value for each row of the
-    Lexis object}
+    Lexis object.}
   \item{data}{an optional data frame, list, or environment containing
     the variables. If  not found in \code{data}, the variables are
-    taken from the environment from which \code{Lexis} was called}
+    taken from the environment from which \code{Lexis} was called.}
   \item{merge}{a logical flag. If \code{TRUE} then the \code{data} 
     argument will be coerced to a data frame and then merged with
-    the resulting \code{Lexis} object}
+    the resulting \code{Lexis} object.}
+  \item{states}{A vector of labels for the states. If given, the state
+    variables \code{lex.Cst} and \code{lex.Xst} are returned as factors with
+    identical levels attributes.}
 }
 \details{
   The analysis of long-term population-based follow-up studies typically
@@ -55,9 +58,9 @@ Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
   with a column for each time scale, and additional columns with the
   following names:
   \item{lex.id}{Identification of the inidvidual}
-  \item{lex.deltat}{Duration of follow-up}
-  \item{lex.status1}{Entry status}
-  \item{lex.status2}{Exit status}
+  \item{lex.dur}{Duration of follow-up}
+  \item{lex.Cst}{Entry status}
+  \item{lex.Xst}{Exit status}
   If \code{merge=TRUE} then the \code{Lexis} object will also contain
   all variables from the \code{data} argument.
 }
@@ -89,7 +92,10 @@ Lcoh <- Lexis( entry = list( per=en ),
 Lcoh
 }
 \seealso{\code{\link{plot.Lexis}}, \code{\link{splitLexis}},
-  \code{\link{merge.Lexis}}, \code{\link{entry}},
+  \code{\link{merge.Lexis}},
   \code{\link{timeScales}},
-  \code{\link{timeBand}}}
+  \code{\link{timeBand}},
+  \code{\link{entry}},
+  \code{\link{exit}},
+  \code{\link{dur}}}
 \keyword{survival}

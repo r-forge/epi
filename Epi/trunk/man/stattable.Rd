@@ -9,7 +9,7 @@
 }
 \usage{
 stat.table(index, contents = count(), data, margins = FALSE)
-print.stat.table(x, width=7, digits,...)
+\method{print}{stat.table}(x, width=7, digits,...)
 }
 \arguments{
   \item{index}{A factor, or list of factors, used for cross-classification.
