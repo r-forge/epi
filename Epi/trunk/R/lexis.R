@@ -1,6 +1,6 @@
 Lexis <-
 function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
-         merge=TRUE)
+         merge=TRUE, states )
 {
   nmissing <- missing(entry) + missing(exit) + missing(duration)
   if (nmissing > 1)
@@ -73,11 +73,11 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
       entry <- cbind(entry, exit[,entry.missing, drop=FALSE] - duration)
     }
     ## Check that duration is the same on all time scales
-    deltat <- exit - entry[,names(exit),drop=FALSE]
+    dur <- exit - entry[,names(exit),drop=FALSE]
     if (missing(duration)) {
-      duration <- deltat[,1]
+      duration <- dur[,1]
     }
-    ok <- sapply(lapply(deltat, all.equal, duration), isTRUE)
+    ok <- sapply(lapply(dur, all.equal, duration), isTRUE)
     if (!all(ok)) {
       stop("Duration is not the same on all time scales")
     }
@@ -101,9 +101,21 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
   ## variables Use the prefix "lex." for the names of reserved
   ## variables.
 
-  lex <- data.frame(entry, "lex.deltat" = duration,
-                    "lex.status1"=entry.status,
-                    "lex.status2"=exit.status, "lex.id" = id)
+  lex <- data.frame(entry, "lex.dur" = duration,
+                    "lex.Cst"=entry.status,
+                    "lex.Xst"=exit.status, "lex.id" = id)
+
+  #### Addition by BxC --- support for states as factors
+  # Convert states to factors if states are given
+  if( !missing( states ) ) #is.character( states ) )
+    {
+    # This as.character-business is necessary because we cannot assume
+    # that the values of states are 1,2, etc.
+    st.lev <- unique( as.character( c(lex$lex.Cst,lex$lex.Xst) ) )
+    lex$lex.Cst <- factor( as.character(lex$lex.Cst), levels=st.lev, labels=states )
+    lex$lex.Xst <- factor( as.character(lex$lex.Xst), levels=st.lev, labels=states )
+    }
+
   if (!missing(data) && merge) {
     duplicate.names <- intersect(names(lex), names(data))
     if (length(duplicate.names) > 0) {
@@ -169,7 +181,7 @@ plot.Lexis.1D <- function(x, time.scale=1, breaks="lightgray",
     stop("Only one time scale allowed")
   
   time.entry <- x[,time.scale]
-  time.exit <- x[,time.scale] + x$lex.deltat
+  time.exit <- x[,time.scale] + x$lex.dur
   id <- x$lex.id
 
   if (missing(xlim))
@@ -196,7 +208,7 @@ plot.Lexis.1D <- function(x, time.scale=1, breaks="lightgray",
 
 points.Lexis.1D <- function(x, time.scale, ...)
 {
-  time.exit <- x[,time.scale] + x$lex.deltat
+  time.exit <- x[,time.scale] + x$lex.dur
   points(time.exit, x$lex.id, ...)
 }
 
@@ -204,7 +216,7 @@ lines.Lexis.1D <- function(x, time.scale, col="darkgray", breaks="lightgray",
                            ...)
 {
   time.entry <- x[,time.scale]
-  time.exit <- x[,time.scale] + x$lex.deltat
+  time.exit <- x[,time.scale] + x$lex.dur
   id <- x$lex.id
   segments(time.entry, id, time.exit, id, col=col, ...)
   ## Plot break points
@@ -227,7 +239,7 @@ plot.Lexis.2D <- function(x, time.scale, breaks="lightgray",
   time.entry <- time.exit <- vector("list",2)
   for (i in 1:2) {
     time.entry[[i]] <- x[,time.scale[i]]
-    time.exit[[i]] <- x[,time.scale[i]] + x$lex.deltat
+    time.exit[[i]] <- x[,time.scale[i]] + x$lex.dur
   }
 
   if (missing(xlim) && missing(ylim)) {
@@ -304,7 +316,7 @@ points.Lexis.2D <- function(x, time.scale, ...)
 {
   time.exit <- vector("list",2)
   for (i in 1:2) {
-    time.exit[[i]] <- x[,time.scale[i]] + x$lex.deltat
+    time.exit[[i]] <- x[,time.scale[i]] + x$lex.dur
   }
   points(time.exit[[1]], time.exit[[2]], ...)
 }
@@ -314,7 +326,7 @@ lines.Lexis.2D <- function(x, time.scale, col="darkgray", ...)
   time.entry <- time.exit <- vector("list",2)
   for (i in 1:2) {
     time.entry[[i]] <- x[,time.scale[i]]
-    time.exit[[i]] <- x[,time.scale[i]] + x$lex.deltat
+    time.exit[[i]] <- x[,time.scale[i]] + x$lex.dur
   }
   segments(time.entry[[1]], time.entry[[2]], time.exit[[1]], time.exit[[2]],
            col=col, ...)
@@ -408,32 +420,35 @@ merge.Lexis <- function(x, y, id, by, ...)
 }
 
 
+## Extractor functions
+
 entry <- function(x, time.scale = NULL)
 {
   time.scale <- check.time.scale(x, time.scale)
-  return(x$time.scale[1])
+  return( as.matrix( x[,time.scale, drop=FALSE] ) )
 }
+
 
 exit <- function(x, time.scale = NULL)
 {
   time.scale <- check.time.scale(x, time.scale)
-  return(x$time.scale[1] + x$lex.deltat)
+  return( as.matrix( x[,time.scale, drop=FALSE] + x$lex.dur ) )
 }
 
-deltat.Lexis <- function(x, ...)
+
+dur <- function( x )
 {
-  return(x$lex.deltat)
+  return(x$lex.dur)
 }
 
-status <- function(x, at=c("exit","entry"))
+
+status <- function(x, at=c("entry","exit"))
 {
-  switch(match.arg(at),
-         "entry"=x$lex.status1,
-         "exit"=x$lex.status2)
+res <- x[,c("lex.Cst","lex.Xst")]
+colnames(res) <- c("entry","exit")
+return( as.data.frame( res[,at,drop=FALSE] ) )
 }
-  
-  
-## Other extractor functions
+
 
 timeScales <- function(x)
 {
@@ -451,7 +466,7 @@ timeBand <- function(lex, time.scale, type="integer")
 
   ##Check that right hand side of interval falls in the same band
   abrk <- c(breaks, Inf)
-  if (any(time1 + lex$lex.deltat > abrk[band+1])) {
+  if (any(time1 + lex$lex.dur > abrk[band+1])) {
     stop("Intervals spanning multiple time bands in Lexis object")
   }
 

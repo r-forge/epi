@@ -99,7 +99,7 @@ stat.table <- function(index, contents=count(), data, margins=FALSE)
   quantile <- function(x, probs, na.rm=TRUE,names=TRUE,type=7,...) {
     if (length(probs) > 1)
       stop("The quantile function only accepts scalar prob values within stat.table")
-    tapply(x, INDEX=subindex, FUN = stats::quantile, probs=prob,
+    tapply(x, INDEX=subindex, FUN = stats::quantile, probs=probs,
            na.rm=na.rm,names=names,type=type,...)
   }
   median <- function(x, na.rm=TRUE) {

@@ -244,7 +244,7 @@ data=NULL)
                              aov[2,3],"df:","p-value=",format.pval(aov[2,5],digits=3))))
 
   }      
-  ## stratifying variable
+  ## stratifying variable
   if(!missing(strata)) {
     sn <- levels(strata)
     nlevS<-length(levels(strata))
