@@ -1,4 +1,4 @@
-\name{time.scales}
+\name{timeScales}
 \alias{timeScales}
 \title{The time scales of a Lexis object}
 \description{

@@ -39,6 +39,7 @@ export(
   lines.Lexis,
   subset.Lexis,
   tab.Lexis,
+  tab,
   splitLexis,
   cutLexis,
   entry,

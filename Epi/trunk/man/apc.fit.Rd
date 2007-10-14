@@ -141,10 +141,14 @@ apc.fit( data,
 \references{
    The considerations behind the parametrizations used in this function
    are given in details in a preprint from Department of Biostatistics
-   in Copenhagen: \url{http://www.pubhealth.ku.dk/bs/publikationer/rr-06-1.pdf}.
+   in Copenhagen:
+   \url{http://www.pubhealth.ku.dk/bs/publikationer/rr-06-1.pdf}, later
+   published as:
+   B. Carstensen: Age-period-cohort models for the Lexis diagram.
+   Statistics in Medicine, 10; 26(15):3018-45, 2007. 
    }
 \author{
-   Bendix Carstensen, \url{http://www.biostat.ku.dk/~~bxc}
+   Bendix Carstensen, \url{http://www.biostat.ku.dk/~bxc}
    }
 \seealso{
    \code{\link{apc.frame}},

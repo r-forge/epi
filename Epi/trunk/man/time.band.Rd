@@ -1,4 +1,4 @@
-\name{time.band}
+\name{timeBand}
 \alias{timeBand}
 \alias{breaks}
 \title{Extract time band data from a split Lexis object}
