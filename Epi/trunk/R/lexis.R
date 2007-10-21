@@ -3,8 +3,9 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
          merge=TRUE, states )
 {
   nmissing <- missing(entry) + missing(exit) + missing(duration)
-  if (nmissing > 1)
-    stop("At least two of the arguments entry, exit, duration must be supplied")
+
+  if (nmissing > 2)
+    stop("At least one of the arguments exit and duration must be supplied")
 
   ## If data argument is supplied, use it to evaluate arguments
   if (!missing(data)) {
@@ -26,7 +27,33 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
       data <- as.data.frame(data)
     }
   }
-  
+
+  ## If entry is missing and one of the others is given as a list of length
+  ## one, entry is assumed to be 0 on this only timescale.
+  if (missing(entry) & nmissing==2)
+    {
+    if( !missing(exit) )
+      { if( length(exit)>1 )
+          stop("If 'entry' is omitted, only one timescale can be specified.")
+        else
+        {
+        entry <- exit
+        entry[[1]] <- 0*entry[[1]]
+        cat( "NOTE: entry is assumed to be 0 on the",names(exit),"timescale.\n")
+        }
+      }
+    if( !missing(duration) )
+      { if( length(duration)>1 )
+          stop("If 'entry' is omitted, only one timescale can be specified")
+        else
+        {
+        entry <- duration
+        entry[[1]] <- 0*entry[[1]]
+        cat( "NOTE: entry is assumed to be 0 on the",names(duration),"timescale.\n")
+        }
+      }
+    }
+
   ## Coerce entry and exit lists to data frames
   
   if(!missing(entry)) {
@@ -42,6 +69,14 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
     if (is.null(names(exit)))
       stop("exit times have no names")
     if (any(substr(names(exit),1,4) == "lex."))
+      stop("names starting with \"lex.\" cannot be used for time scales")
+  }
+
+  if(!missing(duration)) {
+    duration <- as.data.frame(duration)
+    if (is.null(names(duration)))
+      stop("duration have no names")
+    if (any(substr(names(duration),1,4) == "lex."))
       stop("names starting with \"lex.\" cannot be used for time scales")
   }
 
@@ -71,13 +106,13 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
     entry.missing <- setdiff(all.time.scales, names(entry))
     if (length(entry.missing) > 0) {
       entry <- cbind(entry, exit[,entry.missing, drop=FALSE] - duration)
-    }
+      }
     ## Check that duration is the same on all time scales
-    dur <- exit - entry[,names(exit),drop=FALSE]
+    dura <- exit - entry[,names(exit),drop=FALSE]
     if (missing(duration)) {
-      duration <- dur[,1]
-    }
-    ok <- sapply(lapply(dur, all.equal, duration), isTRUE)
+      duration <- dura[,1]
+      }
+    ok <- sapply(lapply(dura, all.equal, duration), isTRUE)
     if (!all(ok)) {
       stop("Duration is not the same on all time scales")
     }
@@ -100,10 +135,11 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
   ## Return a data frame with the entry times, duration, and status
   ## variables Use the prefix "lex." for the names of reserved
   ## variables.
-
+  if( is.data.frame( duration ) ) duration <- duration[,1]
   lex <- data.frame(entry, "lex.dur" = duration,
-                    "lex.Cst"=entry.status,
-                    "lex.Xst"=exit.status, "lex.id" = id)
+                           "lex.Cst" = entry.status,
+                           "lex.Xst" = exit.status,
+                           "lex.id"  = id )
 
   #### Addition by BxC --- support for states as factors
   # Convert states to factors if states are given
