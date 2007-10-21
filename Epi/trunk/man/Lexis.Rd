@@ -37,6 +37,9 @@ Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
   a data frame with additional attributes that allows these multiple time
   dimensions of follow-up to be managed.
 
+  Separate variables for current end exit state allows representation of
+  multistate data.
+
   Lexis objects are named after the German gemographer Wilhelm
   Lexis (1837-1914), who is credited with the invention of the
   "Lexis diagram" for representing population dynamics simultaneously
@@ -46,24 +49,30 @@ Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
   only those variables required to define the follow-up history in each
   row. Additional variables can be merged into the \code{Lexis} object
   using the \code{merge} method for \code{Lexis} objects.
-}
+  }
 \note{
   Only two of the three arguments \code{entry}, \code{exit} and
   \code{duration} need to be given.  If the third parameter is missing,
   it is imputed. If duration is imputed, it must be the same on
   all time scales.
-}
+
+  If only either \code{exit} or \code{duration} are supplied it is assumed that
+  \code{entry} is 0. This is only meaningful (and therefore checked) if there
+  is only one timescale.
+  }
 \value{
   An object of class \code{Lexis}. This is represented as a data frame
   with a column for each time scale, and additional columns with the
   following names:
   \item{lex.id}{Identification of the inidvidual}
   \item{lex.dur}{Duration of follow-up}
-  \item{lex.Cst}{Entry status}
-  \item{lex.Xst}{Exit status}
+  \item{lex.Cst}{Entry status (Current state),
+                 i.e. the state in which the follow up takes place.}
+  \item{lex.Xst}{Exit status (eXit state),
+                 i.e. that state taken up after \code{dur} in \code{lex.Cst}.}
   If \code{merge=TRUE} then the \code{Lexis} object will also contain
   all variables from the \code{data} argument.
-}
+  }
 \author{Martyn Plummer}
 \examples{
 # A small bogus cohort
@@ -91,11 +100,15 @@ Lcoh <- Lexis( entry = list( per=en ),
                 data = xcoh )
 Lcoh
 }
-\seealso{\code{\link{plot.Lexis}}, \code{\link{splitLexis}},
-  \code{\link{merge.Lexis}},
-  \code{\link{timeScales}},
-  \code{\link{timeBand}},
-  \code{\link{entry}},
-  \code{\link{exit}},
-  \code{\link{dur}}}
+\seealso{
+   \code{\link{plot.Lexis}},
+   \code{\link{splitLexis}},
+   \code{\link{cutLexis}},
+   \code{\link{merge.Lexis}},
+   \code{\link{timeScales}},
+   \code{\link{timeBand}},
+   \code{\link{entry}},
+   \code{\link{exit}},
+   \code{\link{dur}}
+   }
 \keyword{survival}
