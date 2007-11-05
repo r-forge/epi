@@ -472,7 +472,7 @@ exit <- function(x, time.scale = NULL)
 }
 
 
-dur <- function( x )
+dur <- function(x)
 {
   return(x$lex.dur)
 }
@@ -480,11 +480,9 @@ dur <- function( x )
 
 status <- function(x, at=c("entry","exit"))
 {
-res <- x[,c("lex.Cst","lex.Xst")]
-colnames(res) <- c("entry","exit")
-return( as.data.frame( res[,at,drop=FALSE] ) )
+  at <- match.arg(at)
+  switch(at, "entry"=x$lex.Cst, "exit"=x$lex.Xst)
 }
-
 
 timeScales <- function(x)
 {

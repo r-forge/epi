@@ -66,7 +66,7 @@ tab.Lexis( sL )
 
 # Fit a Poisson model with a natural spline for the effect of time.
 # Extract the variables needed
-D <- status(sL)[,"exit"]
+D <- status(sL, "exit")
 Y <- dur(sL)
 tB <- timeBand( sL, "tfd", "left" )
 MM <- ns( tB, knots=c(50,100,200,400,700), intercept=TRUE )
