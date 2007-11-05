@@ -1,3 +1,8 @@
+Changes in 0.9.6
+
+o Bugfix in timeBand, crashed when type="factor" was chosen.
+  levels was given as 0:(lengh(breaks)+1), changed to 0:lengh(breaks)
+
 Changes in 0.9.5
 
 o The Lexis definition now assumes that entry is 0 if only one of exit
