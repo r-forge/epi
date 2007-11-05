@@ -256,8 +256,9 @@ lines.Lexis.1D <- function(x, time.scale, col="darkgray", breaks="lightgray",
   id <- x$lex.id
   segments(time.entry, id, time.exit, id, col=col, ...)
   ## Plot break points
-  brk <- attr(x,"breaks")[time.scale]
-  abline(v=brk[[1]], h=brk[[2]], col=breaks, ...)
+  brk <- attr(x,"breaks")[[time.scale]]
+  abline(v=brk, col=breaks, ...)
+
 }
 
 plot.Lexis.2D <- function(x, time.scale, breaks="lightgray",
