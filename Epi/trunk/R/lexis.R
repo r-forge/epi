@@ -520,7 +520,7 @@ timeBand <- function(lex, time.scale, type="integer")
                    "middle" = (I1 + I2)/2)
                    
   if(type=="factor") {
-    return(factor(band, levels=0:(length(breaks)+1), labels=labels))
+    return(factor(band, levels=0:length(breaks), labels=labels))
   }
   else {
     return(labels[band+1])
