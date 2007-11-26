@@ -70,7 +70,6 @@ logistic regression}
 construction of the ROC curve}
   0, 1 or 2 plots are produced according to the setting of \code{plot}.
 }
-\references{ }
 \author{Bendix Carstensen, Steno Diabetes Center \& University of
   Copenhagen,
   \url{http://www.biostat.ku.dk/~bxc} }
