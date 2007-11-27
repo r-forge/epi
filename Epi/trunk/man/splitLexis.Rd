@@ -7,12 +7,14 @@
   break points.
 }
 \usage{
-splitLexis(lex, breaks, time.scale)
+splitLexis(lex, breaks, time.scale, tol=.Machine$double.eps^0.5)
 }
 \arguments{
   \item{lex}{an object of class \code{Lexis}}
   \item{breaks}{a vector of break points}
   \item{time.scale}{the name or number of the time scale to be split}
+  \item{tol}{numeric value >= 0. Intervals shorter than this value are
+    dropped}
 }
 \value{
   An object of class \code{Lexis} with multiple rows for each row of

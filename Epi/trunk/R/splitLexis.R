@@ -1,5 +1,5 @@
 split.lexis.1D <-
-function(lex, breaks, time.scale)
+function(lex, breaks, time.scale, tol)
 {
   time.scale <- check.time.scale(lex, time.scale)
   
@@ -17,8 +17,10 @@ function(lex, breaks, time.scale)
   ex <- apply(time2, 1, pmin, I2)       # Exit time
   NR <- nrow(en)
   NC <- ncol(en)
-  ###valid <- en <= ex # Does subject contribute follow-up time to this interval?
-  valid <- en < ex # Does subject contribute follow-up time to this interval?
+
+  ## Does subject contribute follow-up time to this interval?
+  ## (intervals shorter than tol are ignored)
+  valid <- en < ex - tol
   dur <- ex - en; dur[!valid] <- 0 # Time spent in interval
 
   ## Cumulative time since entry at the start of each interval
@@ -34,9 +36,10 @@ function(lex, breaks, time.scale)
   ## Status calculation
   aug.valid <- rbind(valid, rep(FALSE, NC))
   last.valid <- valid & !aug.valid[-1,]
-
+  any.valid <- apply(valid,2,any)
+                     
   new.Xst <- matrix(lex$lex.Cst, NR, NC, byrow=TRUE)
-  new.Xst[last.valid] <- lex$lex.Xst
+  new.Xst[last.valid] <- lex$lex.Xst[any.valid]
   
   n.interval <- apply(valid, 2, sum)
   new.lex <- Lexis("entry" = new.entry,
@@ -54,13 +57,8 @@ function(lex, breaks, time.scale)
 }
 
 
-splitLexis <- function(lex, breaks, time.scale)
+splitLexis <- function(lex, breaks, time.scale, tol= .Machine$double.eps^0.5)
 {
-  ## Time splitting for lexis objects
-  ## lexis - a Lexis object
-  ## breaks - a named list of break points. Each name must correspond
-  ##          to a time dimension in the Lexis object
-
   ## Set temporary, unique, id variable
   lex$lex.tempid <- lex$lex.id
   lex$lex.id <- 1:nrow(lex) 
@@ -71,7 +69,7 @@ splitLexis <- function(lex, breaks, time.scale)
   aux.data <- lex[, c("lex.id","lex.tempid", aux.data.names), drop=FALSE]
 
   ## Split the data
-  lex <- split.lexis.1D(lex, breaks, time.scale)
+  lex <- split.lexis.1D(lex, breaks, time.scale, tol)
 
   ## Save attributes
   lex.attr <- attributes(lex)

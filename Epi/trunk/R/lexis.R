@@ -501,7 +501,8 @@ timeBand <- function(lex, time.scale, type="integer")
 
   ##Check that right hand side of interval falls in the same band
   abrk <- c(breaks, Inf)
-  if (any(time1 + lex$lex.dur > abrk[band+1])) {
+  tol <- sqrt(.Machine$double.eps)
+  if (any(time1 + lex$lex.dur > abrk[band+1] + tol)) {
     stop("Intervals spanning multiple time bands in Lexis object")
   }
 
