@@ -15,9 +15,11 @@ Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
     scale. All time scales must have the same units (e.g. years).}
   \item{exit}{a named list of exit times.}
   \item{duration}{a numeric vector giving the duration of follow-up.}
-  \item{entry.status}{a vector giving the status at entry.}
-  \item{exit.status}{a vector giving status at exit. Any change in
-    status during follow-up is assumed to take place exactly at the exit time.}
+  \item{entry.status}{a vector or a factor giving the status at
+    entry}
+  \item{exit.status}{a vector or factor giving status at exit. Any
+    change in status during follow-up is assumed to take place exactly
+    at the exit time.}
   \item{id}{a vector giving a unique identity value for each row of the
     Lexis object.}
   \item{data}{an optional data frame, list, or environment containing

@@ -28,6 +28,24 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
     }
   }
 
+  ## Check compatibility of entry and exit status
+      
+  if (is.factor(entry.status) || is.factor(exit.status)) {
+      if (is.factor(entry.status) && is.factor(exit.status)) {
+          if (levels(entry.status) != levels(exit.status)) {
+              stop("incompatible factor levels in entry.status and exit.status")
+          }
+      }
+      else {
+          stop("Incompatible classes for entry and exit status")
+      }
+  }
+  else {
+      if (mode(entry.status) != mode(exit.status)) {
+          stop("Incompatible mode for entry and exit status")
+      }
+  }
+  
   ## If entry is missing and one of the others is given as a list of length
   ## one, entry is assumed to be 0 on this only timescale.
   if (missing(entry) & nmissing==2)
