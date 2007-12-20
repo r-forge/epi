@@ -11,7 +11,7 @@
 \usage{
 entry(x, time.scale = NULL)
 exit(x, time.scale = NULL)
-status(x, at=c("entry","exit"))
+status(x, at="exit")
 dur(x)
 }
 \arguments{
@@ -22,10 +22,13 @@ dur(x)
     measured.}
 }
 \value{
-  The \code{entry} and \code{exit} functions return a matrix containing
-  the entry times and exit times, respectively, on the requested time
-  scales. The \code{status} function returns a dataframe with the status
-  at entry and/or exit and \code{dur} returns a vector with the lengths
+  The \code{entry} and \code{exit} functions return a vector of 
+  entry times and exit times, respectively, on the requested time
+  scale.  If multiple time scales are requested, then a matrix is 
+  returned.
+
+  The \code{status} function returns a vector giving the status
+  at entry or exit and \code{dur} returns a vector with the lengths
   of the follow-up intervals.
 }
 \author{Martyn Plummer}

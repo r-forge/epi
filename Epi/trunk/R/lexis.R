@@ -480,14 +480,14 @@ merge.Lexis <- function(x, y, id, by, ...)
 entry <- function(x, time.scale = NULL)
 {
   time.scale <- check.time.scale(x, time.scale)
-  return( as.matrix( x[,time.scale, drop=FALSE] ) )
+  return(x[, time.scale])
 }
 
 
 exit <- function(x, time.scale = NULL)
 {
   time.scale <- check.time.scale(x, time.scale)
-  return( as.matrix( x[,time.scale, drop=FALSE] + x$lex.dur ) )
+  return(x[, time.scale] + x$lex.dur)
 }
 
 
@@ -497,9 +497,9 @@ dur <- function(x)
 }
 
 
-status <- function(x, at=c("entry","exit"))
+status <- function(x, at="exit")
 {
-  at <- match.arg(at)
+  at <- match.arg(at, c("entry","exit"))
   switch(at, "entry"=x$lex.Cst, "exit"=x$lex.Xst)
 }
 
