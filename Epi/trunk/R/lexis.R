@@ -32,7 +32,7 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
       
   if (is.factor(entry.status) || is.factor(exit.status)) {
       if (is.factor(entry.status) && is.factor(exit.status)) {
-          if (levels(entry.status) != levels(exit.status)) {
+          if (!identical(levels(entry.status),levels(exit.status))) {
               stop("incompatible factor levels in entry.status and exit.status")
           }
       }
@@ -479,15 +479,25 @@ merge.Lexis <- function(x, y, id, by, ...)
 
 entry <- function(x, time.scale = NULL)
 {
-  time.scale <- check.time.scale(x, time.scale)
-  return(x[, time.scale])
+    time.scale <- check.time.scale(x, time.scale)
+    if (length(time.scale) > 1) {
+        return(as.matrix(x[, time.scale]))
+    }
+    else {
+        return(x[, time.scale])
+    }
 }
 
 
 exit <- function(x, time.scale = NULL)
 {
-  time.scale <- check.time.scale(x, time.scale)
-  return(x[, time.scale] + x$lex.dur)
+    time.scale <- check.time.scale(x, time.scale)
+    if (length(time.scale) > 1) {
+        return(as.matrix(x[, time.scale]))
+    }
+    else {
+        return(x[, time.scale])
+    }
 }
 
 
