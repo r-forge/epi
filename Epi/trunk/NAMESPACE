@@ -38,6 +38,8 @@ export(
   tab,
   splitLexis,
   cutLexis,
+  cutLexis2,
+  countLexis,
   entry,
   exit,
   status,

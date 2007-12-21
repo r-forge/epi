@@ -467,7 +467,7 @@ merge.Lexis <- function(x, y, id, by, ...)
     }
   }
   
-  z <-  base::merge.data.frame(x, y)
+  z <-  base::merge.data.frame(x, y, ...)
   attr(z,"breaks") <- attr(x, "breaks")
   attr(z,"time.scales") <- attr(x, "time.scales")
   class(z) <- c("Lexis", "data.frame")
@@ -493,10 +493,10 @@ exit <- function(x, time.scale = NULL)
 {
     time.scale <- check.time.scale(x, time.scale)
     if (length(time.scale) > 1) {
-        return(as.matrix(x[, time.scale]))
+        return(as.matrix(x[, time.scale]) + x$lex.dur)
     }
     else {
-        return(x[, time.scale])
+        return(x[, time.scale] + x$lex.dur)
     }
 }
 
