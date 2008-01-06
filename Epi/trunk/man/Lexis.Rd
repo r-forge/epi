@@ -61,6 +61,11 @@ Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
   If only either \code{exit} or \code{duration} are supplied it is assumed that
   \code{entry} is 0. This is only meaningful (and therefore checked) if there
   is only one timescale.
+  
+  If \code{entry.status} is not given, its class is automatically set to that
+  of \code{exit.status}. If \code{exit.status} is a factor, the value of
+  \code{entry.status} is set to the first level, if it is logical it value is
+  set to \code{FALSE}.
   }
 \value{
   An object of class \code{Lexis}. This is represented as a data frame

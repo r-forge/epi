@@ -9,11 +9,13 @@
   (\code{lex.Cst} and \code{lex.Xst}), as well the risk time in each state.
   }
 \usage{
-  \method{tab}{Lexis}( x, simplify=TRUE, ... )
+  \method{tab}{Lexis}( x, simplify=TRUE, scale=1, ... )
   }
 \arguments{
   \item{ x }{A Lexis object.}
   \item{ simplify }{Should rows with 0 follow-up time be dropped?}
+  \item{scale}{Scaling factor for the rates. The calculated rates are
+               multiplied by this number.}
   \item{ ... }{Other parameters - ignored}
 }
 \details{
@@ -38,5 +40,6 @@ nic <- Lexis( data=nickel,
 str( nic )
 head( nic )
 tab.Lexis( nic )
+tab( nic )
 }
 \keyword{survival}

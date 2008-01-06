@@ -23,6 +23,8 @@ export(
   Icens,
   print.Icens,
   plotevent,
+  fit.add,
+  fit.mult,
   ftrend,
   W.Lexis,
   Lexis.diagram,
@@ -38,7 +40,6 @@ export(
   tab,
   splitLexis,
   cutLexis,
-  cutLexis2,
   countLexis,
   entry,
   exit,
@@ -68,10 +69,8 @@ export(
 S3method(plot, Lexis)
 S3method(points, Lexis)
 S3method(lines, Lexis)
-S3method(tab, Lexis)
 S3method(merge, Lexis)
 S3method(subset, Lexis)
-#S3method{cut, Lexis}
-#S3method{split, Lexis}
+S3method(tab, Lexis)
 S3method(merge, data.frame)
 S3method(print, stat.table)

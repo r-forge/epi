@@ -45,59 +45,60 @@ apc.fit( data,
     diagnosis among cases.}
   \item{model}{Type of model fitted:
     \itemize{
-	    \item \code{bs} fits a model with B-splines for each of
-	      the terms, with \code{npar} parameters for the terms.
 	    \item \code{ns} fits a model with natural splines for each of
 	      the terms, with \code{npar} parameters for the terms.
-      \item \code{ls} fits a model with linear splines.
+      \item \code{bs} fits a model with B-splines for each of
+	      the terms, with \code{npar} parameters for the terms.
+	    \item \code{ls} fits a model with linear splines.
       \item \code{factor} fits a factor model with one parameter
 	      per value of \code{A}, \code{P} and \code{C}. \code{npar}
-	      is ignored in this case.}
+	      is ignored in this case.
+           }
       }
-  \item{dr.extr}{How the drift parameter should be extracted from the
-    age-period-cohort model. \code{weighted} (default) lets the
+  \item{dr.extr}{Character. How the drift parameter should be extracted from
+    the age-period-cohort model. \code{"weighted"} (default) lets the
     weighted average (by marginal no. cases, \code{D}) of the estimated
-    period and cohort effects have 0 slopw. \code{Holford} uses the
+    period and cohort effects have 0 slope. \code{"Holford"} uses the
     naive average over all values for the estimated effects,
     disregarding the no. cases.} 
-  \item{parm}{The parametrization of the effects. The first four all
-    refer to the ML-fit of the Age-Period-Cohort model, the last four
+  \item{parm}{Character. Indicates the parametrization of the effects.
+    The first four refer to the ML-fit of the Age-Period-Cohort model, the last four
     give Age-effects from a smaller model and residuals relative to
-    this. If one of the latter is chosen, \code{drift} is ignored. 
-    Possible values are:
+    this. If one of the latter is chosen, the argument \code{dr.extr}
+    is ignored. Possible values for \code{parm} are:
     \itemize{
-      \item \code{ACP}: ML-estimates. Age-effects as rates for the
+      \item \code{"ACP"}: ML-estimates. Age-effects as rates for the
       reference cohort. Cohort effects as RR relative to the reference
       cohort. Period effects constrained to be 0 on average with 0 slope.
-      \item \code{APC}: ML-estimates. Age-effects as rates for the
+      \item \code{"APC"}: ML-estimates. Age-effects as rates for the
       reference period. Period effects as RR relative to the reference
       period. Cohort effects constrained to be 0 on average with 0 slope.
-      \item \code{AdCP}: ML-estimates. Age-effects as rates for the
+      \item \code{"AdCP"}: ML-estimates. Age-effects as rates for the
       reference cohort. Cohort and period effects constrained to be 0 on
       average with 0 slope. These effects do not multiply to the fitted
       rates, the drift is missing and needs to be included to produce
       the fitted values.
-      \item \code{AdPC}: ML-estimates. Age-effects as rates for the
+      \item \code{"AdPC"}: ML-estimates. Age-effects as rates for the
       reference period. Cohort and period effects constrained to be 0 on
       average with 0 slope. These effects do not multiply to the fitted
       rates, the drift is missing and needs to be included to produce
       the fitted values.
-      \item \code{Ad-C-P}: Age effects are rates for the reference
+      \item \code{"Ad-C-P"}: Age effects are rates for the reference
       cohort in the Age-drift model (cohort drift). Cohort effects are from the model
       with cohort alone, using log(fitted values) from the Age-drift
       model as offset. Period effects are from the model with period
       alone using log(fitted values) from the cohort model as offset.      
-      \item \code{Ad-P-C}: Age effects are rates for the reference
+      \item \code{"Ad-P-C"}: Age effects are rates for the reference
       period in the Age-drift model (period drift). Period effects are from the model
       with period alone, using log(fitted values) from the Age-drift
       model as offset. Cohort effects are from the model with cohort
       alone using log(fitted values) from the period model as offset.      
-      \item \code{AC-P}: Age effects are rates for the reference
+      \item \code{"AC-P"}: Age effects are rates for the reference
       cohort in the Age-Cohort model, cohort effects are RR relative to
       the reference cohort. Period effects are from the model
       with period alone, using log(fitted values) from the Age-Cohort
       model as offset.
-      \item \code{AP-C}: Age effects are rates for the reference
+      \item \code{"AP-C"}: Age effects are rates for the reference
       period in the Age-Period model, period effects are RR relative to
       the reference period. Cohort effects are from the model
       with cohort alone, using log(fitted values) from the Age-Period

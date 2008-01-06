@@ -40,7 +40,12 @@ function(lex, breaks, time.scale, tol)
                      
     new.Xst <- matrix(lex$lex.Cst, NR, NC, byrow=TRUE)
     new.Xst[last.valid] <- lex$lex.Xst[any.valid]
-  
+
+# Added by BxC:
+    if( is.factor( lex$lex.Xst ) )
+      new.Xst <- factor( new.Xst, levels=levels(lex$lex.Xst) )
+# end of addition
+
     n.interval <- apply(valid, 2, sum)
     new.lex <- Lexis("entry" = new.entry,
                      "duration" = dur[valid],

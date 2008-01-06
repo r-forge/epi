@@ -102,7 +102,7 @@ function ( test = NULL,
 # the two categories of resp.
   
 # First a table of the test (continuous variable) vs. the response
-  m  <- as.matrix( table( switch( PS+1, test, lr$fit ), resp ) )
+  m  <- as.matrix( base:::table( switch( PS+1, test, lr$fit ), resp ) )
 # What values do they refer to
   fv <-     sort( unique( switch( PS+1, test, lr$fit ) ) )
 # How may different values of the test variable do we have?

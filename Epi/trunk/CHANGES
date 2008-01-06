@@ -1,3 +1,32 @@
+Changes in 1.0.5
+
+o Typos in documentation of APC functions corrected.
+
+o cutLexis updated to handle various instances by MP.
+  A few BxC additions to MP's code:
+  - cutLexis2 is renamed cutLexis. BxC's old cutLexis killed.
+  - count=FALSE as argument to cutLexis, just calls countLexis if TRUE.
+  - cutLexis no longer returns the working column lex.cut
+  - cutLexis was missing the attributes "time.scales" and "breaks". Added.
+  - cut=<dataframe> is allowed, simplifying cut of split Lexis objects.
+  - documentation accordingly altered.
+   
+o splitLexis amended so that lex.Xst is returned as a factor if
+  lex.Cst is a factor. splitLexis crashed if lex.Cst and lex.Xst were factors.
+
+o Lexis now allows omission of entry.status --- if exit.status is 
+  numeric/logical/factor, entry.status (and hence lex.Cst) will be set
+  to 0/FALSE/first level. 
+
+o Lexis made sure that lex.Cst and lex.Xst have the same class. If
+  they are factors, the set of levels is taken to be the union.
+
+Changes in 1.0.1
+
+o cutLexis now works properly - no it did not!	
+
+o cutLexis now accepts a (smaller) dataframe with cutpoints and states as input.
+
 Changes in 0.9.6
 
 o Bugfix in timeBand, crashed when type="factor" was chosen.

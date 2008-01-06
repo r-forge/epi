@@ -7,6 +7,8 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
   if (nmissing > 2)
     stop("At least one of the arguments exit and duration must be supplied")
 
+  only.exit <- missing( entry.status ) && !missing( exit.status )
+
   ## If data argument is supplied, use it to evaluate arguments
   if (!missing(data)) {
     if (!missing(entry)) {
@@ -28,12 +30,32 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
     }
   }
 
+  ## Adjust entry status mode according to exit status
+  if( only.exit )
+    {
+    if( is.logical( exit.status ) )
+        entry.status <- FALSE
+    if( is.factor( exit.status ) )
+        entry.status <- factor( rep( levels(exit.status)[1],
+                                     length(exit.status)),
+                                levels=levels(exit.status),
+                                labels=levels(exit.status) )
+    if( is.numeric( exit.status ) )
+        entry.status <- rep( 0, length( exit.status ) )
+    }
+
   ## Check compatibility of entry and exit status
-      
   if (is.factor(entry.status) || is.factor(exit.status)) {
       if (is.factor(entry.status) && is.factor(exit.status)) {
           if (!identical(levels(entry.status),levels(exit.status))) {
-              stop("incompatible factor levels in entry.status and exit.status")
+              all.levels = union(levels(entry.status),levels(exit.status))
+              entry.status <- factor( entry.status, levels=all.levels )
+               exit.status <- factor(  exit.status, levels=all.levels )
+# Start of BxC change
+#              stop("incompatible factor levels in entry.status and exit.status")
+              cat("Incompatible factor levels in entry.status and exit.status:\n",
+                  "both lex.Cst and lex.Xst now have levels:\n", all.levels)
+# End of Bxc Change
           }
       }
       else {
@@ -48,7 +70,7 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
   
   ## If entry is missing and one of the others is given as a list of length
   ## one, entry is assumed to be 0 on this only timescale.
-  if (missing(entry) & nmissing==2)
+  if( nmissing==2 )
     {
     if( !missing(exit) )
       { if( length(exit)>1 )
@@ -60,6 +82,7 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
         cat( "NOTE: entry is assumed to be 0 on the",names(exit),"timescale.\n")
         }
       }
+    else
     if( !missing(duration) )
       { if( length(duration)>1 )
           stop("If 'entry' is omitted, only one timescale can be specified")
@@ -70,6 +93,8 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
         cat( "NOTE: entry is assumed to be 0 on the",names(duration),"timescale.\n")
         }
       }
+    else
+    stop("Either exit or duration must be supplied.")
     }
 
   ## Coerce entry and exit lists to data frames
@@ -488,7 +513,6 @@ entry <- function(x, time.scale = NULL)
     }
 }
 
-
 exit <- function(x, time.scale = NULL)
 {
     time.scale <- check.time.scale(x, time.scale)
@@ -499,7 +523,6 @@ exit <- function(x, time.scale = NULL)
         return(x[, time.scale] + x$lex.dur)
     }
 }
-
 
 dur <- function(x)
 {

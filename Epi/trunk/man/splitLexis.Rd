@@ -74,13 +74,14 @@ points( Lcoh, pch=c(NA,16)[Lcoh$lex.Xst+1], col="red", cex=1.5 )
 # Split time along two time-axes
 ( x2 <- splitLexis( Lcoh, breaks = seq(1900,2000,5), time.scale="per") )
 ( x2 <- splitLexis( x2, breaks = seq(0,80,5), time.scale="age" ) ) 
+str( x2 )
 
 # Tabulate the cases and the person-years
-tab.Lexis( x2 )
+tab( x2 )
 tapply( status(x2,"exit")==1, list( timeBand(x2,"age","left"),
                                     timeBand(x2,"per","left") ), sum )
 tapply( dur(x2),  list( timeBand(x2,"age","left"),
                         timeBand(x2,"per","left") ), sum )
 }
-\seealso{\code{\link{timeBand}}, \code{\link{cutLexis}}}
+\seealso{\code{\link{timeBand}}, \code{\link{cutLexis}}, \code{\link{tab.Lexis}}}
 \keyword{manip}
