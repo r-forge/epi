@@ -10,7 +10,7 @@ o cutLexis updated to handle various instances by MP.
   - cutLexis was missing the attributes "time.scales" and "breaks". Added.
   - cut=<dataframe> is allowed, simplifying cut of split Lexis objects.
   - documentation accordingly altered.
-   
+
 o splitLexis amended so that lex.Xst is returned as a factor if
   lex.Cst is a factor. splitLexis crashed if lex.Cst and lex.Xst were factors.
 
