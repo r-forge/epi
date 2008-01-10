@@ -62,10 +62,22 @@ Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
   \code{entry} is 0. This is only meaningful (and therefore checked) if there
   is only one timescale.
   
-  If \code{entry.status} is not given, its class is automatically set to that
-  of \code{exit.status}. If \code{exit.status} is a factor, the value of
-  \code{entry.status} is set to the first level, if it is logical it value is
-  set to \code{FALSE}.
+  If any of \code{entry.status} or \code{exit.status} are of mode character,
+  they will be converted to factors.
+  
+  If \code{entry.status} is not given, then:
+
+  Its class is automatically set to that of \code{exit.status}. If
+  \code{exit.status} is factor, the value of \code{entry.status} is set to the
+  first level. This may be highly undesirable, and therefore noted. For example,
+  if \code{exit.status} is character the first level will be the first in the
+  alphabetical ordering; slightly unfortunate if values are
+  \code{c("Well","Diseased")}. If \code{exit.status} is logical, the value of
+  \code{entry.status} set to \code{FALSE}.
+
+  If \code{entry.status} or \code{exit.status} are factors or character, the
+  corresponding state variables \code{lex.Cst} and \code{lex.Xst} will be
+  (unordered) factors with identical levels.
   }
 \value{
   An object of class \code{Lexis}. This is represented as a data frame
@@ -106,6 +118,19 @@ Lcoh <- Lexis( entry = list( per=en ),
          exit.status = fail,
                 data = xcoh )
 Lcoh
+
+# Using character states may have undesired effects:
+xcoh$Fail <- c("Dead","Well","Dead")
+Lexis( entry = list( per=en ),
+        exit = list( per=ex, age=ex-bt ),
+ exit.status = Fail,
+        data = xcoh )
+        
+( xcoh$Fail <- factor( xcoh$Fail, levels=c("Well","Dead") ) )
+Lexis( entry = list( per=en ),
+        exit = list( per=ex, age=ex-bt ),
+ exit.status = Fail,
+        data = xcoh )
 }
 \seealso{
    \code{\link{plot.Lexis}},
