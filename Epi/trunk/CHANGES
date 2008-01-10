@@ -15,6 +15,8 @@ o splitLexis gave wrong results for factor states.
   turned to numeric before the call to split.lexis.1D and the factor 
   attributes reinstituted after the split. 
 
+o Added transform method for Lexis objects.
+
 Changes in 1.0.5
 
 o Typos in documentation of APC functions corrected.
