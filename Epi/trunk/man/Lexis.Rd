@@ -51,6 +51,10 @@ Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
   only those variables required to define the follow-up history in each
   row. Additional variables can be merged into the \code{Lexis} object
   using the \code{merge} method for \code{Lexis} objects.
+
+  There are also \code{merge}, \code{subset} and \code{transform} methods for
+  \code{Lexis} objects. They work as the corresponding methods for data-frames
+  but ensures that the result is a \code{Lexis} object.
   }
 \note{
   Only two of the three arguments \code{entry}, \code{exit} and
@@ -137,6 +141,9 @@ Lexis( entry = list( per=en ),
    \code{\link{splitLexis}},
    \code{\link{cutLexis}},
    \code{\link{merge.Lexis}},
+   \code{\link{subset.Lexis}},
+   \code{\link{transform.Lexis}},
+   \code{\link{tab.Lexis}},
    \code{\link{timeScales}},
    \code{\link{timeBand}},
    \code{\link{entry}},
