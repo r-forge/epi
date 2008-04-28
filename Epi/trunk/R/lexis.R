@@ -30,6 +30,13 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
     }
   }
 
+  ## Check for missing values in status variables
+  wh.miss <- any(is.na(entry.status)) + 2*any(is.na(exit.status))
+  if ( wh.miss > 0 ) stop("Missing values in ",
+                          switch( wh.miss, "entry status",
+                                           "exit status",
+                                           "entry AND exit status" ) )
+
   ## Adjust entry status mode according to exit status
   if( only.exit )
     {
@@ -55,11 +62,6 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
   if( is.character(entry.status) ) entry.status <- factor(entry.status)
   if( is.character( exit.status) )  exit.status <- factor( exit.status)
 
-  ## Check for missing values in status variables
-  if (any(is.na(entry.status)) || any(is.na(exit.status))) {
-      stop("Missing values in entry or exit status")
-  }
-  
   ## Check compatibility of entry and exit status
   if (is.factor(entry.status) || is.factor(exit.status)) {
       if (is.factor(entry.status) && is.factor(exit.status)) {
