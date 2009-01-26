@@ -35,7 +35,7 @@
                 If this argument is supplied and \code{x} is a datafame, all
                 character variables are converted to class \code{cal.yr}.
                 Factors in the dataframe will be ignored.}
-  \item{wh}{Indices of the variables to convert if code{x} is a data frame.
+  \item{wh}{Indices of the variables to convert if \code{x} is a data frame.
             Can be either a numerical or character vector.}
   \item{unit}{Which units are the date measured in, \code{"y"} for years,
     \code{"d"} for days.}
