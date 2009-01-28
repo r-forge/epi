@@ -19,7 +19,7 @@ apc.fit( data,
             Y,
         ref.c,
         ref.p,
-          dist = c("poisson","logistic"),
+          dist = c("poisson","binomial"),
          model = c("ns","bs","ls","factor"),
        dr.extr = c("weighted","Holford"),
           parm = c("ACP","APC","AdCP","AdPC","Ad-P-C","Ad-C-P","AC-P","AP-C"),
@@ -46,8 +46,9 @@ apc.fit( data,
   \item{ref.p}{Reference period, numerical. Defaults to median date of
     diagnosis among cases.}
   \item{dist}{Distribution (or more precisely: Likelihood) used for modelling.
-              if a binomila model us ised, \code{Y} is assuemd to be the
-              denominator.}
+              if a binomial model us ised, \code{Y} is assuemd to be the
+              denominator; \code{"binomial"} gives a binomial model with logit
+              link.}
   \item{model}{Type of model fitted:
     \itemize{
 	    \item \code{ns} fits a model with natural splines for each of
