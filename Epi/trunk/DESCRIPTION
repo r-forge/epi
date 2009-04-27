@@ -1,6 +1,6 @@
 Package: Epi
-Version: 1.0.10
-Date: 2009-01-26
+Version: 1.0.12
+Date: 2009-03-27
 Title: A package for statistical analysis in epidemiology.
 Author: Bendix Carstensen, Martyn Plummer, Esa Laara, Michael Hills et. al.
 Maintainer: Bendix Carstensen <bxc@steno.dk>
