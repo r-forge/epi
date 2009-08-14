@@ -2,7 +2,6 @@
 %\VignetteIndexEntry{Follow-up data with the Epi package}
 \documentclass[a4paper,twoside,12pt]{article}
 
-\usepackage[latin1]{inputenc}
 \usepackage[english]{babel}
 \usepackage{booktabs,rotating,graphicx,amsmath,verbatim,fancyhdr,Sweave}
 \usepackage[colorlinks,linkcolor=red,urlcolor=blue]{hyperref}
@@ -294,7 +293,7 @@ in state 2, but that the final transition to state 1 (death from lung
 cancer) is preserved. This is the point of the \texttt{precursor.states=}
 argument. It names the states (in this case 0, ``Alive'') that will be
 over-witten by \texttt{new.state} (in this case state 2, ``High
-exosure''). Clearly, state 1 (``Dead'') should not be updated even if
+exposure''). Clearly, state 1 (``Dead'') should not be updated even if
 it is after the time where the persons moves to state 2. In other
 words, only state 0 is a precursor to state 2, state 1 is always
 subsequent to state 2.

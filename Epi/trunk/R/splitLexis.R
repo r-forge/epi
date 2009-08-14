@@ -57,7 +57,7 @@ function(lex, breaks, time.scale, tol)
 }
 
 
-splitLexis <- function(lex, breaks, time.scale, tol= .Machine$double.eps^0.5)
+splitLexis <- function(lex, breaks, time.scale=1, tol= .Machine$double.eps^0.5)
 {
   ## Set temporary, unique, id variable
   lex$lex.tempid <- lex$lex.id
