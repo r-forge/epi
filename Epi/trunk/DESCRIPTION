@@ -1,10 +1,11 @@
 Package: Epi
-Version: 1.1.0
-Date: 2009-08-06
+Version: 1.1.2
+Date: 2009-09-04
 Title: A package for statistical analysis in epidemiology.
 Author: Bendix Carstensen, Martyn Plummer, Esa Laara, Michael Hills et. al.
 Maintainer: Bendix Carstensen <bxc@steno.dk>
-Suggests: splines, nlme, survival
+Depends: utils
+Suggests: splines, nlme, survival, mstate
 Description: Functions for demographic and epidemiological
   analysis in the Lexis diagram, i.e. register and cohort follow-up
   data, including interval censored data and representation of

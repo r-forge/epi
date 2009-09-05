@@ -196,7 +196,7 @@ cutLexis <- function(data,
         }
     }
     
-    lx <- doCutLexis( data, cut, timescale, new.scale )
+    lx <- doCutLexis( data, cut, timescale, new.scale=TRUE )
     if (is.factor(data$lex.Cst)) {
         lx <- setStatus.factor(lx, new.state, precursor.states, progressive)
     }
@@ -253,6 +253,9 @@ cutLexis <- function(data,
       }
     else
       {
+      # Remove the new timescale
+      lx <- lx[,-match("lex.new.scale",names(lx))]
+      # and transfer all the other attributes
       attr( lx, "time.scales" ) <- attr( data, "time.scales" )
       attr( lx, "breaks" )      <- attr( data, "breaks" )
       attr( lx, "class" )       <- attr( data, "class" )
