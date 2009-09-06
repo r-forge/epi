@@ -119,18 +119,18 @@ b <- list(NULL)
 par( mar=c(0,0,0,0), cex=1.5 )
 plot( NA,
       bty="n",
-      xlim=0:1*100, ylim=0:1*100, xaxt="n", yaxt="n", xlab="", ylab="" )
-      \n', file = file )
+      xlim=0:1*100, ylim=0:1*100, xaxt="n", yaxt="n", xlab="", ylab="" )',
+      file = file )
 for( i in 1:n.st )
-cat( 'b[[',paste(i),']] <- tbox("',st.nam[i],'",',
-                      paste(c(xx[i],yy[i],wd[i],ht[i]),collapse=","),
-     '               ,font=2, txt.col="black",
-                      lwd=2, border="black", col="transparent" )\n',
-      sep="", file=file, append=T )
+cat( 'b[[',paste(i),']] <-\ntbox("',st.nam[i],'",',
+     paste(c(xx[i],yy[i],wd[i],ht[i]),collapse=","),",",
+'\n         font=2, txt.col="black",',
+'\n         lwd=2, border="black", col="transparent" )\n',
+     sep="", file=file, append=TRUE )
 for( i in 1:n.st ) for( j in 1:n.st )
   if( !is.na(tm[i,j]) )
 cat( 'boxarr( b[[',paste(i),']], b[[',paste(j),']], fr=0.8,
-              angle=15, lwd=2, length=par("pin")[1]/30 )\n',
-      file=file, append=T )
+             angle=15, lwd=2, length=par("pin")[1]/30 )\n',
+      sep="", file=file, append=T )
 }
 }

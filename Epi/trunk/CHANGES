@@ -1,6 +1,6 @@
 Changes in 1.1.2
 
-o cutLexis crashed it new.state=TRUE and new.scale=FALSE were specified.
+o cutLexis crashed if new.state=TRUE and new.scale=FALSE were specified.
   Fixed.
 
 Changes in 1.1.1
