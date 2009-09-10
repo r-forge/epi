@@ -1,0 +1,250 @@
+Changes in 1.1.2
+
+o cutLexis crashed if new.state=TRUE and new.scale=FALSE were specified.
+  Fixed.
+
+Changes in 1.1.1
+
+o Functions stack.Lexis, tmat.Lexis and mstate.Lexis have been added
+  to facilitate practical multistate modelling. The two latter provides an
+  interface to the mstate package.
+  
+o Functions tbox, dbox, fillarr, boxarr and boxes.Lexis added to facilitate
+  drawing of multistate box diagrams.
+
+Changes in 1.1.0
+
+o Two new datasets DMrand and DMlate with random samples from the
+  Danish National diabetes register. The examples from these
+  illustrate most of the recently added multistate stuff.
+
+o Minor bug in check.time.scale was fixed (misplaced parentheses in the
+  argument to any(), causing a warning).
+
+o cutLexis introduces a new timescale "time since event", which has
+  missing values for any follow-up time prior to event.  Hence
+  requires that the Lexis plotting functions explicitly discards the
+  units with missing on timescales in use. Accomplished by the new
+  function valid.times.
+
+o cutLexis now places the new states after the precursor states and before the
+  other ones in the factors lex.Cst and lex.Xst.
+
+o splitLexis uses the first timescale by default. Which in particular
+  means that in the case of only one time scale it is not necessary to
+  specify it, so this has become acceptable now.
+
+o Vignettes has been updated.
+
+o Example for ci.cum has been fixed to be compatible with the new survival
+  package as of 2.9.0 as announced.
+
+o apc.fit fitted the wrong model when using parm="AC-P". Fixed
+
+o The axis scaling of apc.plot has been improved.
+
+o apc.frame now by default plots a reference line for RR=1, this may be
+  switched off by the (newly introduced) parameter "ref.line=FALSE".
+
+Changes in 1.0.10
+
+o Fixed parse errors in documentation.
+
+Changes in 1.0.9
+
+o Thanks to Mike Murphy, Professor of Demography, Department of Social Policy,
+  London School of Economics, a bug causing a crash of apc.fit if only
+  one row in the model matrix correponds to the reference level was fixed.
+
+o Also thanks to Mike Murphy, a much more efficient calculation of
+  median period and cohort is now used.
+
+o apc.fit expanded with an argument allowing logistic regression model
+  instead of a Poisson model only.
+
+Changes in 1.0.8
+
+o tab.Lexis removed and replaced by summary.Lexis which gives a better
+  summary of the transitions and transition rates.
+
+o A bug in ci.pd (confidence interval for probability difference) has
+  been fixed. 
+
+Changes in 1.0.7
+  
+o Stat.table data= argument fixed.
+
+Changes in 1.0.6
+
+o Lexis now converts character values of entry/exit.status to factors
+  for lex.Cst and lex.Xst. And produces a warning if the entry.state
+  is defaulted to the first level of exit.state (i.e. when exit.state
+  is given as charcter or factor).
+
+o splitLexis gave wrong results for factor states.
+  cutLexis gave wrong results for character states.
+  Fixed by letting Lexis coerce character mode entry.status and exit.status 
+  to factors for lex.Cst and lex.Xst.
+
+  In split.lexis.1D was the problem with the factor states, they were 
+  coerced to numeric when stuffed into the new.Xst matrix. Now states are 
+  turned to numeric before the call to split.lexis.1D and the factor 
+  attributes reinstituted after the split. 
+
+o Added transform method for Lexis objects.
+
+Changes in 1.0.5
+
+o Typos in documentation of APC functions corrected.
+
+o cutLexis updated to handle various instances by MP.
+  A few BxC additions to MP's code:
+  - cutLexis2 is renamed cutLexis. BxC's old cutLexis killed.
+  - count=FALSE as argument to cutLexis, just calls countLexis if TRUE.
+  - cutLexis no longer returns the working column lex.cut
+  - cutLexis was missing the attributes "time.scales" and "breaks". Added.
+  - cut=<dataframe> is allowed, simplifying cut of split Lexis objects.
+  - documentation accordingly altered.
+
+o splitLexis amended so that lex.Xst is returned as a factor if
+  lex.Cst is a factor. splitLexis crashed if lex.Cst and lex.Xst were factors.
+
+o Lexis now allows omission of entry.status --- if exit.status is 
+  numeric/logical/factor, entry.status (and hence lex.Cst) will be set
+  to 0/FALSE/first level. 
+
+o Lexis made sure that lex.Cst and lex.Xst have the same class. If
+  they are factors, the set of levels is taken to be the union.
+
+Changes in 1.0.1
+
+o cutLexis now works properly - no it did not!	
+
+o cutLexis now accepts a (smaller) dataframe with cutpoints and states as input.
+
+Changes in 0.9.6
+
+o Bugfix in timeBand, crashed when type="factor" was chosen.
+  levels was given as 0:(lengh(breaks)+1), changed to 0:lengh(breaks)
+
+Changes in 0.9.5
+
+o The Lexis definition now assumes that entry is 0 if only one of exit
+  or duration are given as a one-component list.
+
+o tab.Lexis is now properly working as a method for Lexis objects.
+
+Changes in 0.9.4
+
+o The lex.-variables in Lexis objects are now called 
+  lex.dur, lex.Cst, lex.Xst, lex.id (duration, Current state, eXit
+  state and identification)
+
+o An extra option states= added to Lexis. If used the state variables are
+  returned as factors.
+
+o The utility function deltat.Lexis() has been renamed to dur().
+
+o state() now returns a dataframe of both (entry,exit) states a
+  default. The reason for this is that lex.Cst and lex.Xst may be
+  factors (which actually would be the logical thing to have by default,
+  but it is not enforced only allowed).
+
+o entry() and exit() now by default returns matrices with entry and 
+  exit times on all timescales. If only one timescale is requested,
+  they return a 1-column matrix.
+  
+o A minor typo in stat.table corrected: in the definition of the
+  quantile function prob=probs changed to probs=probs.
+
+o cutLexis() bugs corrected. Now works with split data too, but
+  requires specification of censoring states --- i.e. states that
+  will be replaced by the new state obtained at the cut date.
+
+Changes in 0.9.3 (since 0.9.0)
+
+o New function cutLexis() to allow cutting of follow-up time at a
+  specific date for each person, where a new state is assumed.
+
+o New function tab.Lexis() which tabulates records as well as events 
+  and person-years from a Lexis object.
+
+o splitLexis got state information wrong if breaks were not unique.
+  Fixed.
+
+Changes in 0.9.0
+
+o effx and effx.match updated following Tartu 2007 to avoid attaching 
+  the data, and to correct the parsing of the list of control variables.
+  
+Changes in 0.8.0
+
+o A new function Lexis() to define follow-up on multiple timescales has
+  been added. An object of class Lexis is defined and a number of
+  utilities for the class are available. Time-splititng is now done by 
+  splitLexis().
+
+o The old Lexis function for time-splitting has been renamed to
+  W.Lexis for backward compatibility.
+
+o The function epi.eff() has been replaced by effx() and effx.match().
+
+Changes 0.7.2 to 0.7.3
+
+o Icens is now able to handle a constant underlying rate. (A bug in
+  expand.data was fixed).
+
+Changes 0.7.0 to 0.7.2
+
+o Bugs in ROC fixed, and the functionality of the grid option slightly
+  chnaged.
+
+Changes 0.6.1 to 0.7.0
+
+o Function Icens() for estimation of rates from intervalcensored 
+  follow-up data by Martyn Plummer added.
+
+o Function epi.eff by Michael Hills is added. Estimates effects in
+  various epidemiological study types.
+
+Changes 0.6.0 to 0.6.1
+
+o Coding errors in thoro dataset corrected. Only concerning dates and
+  status for livercancer diagnosis.
+
+o Lexis.lines now allows col.life, lwd.life, pch.fail, col.fail and
+  cex.fail to have the same length as the data, i.e. to produce
+  individualized lines and points. As Lexis.diagram calls Lexis.lines,
+  this facility is also available through Lexis.diagram.
+
+Changes from 0.4 to 0.6
+
+o ci.pd() amended to support the Agresti-Caffo method for confidence
+  intervals for difference between proportions. Newcombes method 10
+  is still used in twoby2.
+
+o apc.fit() added. Fits age-period-cohort models with a range of
+  possibilities for parametrizations.
+
+o Functions for time-splitting at arbitrary times and at recurrent 
+  failures have been added: isec(), icut(), fcut1(), fcut() and
+  ex1(). Eventually they will be superseded by new facilities in Lexis.
+
+o Function apc.plot() to make a plot of an apc fit is added. It is just
+  a wrapper for apc.frame() and apc.lines(), with suitable computation of
+  the paramters supplied to apc.frame.
+
+o Lexis.lines(): pch.fail and col.fail expandS to vectors of length two
+  if only one value is given. 
+
+o ci.cum() aimed at computing cumulative hazard functions from
+  parametric functions for hazards.
+
+o Problem in print.floated() with printing of objects of class
+  "floated" fixed.
+
+o Problem in ci.lin when subset did not match any factor names and
+  diff=T was given the function crashed. Fixed, and documentation updated.
+
+o cal.yr produces objects of class c("cal.yr","numeric"). Functions
+  as.Date.numeric and as.Date.cal.yr added.
