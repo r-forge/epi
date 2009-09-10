@@ -231,7 +231,10 @@ for( i in 1:n.st ) for( j in 1:n.st )
 ########################################################################
 ###  Use the adj=  parameter to position the no. transitions rel. to arrow
     if( show.D )
-    text( arr, paste( D[i,j] ), adj=c(1.5,1.5), font=2, col="black" )
+    if( show.D )
+    text( arr$x+arr$d[2], arr$y-arr$d[1], paste( D[i,j] ),
+          adj=(as.numeric(c(arr$d[2]>0,arr$d[1]<0))-0.5)*1.5+0.5,
+          font=2, col="black" )
     }
   }
      ', file=file )
