@@ -4,24 +4,37 @@
 \alias{dbox}
 \alias{fillarr}
 \alias{boxarr}
+\alias{boxes}
 \alias{boxes.Lexis}
 \title{
   Draw boxes and arrows for illustration of multistate models.
   }
 \description{
   Boxes can be drawn with text (\code{tbox}) or a cross (\code{dbox}), and
-  arrows pointing between the boxes can be drawn automatically not overlapping
-  the \code{boxarr} boxes.
+  arrows pointing between the boxes (\code{boxarr}) can be drawn
+  automatically not overlapping the boxes. \code{\link{Lexis}} objects
+  can be used to generate displays with person-years and events.
   }
 \usage{
    tbox( txt, x, y, w, h,
          font = 2, txt.col = "black", lwd = 2,
-         border = "black", col = "transparent")
+         border = "black", col = "transparent", ...)
    dbox( x, y, w, h=w,
          font=2, cross.col="black", cwd=5,
          lwd=2, border="black", col="transparent" )
-   boxarr( b1, b2, ... )
-   \method{boxes}{Lexis}( obj, file, mult=1.5, cex=1.5 )
+   boxarr( b1, b2, offset=FALSE, ... )
+   boxes( obj, ... )
+   \method{boxes}{Lexis}( obj, file,
+                wmult = 1.5,
+                hmult = 1.5*wmult,
+                  cex = 1.5,
+               show   = inherits( obj, "Lexis" ),
+               show.Y = show,
+               show.D = show,
+              scale.Y = 1,
+             digits.Y = 1,
+                eq.wd = TRUE,
+                eq.ht = TRUE, ... )
    fillarr( x1, y1, x2, y2, fr=0.8,
             angle=17, lwd=2, length=par("pin")[1]/30, ... )
    }
@@ -36,18 +49,32 @@
   \item{lwd}{Line width of the box / arrow.}
   \item{border}{Color of the box border.}
   \item{col}{Background color for the interior of the box.}
+  \item{\dots}{Arguments to be passed on to the call of other functions.}
   \item{cross.col}{Color of the cross.}
   \item{cwd}{Width of the lines in the cross.}
   \item{b1}{Coordinates of the "from" box. A vector with 4 components,
     \code{x}, \code{y}, \code{w}, \code{h}.}
   \item{b2}{Coordinates of the "to" box.}
-  \item{...}{Arguments to be passed on to the call of \code{\link{arrows}}.} 
+  \item{offset}{Logical. Should the arrow be offset a bit to the left.}
   \item{obj}{A \code{\link{Lexis}} object, or a transition matrix; that
     is a matrix}
   \item{file}{Name of the file with the code reproducing the plot.}
-  \item{mult}{Multiplier for the withdt of the box relative to the width of the
+  \item{wmult}{Multiplier for the width of the box relative to the width of the
+              text in the box.}
+  \item{hmult}{Multiplier for the height of the box relative to the height of the
               text in the box.}
   \item{cex}{Character expansion for text in the box.}
+  \item{show}{Should person-years and transitions be put in the plot.
+              Ignored if \code{obj} is not a \code{Lexis} object.}
+  \item{show.Y}{Should person-years be put in the boxes.
+              Ignored if \code{obj} is not a \code{Lexis} object.}
+  \item{show.D}{Should transitions be put alongside the arrows.
+              Ignored if \code{obj} is not a \code{Lexis} object.}
+  \item{scale.Y}{What scale should be used for annotation of person-years.}
+  \item{digits.Y}{How many digtis after the decimal point should be used for the
+                  person-years.}
+  \item{eq.wd}{Should boxes all have the same width?}
+  \item{eq.ht}{Should boxes all have the same height?}
   \item{x1}{x-coordinate of the starting point.}
   \item{y1}{y-coordinate of the starting point.}
   \item{x2}{x-coordinate of the ending point.}
@@ -60,6 +87,7 @@
   \details{    
   These functions are designed to facilitate the drawing of multistate
   models, mainly by automatic calculation of the arrows between boxes.
+
   \code{tbox} draws a box with centered text, and returns a vector of
   location, height and width of the box. This is used when drawing
   arrows between boxes. \code{dbox} draws a box with a cross,
@@ -68,10 +96,29 @@
   lines are drawn. 
   
   \code{boxes.Lexis} takes as input a Lexis object sets up an empty plot
-  area and prompts you to click on the locations for the state boxes, and the
-  draws the model. A transition matrix can also be supplied, in which
-  case the row/column names are used as state names. Optionally returns
-  a file with R-code reproducing the plot.             
+  area (with axes 0 to 100 in both directions) and prompts you to click
+  on the locations for the state boxes, and then draws arrows implied by
+  the actual transitions in the \code{Lexis} object.
+
+  A transition matrix can also be supplied, in which case the row/column
+  names are used as state names.
+
+  Optionally returns the R-code reproducing the plot in a file, which
+  can be useful if you want to produce exactly the same plot with
+  differing arrow colors etc.
+
+  \code{boxarr} draws an arrow between two boxes, on the line conneting
+  the two box centers. The \code{offset} argument is used to offset the
+  arrow a bit to the left (in the direction) on order to accomodate
+  arrows both waus between boxes. \code{boxarr} returns a named list
+  wit´h elements \code{x}, \code{y} and \code{d}, wher the two formewr
+  is the location of the midpoint and the latter is a unit vector in the
+  direction of the arrow, which is used by \code{boxes.Lexis} to
+  position the annotation of arrows with the number of transitions.
+  
+  \code{fill.arr} is just a utility drawing nicer arrows than the default
+  \code{\link{arrows}} command, basically by using filled arrow-heads; called
+  by \code{boxarr}.
   }
 \value{The functions \code{tbox} and \code{dbox} return the location and
        dimension of the boxes, \code{c(x,y,w,h)}, which are designed to be used
@@ -101,10 +148,29 @@ text( boxarr( bw, bc , col="blue", lwd=3 ),
       boxarr( bc, bcd, col=gray(0.7) , lwd=3 )
 text( boxarr( bd, bdc, col="blue", lwd=3 ),
       expression( lambda[DM] ), col="blue", adj=c(1.1,-0.2), cex=0.8 )
-# Set up a transition matrix
-tm <- rbind( c(NA,1,1), c(NA,NA,1), c(NA,NA,NA) )
+
+# Set up a transition matrix allowing recovery
+tm <- rbind( c(NA,1,1), c(1,NA,1), c(NA,NA,NA) )
 rownames(tm) <- colnames(tm) <- c("Cancer","Recurrence","Dead")
-\dontrun{boxes.Lexis( tm )}
+\dontrun{boxes.Lexis( tm, file="" )}
+
+# Set up a Lexis object
+data(DMlate)
+str(DMlate)
+dml <- Lexis( entry=list(Per=dodm, Age=dodm-dobth, DMdur=0 ),
+               exit=list(Per=dox),
+        exit.status=factor(!is.na(dodth),labels=c("DM","Dead")),
+               data=DMlate )
+# Split follow-up at Insulin
+dmi <- cutLexis( dml, cut=dml$doins, new.state="Ins", pre="DM" )
+summary( dmi )
+\dontrun{boxes( dmi, file="" )}
+# Set up a bogus recovery date
+dmi$dorec <- dmi$doins + runif(nrow(dmi),0.5,10)
+dmi$dorec[dmi$dorec>dmi$dox] <- NA
+dmR <- cutLexis( dmi, cut=dmi$dorec, new.state="DM", pre="Ins" )
+summary( dmR )
+\dontrun{boxes( dmR )}
     }
 \keyword{survival}
 \keyword{hplot}
