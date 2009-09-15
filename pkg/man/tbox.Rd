@@ -111,7 +111,7 @@
   the two box centers. The \code{offset} argument is used to offset the
   arrow a bit to the left (in the direction) on order to accomodate
   arrows both waus between boxes. \code{boxarr} returns a named list
-  wit´h elements \code{x}, \code{y} and \code{d}, wher the two formewr
+  with elements \code{x}, \code{y} and \code{d}, where the two former
   is the location of the midpoint and the latter is a unit vector in the
   direction of the arrow, which is used by \code{boxes.Lexis} to
   position the annotation of arrows with the number of transitions.
