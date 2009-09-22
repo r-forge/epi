@@ -22,20 +22,23 @@
    dbox( x, y, w, h=w,
          font=2, cross.col="black", cwd=5,
          lwd=2, border="black", col="transparent" )
-   boxarr( b1, b2, offset=FALSE, ... )
+   boxarr( b1, b2, offset=FALSE, pos=0.6, ... )
    boxes( obj, ... )
    \method{boxes}{Lexis}( obj, file,
+               boxpos = FALSE,
                 wmult = 1.5,
                 hmult = 1.5*wmult,
                   cex = 1.5,
                show   = inherits( obj, "Lexis" ),
                show.Y = show,
-               show.D = show,
               scale.Y = 1,
              digits.Y = 1,
+               show.D = show,
+              scale.D = FALSE,
+             digits.D = 0,
                 eq.wd = TRUE,
                 eq.ht = TRUE, ... )
-   fillarr( x1, y1, x2, y2, fr=0.8,
+   fillarr( x1, y1, x2, y2, gap=2, fr=0.8,
             angle=17, lwd=2, length=par("pin")[1]/30, ... )
    }
 \arguments{
@@ -56,31 +59,44 @@
     \code{x}, \code{y}, \code{w}, \code{h}.}
   \item{b2}{Coordinates of the "to" box.}
   \item{offset}{Logical. Should the arrow be offset a bit to the left.}
+  \item{pos}{Numerical between 0 and 1, determines where on the arrow the
+             text or numer is written.}
   \item{obj}{A \code{\link{Lexis}} object, or a transition matrix; that
     is a matrix}
   \item{file}{Name of the file with the code reproducing the plot.}
+  \item{boxpos}{If \code{TRUE} the boxes are positioned  equidistantly on a
+                circle, if \code{FALSE} (the default) you are queried to
+                click on the screem for the positions. This argument can also
+                be a named list with elements \code{x} and
+                \code{y}, both numerical vectors, giving the centers of
+                the boxes.}
   \item{wmult}{Multiplier for the width of the box relative to the width of the
-              text in the box.}
+               text in the box.}
   \item{hmult}{Multiplier for the height of the box relative to the height of the
-              text in the box.}
+               text in the box.}
   \item{cex}{Character expansion for text in the box.}
   \item{show}{Should person-years and transitions be put in the plot.
               Ignored if \code{obj} is not a \code{Lexis} object.}
   \item{show.Y}{Should person-years be put in the boxes.
               Ignored if \code{obj} is not a \code{Lexis} object.}
+  \item{scale.Y}{What scale should be used for annotation of person-years.}
+  \item{digits.Y}{How many digits after the decimal point should be used for the
+                  person-years.}
   \item{show.D}{Should transitions be put alongside the arrows.
               Ignored if \code{obj} is not a \code{Lexis} object.}
-  \item{scale.Y}{What scale should be used for annotation of person-years.}
-  \item{digits.Y}{How many digtis after the decimal point should be used for the
-                  person-years.}
+  \item{scale.D}{If this a scalar, rates instead of no. transitions are printed
+                 at the arrows, scaled by \code{scale.D}.}
+  \item{digits.D}{How many digits after the decimal point should be used for the
+                  rates.}
   \item{eq.wd}{Should boxes all have the same width?}
   \item{eq.ht}{Should boxes all have the same height?}
   \item{x1}{x-coordinate of the starting point.}
   \item{y1}{y-coordinate of the starting point.}
   \item{x2}{x-coordinate of the ending point.}
   \item{y2}{y-coordinate of the ending point.}
+  \item{gap}{Length of the gap between the box and the ends of the arrows.}
   \item{fr}{Length of the arrow as the fraction of the distance between the
-            boxes.}
+            boxes. Ignored if gap is given.}
   \item{angle}{What angle should the arrow-head have?}
   \item{length}{Length of the arrow head in inches.}
   }
@@ -93,7 +109,7 @@
   arrows between boxes. \code{dbox} draws a box with a cross,
   symbolizing a death state. \code{boxarr} draws an arrow between two
   boxes, making sure it does not intersect the boxes. Only straight
-  lines are drawn. 
+  lines are drawn.
   
   \code{boxes.Lexis} takes as input a Lexis object sets up an empty plot
   area (with axes 0 to 100 in both directions) and prompts you to click
@@ -109,13 +125,13 @@
 
   \code{boxarr} draws an arrow between two boxes, on the line conneting
   the two box centers. The \code{offset} argument is used to offset the
-  arrow a bit to the left (in the direction) on order to accomodate
-  arrows both waus between boxes. \code{boxarr} returns a named list
-  with elements \code{x}, \code{y} and \code{d}, where the two former
-  is the location of the midpoint and the latter is a unit vector in the
+  arrow a bit to the left (as seen in the direction of the arroe) on order
+  to accomodate arrows both ways between boxes. \code{boxarr} returns a named
+  list with elements \code{x}, \code{y} and \code{d}, where the two former
+  give the location of a point on the arrow used for printing (see argument
+  \code{pos}) and the latter is a unit vector in the
   direction of the arrow, which is used by \code{boxes.Lexis} to
-  position the annotation of arrows with the number of transitions.
-  
+  position the annotation of arrows with the number of transitions.  
   \code{fill.arr} is just a utility drawing nicer arrows than the default
   \code{\link{arrows}} command, basically by using filled arrow-heads; called
   by \code{boxarr}.
@@ -152,7 +168,7 @@ text( boxarr( bd, bdc, col="blue", lwd=3 ),
 # Set up a transition matrix allowing recovery
 tm <- rbind( c(NA,1,1), c(1,NA,1), c(NA,NA,NA) )
 rownames(tm) <- colnames(tm) <- c("Cancer","Recurrence","Dead")
-\dontrun{boxes.Lexis( tm, file="" )}
+boxes.Lexis( tm, file="",boxpos=TRUE )
 
 # Set up a Lexis object
 data(DMlate)

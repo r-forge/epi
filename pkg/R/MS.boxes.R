@@ -23,10 +23,11 @@ invisible( c( x, y, w, h ) )
 }
 
 fillarr <-
-function( x1, y1, x2, y2, fr=0.8,
+function( x1, y1, x2, y2, gap=2, fr=0.8,
           angle=17, lwd=2, length=par("pin")[1]/30, ... )
 {
-if( fr > 1 ) fr <- fr/100
+if( !missing(fr)  ) if( fr > 1 ) fr <- fr/100
+if( !missing(gap) ) fr <- 1-gap/sqrt((x1-x2)^2+(y1-y2)^2)
 for( a in 1:angle )
 arrows( x1 + (x2-x1)*(1-fr)/2,
         y1 + (y2-y1)*(1-fr)/2,
@@ -45,7 +46,7 @@ function( a, b )
 }
 
 boxarr <-
-function( b1, b2, offset=FALSE, ... )
+function( b1, b2, offset=FALSE, pos=0.6, ... )
 {
 # If we want to offset the arrow a bit to the left
 if( offset ) d <- std.vec( b2[1]-b1[1], b2[2]-b1[2] )
@@ -75,23 +76,26 @@ if( abs(vy2-y2) < h2/2 ) { bx2 <- vx2
                     else { bx2 <- hx2
                            by2 <- hy2 }
 fillarr( bx1, by1, bx2, by2, ... )
-invisible( list( x=(bx1+bx2)/2,
-                 y=(by1+by2)/2,
-                 d=std.vec(bx2-bx1,by2-by1) ) )
+invisible( list( x = bx1*(1-pos)+bx2*pos,
+                 y = by1*(1-pos)+by2*pos,
+                 d = std.vec(bx2-bx1,by2-by1) ) )
 }
 
 boxes <- function (obj, ...) UseMethod("boxes")
 
 boxes.Lexis <-
 function( obj, file,
+               boxpos = FALSE,
                 wmult = 1.5,
                 hmult = 1.5*wmult,
                   cex = 1.5,
                show   = inherits( obj, "Lexis" ),
                show.Y = show,
-               show.D = show,
               scale.Y = 1,
              digits.Y = 1,
+               show.D = show,
+              scale.D = FALSE,
+             digits.D = 0,
                 eq.wd = TRUE,
                 eq.ht = TRUE, ... )
 {
@@ -105,20 +109,20 @@ else stop( "First argument must be a Lexis object or a square matrix.\n" )
 if( is.null(st.nam) ) st.nam <- paste(1:ncol(tm))
             pl.nam <- st.nam
       n.st <- length( st.nam )
-xx <- yy <- numeric( n.st )
 
 # Do we want to show person-years and events
 if( show & inherits( obj, "Lexis" ) )
   {
-  TR <- summary(obj,simplify=FALSE,scale=scale.Y)$Transitions
+  SM <- summary(obj,simplify=FALSE,scale=scale.Y)
+  TR <- SM$Transitions
   Y <- TR[-nrow(TR),"Risk time:"]
-  D <- TR[-nrow(TR),-(nrow(TR):ncol(TR))]
+  # The rates vector is used later for formatting the values of D printed
+  if( scale.D ) TR <- SM$Rates
+  D <- TR[1:n.st,1:n.st]
   }
 # No extra line with person-years when they are NA
 if( show.Y ) pl.nam <- gsub("\\\nNA", "",
     paste( st.nam, formatC( Y, format="f", digits=digits.Y, big.mark="," ), sep="\n" ) )
-xx <- yy <- wd <- ht <- numeric( n.st )
-b <- list()
 
 # Her comes the plot
 par( mar=c(0,0,0,0), cex=cex )
@@ -130,29 +134,56 @@ ht <- strheight( pl.nam ) * hmult
 wd <- strwidth(  pl.nam ) * wmult
 if( eq.ht ) ht <- rep( max(ht), length(ht) )
 if( eq.wd ) wd <- rep( max(wd), length(wd) )
-# Ask for positions of boxes
-for( i in 1:n.st )
- {
- cat( "\nClick for level ", st.nam[i] )
- flush.console()
- pt <- locator(1)
- xx[i] <- pt$x
- yy[i] <- pt$y
- b[[i]] <- tbox( pl.nam[i], xx[i], yy[i], wd[i], ht[i] )
- }
-cat( "\n" )
 
+# If not supplied, ask for positions of boxes
+if( is.list(boxpos) )
+  {
+  if( names(boxpos) != c("x","y") )
+    stop( "The list given in 'boxpos=' must have names 'x' and 'y'" )
+  if( length(boxpos$x) != n.st | length(boxpos$y) != n.st )
+    stop( "The elements of boxpos must have length eaual to no. states", n.st )
+  xx <- boxpos$x
+  yy <- boxpos$y
+  }
+if( is.logical(boxpos) )
+  # If logical
+  if( boxpos )
+  {
+  ang <- pi - 2*pi*((1:n.st-0.5)/n.st)
+  xx <- cos( ang ) * 35 + 50
+  yy <- sin( ang ) * 35 + 50
+  }
+  else
+  {
+  xx <- yy <- numeric(n.st)
+  for( i in 1:n.st )
+     {
+     cat( "\nClick for level ", st.nam[i] )
+     flush.console()
+     pt <- locator(1)
+     xx[i] <- pt$x
+     yy[i] <- pt$y
+     tbox( pl.nam[i], xx[i], yy[i], wd[i], ht[i] )
+     }
+  cat( "\n" )
+  }
+# Plot the boxes and record position and size
+b <- list()
+for( i in 1:n.st ) b[[i]] <- tbox( pl.nam[i], xx[i], yy[i], wd[i], ht[i] )
 for( i in 1:n.st ) for( j in 1:n.st )
   {
   if( !is.na(tm[i,j]) & i!=j )
     {
-    arr <- boxarr( b[[i]], b[[j]], offset=!is.na(tm[j,i]) )
+    arr <- boxarr( b[[i]], b[[j]], offset=!is.na(tm[j,i]), ... )
     if( show.D )
-    text( arr$x+arr$d[2], arr$y-arr$d[1], paste( D[i,j] ),
-          adj=(as.numeric(c(arr$d[2]>0,arr$d[1]<0))-0.5)*1.5+0.5,
+    text( arr$x-arr$d[2], arr$y+arr$d[1],
+          formatC( D[i,j]*scale.D, format="f", digits=digits.D ),
+          adj=as.numeric(c(arr$d[2]>0,arr$d[1]<0)),
           font=2, col="black" )
     }
   }
+# Redraw the boxes with white background
+for( i in 1:n.st ) tbox( pl.nam[i], xx[i], yy[i], wd[i], ht[i], col="white" )
 
 #################################################################
 # If we want the code we just print the entire function code,
@@ -167,14 +198,20 @@ yy <- round(yy)
 cat( '
 obj <- ', deparse( substitute( obj ) ), '\n
 if( inherits(obj,"Lexis") ) tm <- tmat.Lexis( obj ) else tm <- obj
+### Position of the boxes:
+xx <- c(', paste( xx, collapse=", " ),')
+yy <- c(', paste( yy, collapse=", " ),')
 cex <-', cex, ' # How should text and numbers be scaled
 wmult <-', wmult, ' # Extra box-width relative to string width
 hmult <-', hmult, ' # Extra box-height relative to string height
 eq.wd <-', eq.wd, ' # All boxes the same width
 eq.ht <-', eq.ht, ' # All boxes the same height
-show.D <-', show.D, ' # Show number of events on arrows
 show.Y <-', show.Y, ' # Show number of person-years in boxes
 scale.Y <-', scale.Y, ' # How should person-years be scaled
+digits.Y <-', digits.Y, ' # How should person-years be printed
+show.D <-', show.D, ' # Show number of events on arrows
+scale.D <-', scale.D, ' # How should rates be scaled
+digits.D <-', digits.D, ' # How should rates be printed
 
 # First get the number of transitions, then write it all to a file
 # and then source it to do the plot
@@ -182,31 +219,30 @@ scale.Y <-', scale.Y, ' # How should person-years be scaled
 if( is.null(st.nam) ) st.nam <- paste(1:ncol(tm))
             pl.nam <- st.nam
       n.st <- length( st.nam )
-xx <- yy <- numeric( n.st )
 
 # Do we want to show person-years and events ?
 if( inherits( obj, "Lexis" ) )
   {
 #################################################################
 ### Adjust the scaling of the person-Years
-  TR <- summary(obj,simplify=FALSE,scale=scale.Y)$Transitions
+  SM <- summary(obj,simplify=FALSE,scale=scale.Y)
+  TR <- SM$Transitions
   Y <- TR[-nrow(TR),"Risk time:"]
-  D <- TR[-nrow(TR),-(nrow(TR):ncol(TR))]
+  # The rates vector is used later for formatting the values of D printed
+  if( scale.D ) TR <- SM$Rates
+  D <- TR[1:n.st,1:n.st]
   }
 
+if( show.Y ) pl.nam <-
 # No extra line with person-years when they are NA
-if( show.Y ) pl.nam <- gsub("\\\nNA", "",
-#################################################################
-### Adjust the printing of the person-Years
-    paste( st.nam, formatC( Y, format="f", digits=',digits.Y,', big.mark=","), sep="\n" ) )
-xx <- yy <- wd <- ht <- numeric( n.st )
+        gsub( "\\\nNA",
+              "",
+    # Adjust the printing of the person-Years
+               paste( st.nam,
+                      formatC( Y, format="f", digits=',digits.Y,', big.mark=","),
+                      sep="\n" ) )
 
 #################################################################
-### Position of the boxes:
-xx <- c(', paste( xx, collapse=", " ),')
-yy <- c(', paste( yy, collapse=", " ),')
-b <- list()
-
 # Here comes the plot
 par( mar=c(0,0,0,0), cex=cex )
 plot( NA,
@@ -220,6 +256,7 @@ wd <- strwidth(  pl.nam ) * wmult
 if( eq.ht ) ht <- rep( max(ht), length(ht) )
 if( eq.wd ) wd <- rep( max(wd), length(wd) )
 # Plot the boxes
+b <- list()
 for( i in 1:n.st )
  b[[i]] <- tbox( pl.nam[i], xx[i], yy[i], wd[i], ht[i] )
 # Plot the arrows
@@ -232,11 +269,14 @@ for( i in 1:n.st ) for( j in 1:n.st )
 ###  Use the adj=  parameter to position the no. transitions rel. to arrow
     if( show.D )
     if( show.D )
-    text( arr$x+arr$d[2], arr$y-arr$d[1], paste( D[i,j] ),
-          adj=(as.numeric(c(arr$d[2]>0,arr$d[1]<0))-0.5)*1.5+0.5,
+    text( arr$x-arr$d[2], arr$y+arr$d[1],
+          formatC( D[i,j]*scale.D, format="f", digits=digits.D ),
+          adj=as.numeric(c(arr$d[2]>0,arr$d[1]<0)),
           font=2, col="black" )
     }
   }
+# Redraw the boxes with white background
+for( i in 1:n.st ) tbox( pl.nam[i], xx[i], yy[i], wd[i], ht[i], col="white" )
      ', file=file )
 }
 }
