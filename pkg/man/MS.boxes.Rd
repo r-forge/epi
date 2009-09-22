@@ -168,7 +168,7 @@ text( boxarr( bd, bdc, col="blue", lwd=3 ),
 # Set up a transition matrix allowing recovery
 tm <- rbind( c(NA,1,1), c(1,NA,1), c(NA,NA,NA) )
 rownames(tm) <- colnames(tm) <- c("Cancer","Recurrence","Dead")
-boxes.Lexis( tm, file="",boxpos=TRUE )
+boxes( tm, file="", boxpos=TRUE )
 
 # Set up a Lexis object
 data(DMlate)
