@@ -1,3 +1,12 @@
+Changes in 1.1.7
+
+o boxes.Lexis has been furter enhanced with the facility to plot rates
+  instead of no. transitions on the arrows if required. The code has been
+  tidied a bit too.
+  
+o The man file for boxes.Lexis and subsidiaries have been renamed to
+  MS.boxes.Rd
+
 Changes in 1.1.5
 
 o boxes.Lexis have been enhanced to accomodate two-way transitions between

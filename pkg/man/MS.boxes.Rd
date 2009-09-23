@@ -35,7 +35,7 @@
              digits.Y = 1,
                show.D = show,
               scale.D = FALSE,
-             digits.D = 0,
+             digits.D = as.numeric( as.logical(scale.D) ),
                 eq.wd = TRUE,
                 eq.ht = TRUE, ... )
    fillarr( x1, y1, x2, y2, gap=2, fr=0.8,
@@ -59,8 +59,8 @@
     \code{x}, \code{y}, \code{w}, \code{h}.}
   \item{b2}{Coordinates of the "to" box.}
   \item{offset}{Logical. Should the arrow be offset a bit to the left.}
-  \item{pos}{Numerical between 0 and 1, determines where on the arrow the
-             text or number is written.}
+  \item{pos}{Numerical between 0 and 1, determines the position of the point
+             on the arrow which is returned.}
   \item{obj}{A \code{\link{Lexis}} object, or a transition matrix; that
     is a matrix}
   \item{file}{Name of the file with the code reproducing the plot.}
@@ -92,13 +92,15 @@
   \item{eq.ht}{Should boxes all have the same height?}
   \item{x1}{x-coordinate of the starting point.}
   \item{y1}{y-coordinate of the starting point.}
-  \item{x2}{x-coordinate of the ending point.}
-  \item{y2}{y-coordinate of the ending point.}
+  \item{x2}{x-coordinate of the end point.}
+  \item{y2}{y-coordinate of the end point.}
   \item{gap}{Length of the gap between the box and the ends of the arrows.}
   \item{fr}{Length of the arrow as the fraction of the distance between the
-            boxes. Ignored if gap is given.}
+            boxes. Ignored unless given explicitly, in which case any value
+            given for \code{gap} is ignored.}
   \item{angle}{What angle should the arrow-head have?}
-  \item{length}{Length of the arrow head in inches.}
+  \item{length}{Length of the arrow head in inches. Defaults to 1/30 of the
+                physical width of the plot.}
   }
   \details{    
   These functions are designed to facilitate the drawing of multistate
@@ -112,7 +114,8 @@
   lines are drawn.
   
   \code{boxes.Lexis} takes as input a Lexis object sets up an empty plot
-  area (with axes 0 to 100 in both directions) and prompts you to click
+  area (with axes 0 to 100 in both directions) and if \code{boxpos=FALSE}
+  (the default) prompts you to click
   on the locations for the state boxes, and then draws arrows implied by
   the actual transitions in the \code{Lexis} object.
 
@@ -141,7 +144,7 @@
        as input to the \code{boxarr} function.
 
        The \code{boxarr} function returns the coordinates (as a named
-       list with names \code{x} and \code{y}) of the midpoint of the
+       list with names \code{x} and \code{y}) of a point on the
        arrow, designated to be used for annotation of the arrow.
        } 
 \author{Bendix Carstensen}

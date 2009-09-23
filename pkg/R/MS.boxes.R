@@ -26,8 +26,8 @@ fillarr <-
 function( x1, y1, x2, y2, gap=2, fr=0.8,
           angle=17, lwd=2, length=par("pin")[1]/30, ... )
 {
+fr <- 1-gap/sqrt((x1-x2)^2+(y1-y2)^2)
 if( !missing(fr)  ) if( fr > 1 ) fr <- fr/100
-if( !missing(gap) ) fr <- 1-gap/sqrt((x1-x2)^2+(y1-y2)^2)
 for( a in 1:angle )
 arrows( x1 + (x2-x1)*(1-fr)/2,
         y1 + (y2-y1)*(1-fr)/2,
@@ -95,7 +95,7 @@ function( obj, file,
              digits.Y = 1,
                show.D = show,
               scale.D = FALSE,
-             digits.D = 0,
+             digits.D = as.numeric(as.logical(scale.D)),
                 eq.wd = TRUE,
                 eq.ht = TRUE, ... )
 {
@@ -114,12 +114,8 @@ if( is.null(st.nam) ) st.nam <- paste(1:ncol(tm))
 if( show & inherits( obj, "Lexis" ) )
   {
   SM <- summary(obj,simplify=FALSE,scale=scale.Y)
-  TR <- SM$Transitions
-  Y <- TR[-nrow(TR),"Risk time:"]
-  # The rates vector is used later for formatting the values of D printed
-  if( scale.D ) TR <- SM$Rates
-  if( !scale.D ) scale.D <- 1
-  D <- TR[1:n.st,1:n.st]
+  Y <- SM[[1]][-n.st-1,"Risk time:"]
+  D <- SM[[1+as.logical(scale.D)]][1:n.st,1:n.st] * ifelse(scale.D,scale.D,1)
   }
 # No extra line with person-years when they are NA
 if( show.Y ) pl.nam <- gsub("\\\nNA", "",
@@ -142,12 +138,11 @@ if( is.list(boxpos) )
   if( names(boxpos) != c("x","y") )
     stop( "The list given in 'boxpos=' must have names 'x' and 'y'" )
   if( length(boxpos$x) != n.st | length(boxpos$y) != n.st )
-    stop( "The elements of boxpos must have length eaual to no. states", n.st )
+    stop( "The elements of boxpos must both have length equal to no. states", n.st )
   xx <- boxpos$x
   yy <- boxpos$y
   }
 if( is.logical(boxpos) )
-  # If logical
   if( boxpos )
   {
   ang <- pi - 2*pi*((1:n.st-0.5)/n.st)
@@ -178,7 +173,7 @@ for( i in 1:n.st ) for( j in 1:n.st )
     arr <- boxarr( b[[i]], b[[j]], offset=!is.na(tm[j,i]), ... )
     if( show.D )
     text( arr$x-arr$d[2], arr$y+arr$d[1],
-          formatC( D[i,j]*scale.D, format="f", digits=digits.D ),
+          formatC( D[i,j], format="f", digits=digits.D ),
           adj=as.numeric(c(arr$d[2]>0,arr$d[1]<0)),
           font=2, col="black" )
     }
@@ -200,83 +195,70 @@ cat( '
 obj <- ', deparse( substitute( obj ) ), '\n
 if( inherits(obj,"Lexis") ) tm <- tmat.Lexis( obj ) else tm <- obj
 ### Position of the boxes:
-xx <- c(', paste( xx, collapse=", " ),')
-yy <- c(', paste( yy, collapse=", " ),')
-cex <-', cex, ' # How should text and numbers be scaled
-wmult <-', wmult, ' # Extra box-width relative to string width
-hmult <-', hmult, ' # Extra box-height relative to string height
-eq.wd <-', eq.wd, ' # All boxes the same width
-eq.ht <-', eq.ht, ' # All boxes the same height
-show.Y <-', show.Y, ' # Show number of person-years in boxes
-scale.Y <-', scale.Y, ' # How should person-years be scaled
+      xx <- c(', paste( xx, collapse=", " ),')
+      yy <- c(', paste( yy, collapse=", " ),')
+     cex <-', cex, '      # How should text and numbers be scaled
+   wmult <-', wmult, '    # Extra box-width relative to string width
+   hmult <-', hmult, '    # Extra box-height relative to string height
+   eq.wd <-', eq.wd, '    # All boxes the same width
+   eq.ht <-', eq.ht, '    # All boxes the same height
+  show.Y <-', show.Y, '   # Show number of person-years in boxes
+ scale.Y <-', scale.Y, '  # How should person-years be scaled
 digits.Y <-', digits.Y, ' # How should person-years be printed
-show.D <-', show.D, ' # Show number of events on arrows
-scale.D <-', scale.D, ' # How should rates be scaled
+  show.D <-', show.D, '   # Show number of events on arrows
+ scale.D <-', scale.D, '  # How should rates be scaled
 digits.D <-', digits.D, ' # How should rates be printed
-
-# First get the number of transitions, then write it all to a file
-# and then source it to do the plot
                       st.nam <- colnames( tm )
 if( is.null(st.nam) ) st.nam <- paste(1:ncol(tm))
             pl.nam <- st.nam
       n.st <- length( st.nam )
 
-# Do we want to show person-years and events ?
-if( inherits( obj, "Lexis" ) )
-  {
-#################################################################
-### Adjust the scaling of the person-Years
+# If we want to show person-years and events / rates
   SM <- summary(obj,simplify=FALSE,scale=scale.Y)
-  TR <- SM$Transitions
-  Y <- TR[-nrow(TR),"Risk time:"]
-  # The rates vector is used later for formatting the values of D printed
-  if( scale.D ) TR <- SM$Rates
-  D <- TR[1:n.st,1:n.st]
-  }
-
-if( show.Y ) pl.nam <-
+  Y <- SM[[1]][-n.st-1,"Risk time:"]
+  D <- SM[[1+as.logical(scale.D)]][1:n.st,1:n.st] * ifelse(scale.D,scale.D,1)
 # No extra line with person-years when they are NA
-        gsub( "\\\nNA",
-              "",
-    # Adjust the printing of the person-Years
-               paste( st.nam,
-                      formatC( Y, format="f", digits=',digits.Y,', big.mark=","),
-                      sep="\n" ) )
-
+# and adjust the printing of the person-Years
+if( show.Y )
+  {
+  pl.nam <- gsub( "\\\nNA", "",
+                  paste( st.nam,
+                         formatC( Y, format="f", digits=',digits.Y,',
+                                  big.mark=","),
+                         sep="\n" ) )
+  }
+  
 #################################################################
 # Here comes the plot
 par( mar=c(0,0,0,0), cex=cex )
-plot( NA,
-      bty="n",
+plot( NA, bty="n",
       xlim=0:1*100, ylim=0:1*100, xaxt="n", yaxt="n", xlab="", ylab="" )
 # String height and width only meaningful after a plot has been called
 ht <- strheight( pl.nam ) * hmult
 wd <- strwidth(  pl.nam ) * wmult
-#################################################################
-### Should all boxes be of same height / width:
+
+# Should all boxes be of same height / width:
 if( eq.ht ) ht <- rep( max(ht), length(ht) )
 if( eq.wd ) wd <- rep( max(wd), length(wd) )
+
 # Plot the boxes
 b <- list()
 for( i in 1:n.st )
- b[[i]] <- tbox( pl.nam[i], xx[i], yy[i], wd[i], ht[i] )
-# Plot the arrows
+   b[[i]] <- tbox( pl.nam[i], xx[i], yy[i], wd[i], ht[i] )
+
+# Plot the arrows and the text along them
 for( i in 1:n.st ) for( j in 1:n.st )
-  {
-  if( !is.na(tm[i,j]) )
-    {
-    arr <- boxarr( b[[i]], b[[j]], offset=!is.na(tm[j,i]) )
-########################################################################
-###  Use the adj=  parameter to position the no. transitions rel. to arrow
-    if( show.D )
-    if( show.D )
-    text( arr$x-arr$d[2], arr$y+arr$d[1],
-          formatC( D[i,j]*scale.D, format="f", digits=digits.D ),
-          adj=as.numeric(c(arr$d[2]>0,arr$d[1]<0)),
-          font=2, col="black" )
-    }
-  }
-# Redraw the boxes with white background
+   {
+   if( !is.na(tm[i,j]) )
+     {
+     arr <- boxarr( b[[i]], b[[j]], offset=!is.na(tm[j,i]) )
+     if( show.D ) text( arr$x-arr$d[2], arr$y+arr$d[1],
+                        formatC( D[i,j], format="f", digits=digits.D ),
+                        adj=as.numeric(c(arr$d[2]>0,arr$d[1]<0)),
+                        font=2, col="black" )
+     }
+   }
+# Redraw the boxes with white background to move the arrows behind them
 for( i in 1:n.st ) tbox( pl.nam[i], xx[i], yy[i], wd[i], ht[i], col="white" )
      ', file=file )
 }
