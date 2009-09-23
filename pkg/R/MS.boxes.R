@@ -118,6 +118,7 @@ if( show & inherits( obj, "Lexis" ) )
   Y <- TR[-nrow(TR),"Risk time:"]
   # The rates vector is used later for formatting the values of D printed
   if( scale.D ) TR <- SM$Rates
+  if( !scale.D ) scale.D <- 1
   D <- TR[1:n.st,1:n.st]
   }
 # No extra line with person-years when they are NA
