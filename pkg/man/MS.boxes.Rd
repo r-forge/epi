@@ -60,13 +60,13 @@
   \item{b2}{Coordinates of the "to" box.}
   \item{offset}{Logical. Should the arrow be offset a bit to the left.}
   \item{pos}{Numerical between 0 and 1, determines where on the arrow the
-             text or numer is written.}
+             text or number is written.}
   \item{obj}{A \code{\link{Lexis}} object, or a transition matrix; that
     is a matrix}
   \item{file}{Name of the file with the code reproducing the plot.}
   \item{boxpos}{If \code{TRUE} the boxes are positioned  equidistantly on a
                 circle, if \code{FALSE} (the default) you are queried to
-                click on the screem for the positions. This argument can also
+                click on the screen for the positions. This argument can also
                 be a named list with elements \code{x} and
                 \code{y}, both numerical vectors, giving the centers of
                 the boxes.}
@@ -123,10 +123,10 @@
   can be useful if you want to produce exactly the same plot with
   differing arrow colors etc.
 
-  \code{boxarr} draws an arrow between two boxes, on the line conneting
+  \code{boxarr} draws an arrow between two boxes, on the line connecting
   the two box centers. The \code{offset} argument is used to offset the
-  arrow a bit to the left (as seen in the direction of the arroe) on order
-  to accomodate arrows both ways between boxes. \code{boxarr} returns a named
+  arrow a bit to the left (as seen in the direction of the arrow) on order
+  to accommodate arrows both ways between boxes. \code{boxarr} returns a named
   list with elements \code{x}, \code{y} and \code{d}, where the two former
   give the location of a point on the arrow used for printing (see argument
   \code{pos}) and the latter is a unit vector in the
@@ -168,7 +168,7 @@ text( boxarr( bd, bdc, col="blue", lwd=3 ),
 # Set up a transition matrix allowing recovery
 tm <- rbind( c(NA,1,1), c(1,NA,1), c(NA,NA,NA) )
 rownames(tm) <- colnames(tm) <- c("Cancer","Recurrence","Dead")
-boxes( tm, file="", boxpos=TRUE )
+boxes.Lexis( tm, file="", boxpos=TRUE )
 
 # Set up a Lexis object
 data(DMlate)
