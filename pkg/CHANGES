@@ -1,3 +1,8 @@
+Changes in 1.1.8
+
+o apc.fit had a bug in the specification of knots when using the argument
+  model="bs".
+
 Changes in 1.1.7
 
 o boxes.Lexis has been furter enhanced with the facility to plot rates
