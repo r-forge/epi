@@ -26,7 +26,6 @@ export(
   fit.add,
   fit.mult,
   ftrend,
-  W.Lexis,
   Lexis.diagram,
   Lexis.lines,
   Life.lines,
