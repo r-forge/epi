@@ -1,6 +1,11 @@
 #include <R.h>
 #include <Rinternals.h>
 
+static int imin(int i, int j)
+{
+    return i < j ? i : j;
+}
+
 /* 
    Efficient calculation of the conditional log likelihood, along with
    the score and information matrix, for a single stratum.
@@ -8,13 +13,11 @@
    Input parameters:
 
    X      T x m matrix of covariate values
-   beta   m-vector of log odds ratio parameters
    y      T-vector that indicates if an individual is a case (y[t]==1)
             or control (y[t]==0)
-   Tp     pointer to T
-   mp     pointer to m
-
-   X and y may be modified in-place.
+   T      Number of individuals in the stratum
+   m      Number of covariates
+   beta   m-vector of log odds ratio parameters
 
    Output parameters:
 
@@ -28,13 +31,15 @@
    
 */
 
-void cloglik(double *X, int *y, int T, int m, double *beta, 
+void cloglik(double const *X, int const *y, int T, int m, double const *beta, 
 	     double *loglik, double *score, double *info)
 {
     double *f, *g, *h, *xt;
     int i,j,k,t;
     int K = 0, Kp;
-    
+    int iscase = 1;
+    double sign = 1;
+
     /* Calculate number of cases */
     for (t = 0; t < T; ++t) {
 	if (y[t] != 0 && y[t] != 1) {
@@ -47,29 +52,22 @@ void cloglik(double *X, int *y, int T, int m, double *beta,
     }
 
     /* 
-       If there are more cases than controls then swap cases and controls
-       and invert the covariate values. Note that we are relying on
-       the fact that X, y are *copies* of the original data so we don't
-       swap them back at the end of the call.
+       If there are more cases than controls then define cases to be
+       those with y[t] == 0, and reverse the sign of the covariate values.
     */
-
     if (K > T/2) {
 	K = T - K;
-	for (t = 0; t < T; ++t) {
-	    y[t] = 1 - y[t];
-	    for (i = 0; i < m; ++i) {
-		X[t + i*T] = -X[t + i*T];
-	    }
-	}
+	iscase = 0;
+	sign = -1;
     }
 
     /* Contribution from cases */
 
-    for (int t = 0; t < T; ++t) {
-	if (y[t]) {
-	    for (int i = 0; i < m; ++i) {
-		loglik[0] += X[t + i*T] * beta[i];
-		score[i] += X[t + i*T];
+    for (t = 0; t < T; ++t) {
+	if (y[t] == iscase) {
+	    for (i = 0; i < m; ++i) {
+		loglik[0] += sign * X[t + i*T] * beta[i];
+		score[i] += sign * X[t + i*T];
 	    }
 	}
     }
@@ -101,13 +99,13 @@ void cloglik(double *X, int *y, int T, int m, double *beta,
     for (t = 0; t < T; ++t) {
 
 	double Ct = 0;
-	for (int i = 0; i < m; ++i) {
-	    xt[i] = X[t + T*i];
+	for (i = 0; i < m; ++i) {
+	    xt[i] = sign * X[t + T*i];
 	    Ct += beta[i] * xt[i];
 	}
 	Ct = exp(Ct);
 
-	for (k = 1; k < Kp; ++k) {
+	for (k = imin(K,t+1); k > 0; --k) {
 
 	    for (i = 0; i < m; ++i) {
 		double const *gpi = g + Kp*i;
@@ -150,7 +148,6 @@ void cloglik(double *X, int *y, int T, int m, double *beta,
     Free(xt);
 }
 
-
 /*
  * .Call Interface to do conditional log likelihood calculations
  *
@@ -172,14 +169,15 @@ SEXP neg_cloglik(SEXP X, SEXP y, SEXP beta)
     int m = length(beta);
     int M = m*m;
     double *bp = REAL(beta);
-    double loglik = 0;
-    double *score, *info;
+    double loglik, *score, *info;
     SEXP ans, grad, hess, dims;
 
     if (!isNewList(X)) error("'X' must be a list");
     if (!isNewList(y)) error("'y' must be a list");
     if (length(X) != length(y)) error("length mismatch between X and y");
 
+    /* Output parameters of cloglik must be initialized to zero */
+    loglik = 0;
     score = (double *) R_alloc(m, sizeof(double));
     for (i = 0; i < m; ++i) {
 	score[i] = 0;
