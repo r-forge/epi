@@ -30,11 +30,13 @@ clogistic(formula, strata, data, weights, subset, na.action, init, offset, model
     an optional list. See the \code{contrasts.arg} of
     \code{model.matrix.default}
   }
-  \item{\dots}{NOT IMPLEMENTED}
+  \item{\dots}{additional arguments for controlling the fitting process.
+    These are passed to the \code{nlm} function. Examples are \code{iterlim},
+    \code{steptol}, \code{stepmax}, \code{grad.tol}, \code{print.level}}
 }
 \value{
   An object of class \code{"clogistic"}.
 }
 \author{Martyn Plummer}
-\seealso{\code{\link{glm}}}
+\seealso{\code{\link{glm}}, \code{\link{nlm}}}
 \keyword{models}

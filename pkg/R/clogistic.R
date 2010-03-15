@@ -35,25 +35,53 @@ fitClogit <- function(X, y, strata, weights, init, offset, ...)
 
     y <- fixEvent(y)
     
-    ## Centre predictor variables about the mean
-    ## FIXME: we can do this within strata
-    X <- sweep(X, 2, apply(X, 2, mean))
-    
     if (missing(strata)) {
         stop("strata missing")
     }
     ## Split into strata
-    X <- splitMatrix(X, strata, drop=TRUE)
-    y <- split(y, strata, drop=TRUE)
-    
+    Xsplit <- splitMatrix(X, strata, drop=TRUE)
+    ysplit <- split(y, strata, drop=TRUE)
+
+    ## Centre predictor variables about mean in each stratum
+    Xsplit <- lapply(Xsplit, function(x) sweep(x, 2, apply(x,2,mean)))
+
     ## Objective function for nlm uses lexical scoping
     objf <- function(beta) {
-        .Call("neg_cloglik", X, y, beta, PACKAGE="Epi")
+        .Call("neg_cloglik", Xsplit, ysplit, beta, PACKAGE="Epi")
     }
 
-    nlm.out <- nlm(objf, init, hessian=TRUE, ...)
-    nlm.out$nullmodel <- objf(rep(0,m))
-    return(nlm.out)
+    ## Drop collinear columns if necessary
+    nullmodel <- objf(rep(0,m))
+    qrhess <- qr(attr(nullmodel, "hessian"))
+    rank <- qrhess$rank
+    if (rank < m) {
+        bad <- qrhess$pivot[(rank+1):m]
+        init <- init[-bad]
+        Xsplit <- splitMatrix(X[,-bad,drop=FALSE], strata, drop=TRUE)
+        Xsplit <- lapply(Xsplit, function(x) sweep(x, 2, apply(x,2,mean)))
+        warning("Singular design matrix: column ", paste(bad, collapse=","))
+    }
+
+    fit <- nlm(objf, init, hessian=TRUE, ...)
+    
+    ## Translate nlm results into the more familiar language of regression
+    ## models
+    fit <- list(coefficients=fit$estimate, var = solve(fit$hessian),
+                loglik = c(-nullmodel, -fit$minimum),
+                score = -fit$gradient,
+                iter = fit$iterations, code=fit$code)
+    
+    if (rank < m) {
+        ## Put back dropped parameters as missing values
+        coef <- rep(NA, m)
+        coef[-bad] <- fit$coefficients
+        fit$coefficients <- coef
+        var <- matrix(NA, m, m)
+        var[-bad,-bad] <- fit$var
+        fit$var <- var
+    }
+    
+    return(fit)
 }
 
 clogistic <- function (formula, strata, data, weights, subset, na.action,
@@ -104,13 +132,11 @@ clogistic <- function (formula, strata, data, weights, subset, na.action,
     if (missing(init))
         init <- rep(0, ncol(X))
     fit <- fitClogit(X = X, y = Y, strata=strata, weights = weights,
-                     offset = offset, init=init)
-    ## Translate nlm results into the more familiar language of regression
-    ## models
-    fit <- list(coefficients=fit$estimate, var = solve(fit$hessian),
-                loglik = c(-fit$nullmodel,-fit$minimum),
-                score = -fit$gradient,
-                iter = fit$iterations, code=fit$code)
+                     offset = offset, init=init, ...)
+    if (fit$code > 2) {
+      warning("nlm function terminated with code ", fit$code)
+    }
+    
     ## Add back in parameter names
     cfnames <- colnames(X)
     names(fit$coefficients) <- cfnames
@@ -140,11 +166,7 @@ print.clogistic <- function (x, digits = max(options()$digits - 4, 3), ...)
     ## Print method for clogistic objects, edited from print.coxph
     
     cat("\nCall: ", deparse(x$call), "\n\n", sep="\n")
-    if (x$code > 2) {
-        cat("Optimization in clogistic terminated with code ", x$code, "\n")
-        cat("See nlm help page for details\n")
-        return()
-    }
+
     savedig <- options(digits = digits)
     on.exit(options(savedig))
     coef <- coef.clogistic(x)

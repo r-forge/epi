@@ -34,7 +34,7 @@ static int imin(int i, int j)
 void cloglik(double const *X, int const *y, int T, int m, double const *beta, 
 	     double *loglik, double *score, double *info)
 {
-    double *f, *g, *h, *xt;
+    double *f, *g, *h, *xt, *lpmax;
     int i,j,k,t;
     int K = 0, Kp;
     int iscase = 1;
@@ -61,12 +61,29 @@ void cloglik(double const *X, int const *y, int T, int m, double const *beta,
 	sign = -1;
     }
 
-    /* Contribution from cases */
+    /*
+      Calculate the maximum value of the linear predictor (lpmax) within the
+      stratum. This is subtracted from the linear predictor when taking
+      exponentials for numerical stability. Note that we must correct
+      the log-likelihood for this, but not the score or information matrix.
+    */
+    lpmax = Calloc(m, double);
+    for (i = 0; i < m; ++i) {
+	lpmax[i] = beta[i] * sign * X[T*i];
+    }
+    for (t = 1; t < T; ++t) {
+	for (i = 0; i < m; ++i) {
+	    double lp = beta[i] * sign * X[t + T*i];
+	    if (lp > lpmax[i])
+		lpmax[i] = lp;
+	}
+    }
 
+    /* Contribution from cases */
     for (t = 0; t < T; ++t) {
 	if (y[t] == iscase) {
 	    for (i = 0; i < m; ++i) {
-		loglik[0] += sign * X[t + i*T] * beta[i];
+		loglik[0] += sign * X[t + i*T] * beta[i] - lpmax[i];
 		score[i] += sign * X[t + i*T];
 	    }
 	}
@@ -92,8 +109,8 @@ void cloglik(double const *X, int const *y, int T, int m, double const *beta,
     f[0] = 1;
 
     /* 
-       Recursively calculate contributions from summing over all
-       possible case sets of size K.
+       Recursively calculate contributions over all possible case sets
+       of size K.
     */
 
     for (t = 0; t < T; ++t) {
@@ -101,7 +118,7 @@ void cloglik(double const *X, int const *y, int T, int m, double const *beta,
 	double Ct = 0;
 	for (i = 0; i < m; ++i) {
 	    xt[i] = sign * X[t + T*i];
-	    Ct += beta[i] * xt[i];
+	    Ct += beta[i] * xt[i] - lpmax[i];
 	}
 	Ct = exp(Ct);
 
@@ -129,7 +146,7 @@ void cloglik(double const *X, int const *y, int T, int m, double const *beta,
 
     }
 
-    /* Add contributions from this stratum */
+    /* Add contributions from this stratum to the output parameters */
 
     loglik[0] -= log(f[K]);
     for (i = 0; i < m; ++i) {
@@ -146,6 +163,7 @@ void cloglik(double const *X, int const *y, int T, int m, double const *beta,
     Free(g);
     Free(h);
     Free(xt);
+    Free(lpmax);
 }
 
 /*
