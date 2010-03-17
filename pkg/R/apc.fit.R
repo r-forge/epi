@@ -6,7 +6,7 @@ function( data,
              Y,
          ref.c,
          ref.p,
-          dist = c("poisson","binomial")
+          dist = c("poisson","binomial"),
          model = c("ns","bs","ls","factor"),
        dr.extr = c("weighted","Holford"),
           parm = c("ACP","APC","AdCP","AdPC","Ad-P-C","Ad-C-P","AC-P","AP-C"),
