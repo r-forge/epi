@@ -25,68 +25,35 @@ fixEvent <- function(event)
             stop("If outcome is a factor then it must have 2 levels")
         status <- event == levels(event)[2]
     }
-    return(status)
+    return(as.integer(status))
 }  
 
-fitClogit <- function(X, y, strata, weights, init, offset, ...)
+fitClogit <- function(X, y, strata, init, iter.max, eps, toler.chol, ...)
 {
-    m <- ncol(X)
-    M <- 1 + m + m*m
-
-    y <- fixEvent(y)
+    ## Safe wrapper around the C function "clogit" that ensures all
+    ## arguments have the correct type and storage mode.
     
-    if (missing(strata)) {
-        stop("strata missing")
+    y <- fixEvent(y)
+    if (!is.matrix(X)) {
+        X <- as.matrix(X)
     }
+    if (!is.real(X)) {
+        X <- matrix(as.real(X), nrow(X), ncol(X))
+    }
+    
     ## Split into strata
     Xsplit <- splitMatrix(X, strata, drop=TRUE)
     ysplit <- split(y, strata, drop=TRUE)
 
-    ## Centre predictor variables about mean in each stratum
-    Xsplit <- lapply(Xsplit, function(x) sweep(x, 2, apply(x,2,mean)))
-
-    ## Objective function for nlm uses lexical scoping
-    objf <- function(beta) {
-        .Call("neg_cloglik", Xsplit, ysplit, beta, PACKAGE="Epi")
-    }
-
-    ## Drop collinear columns if necessary
-    nullmodel <- objf(rep(0,m))
-    qrhess <- qr(attr(nullmodel, "hessian"))
-    rank <- qrhess$rank
-    if (rank < m) {
-        bad <- qrhess$pivot[(rank+1):m]
-        init <- init[-bad]
-        Xsplit <- splitMatrix(X[,-bad,drop=FALSE], strata, drop=TRUE)
-        Xsplit <- lapply(Xsplit, function(x) sweep(x, 2, apply(x,2,mean)))
-        warning("Singular design matrix: column ", paste(bad, collapse=","))
-    }
-
-    fit <- nlm(objf, init, hessian=TRUE, ...)
-    
-    ## Translate nlm results into the more familiar language of regression
-    ## models
-    fit <- list(coefficients=fit$estimate, var = solve(fit$hessian),
-                loglik = c(-nullmodel, -fit$minimum),
-                score = -fit$gradient,
-                iter = fit$iterations, code=fit$code)
-    
-    if (rank < m) {
-        ## Put back dropped parameters as missing values
-        coef <- rep(NA, m)
-        coef[-bad] <- fit$coefficients
-        fit$coefficients <- coef
-        var <- matrix(NA, m, m)
-        var[-bad,-bad] <- fit$var
-        fit$var <- var
-    }
-    
-    return(fit)
+    .Call("clogit", Xsplit, ysplit, as.double(init),
+          as.integer(iter.max), as.double(eps), as.double(toler.chol),
+          PACKAGE="Epi")
 }
 
 clogistic <- function (formula, strata, data, weights, subset, na.action,
-                    init, offset, model = TRUE, x = FALSE, y = TRUE,
-                    contrasts = NULL, ...) 
+                       init, offset, model = TRUE, x = FALSE, y = TRUE,
+                       contrasts = NULL, iter.max=20, eps=1e-9,
+                       toler.chol = sqrt(.Machine$double.eps)) 
 {
     ## User interface, edited version of glm
     
@@ -131,11 +98,22 @@ clogistic <- function (formula, strata, data, weights, subset, na.action,
     }
     if (missing(init))
         init <- rep(0, ncol(X))
-    fit <- fitClogit(X = X, y = Y, strata=strata, weights = weights,
-                     offset = offset, init=init, ...)
-    if (fit$code > 2) {
-      warning("nlm function terminated with code ", fit$code)
+    fit <- fitClogit(X = X, y = Y, strata=strata, init=init,
+                     toler.chol=toler.chol, eps=eps, iter.max=iter.max)
+    if (fit$flag <= 0) {
+        error("Information matrix is not positive definite")
     }
+    else if (fit$flag == 1000) {
+        warning("Iteration limit exceeded")
+    }
+
+    nvar <- length(init)
+    which.sing <- if (fit$flag < nvar) {
+        diag(fit$var)==0
+    } else {
+        rep(FALSE, nvar)
+    }
+    fit$coefficients[which.sing] <- NA
     
     ## Add back in parameter names
     cfnames <- colnames(X)
