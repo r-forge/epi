@@ -7,7 +7,9 @@
   scale efficiently to strata with large numbers of cases.
 }
 \usage{
-clogistic(formula, strata, data, weights, subset, na.action, init, offset, model = TRUE, x = FALSE, y = TRUE, contrasts = NULL, ...)
+clogistic(formula, strata, data, weights, subset, na.action, init,
+offset, model = TRUE, x = FALSE, y = TRUE, contrasts = NULL,
+iter.max=20, eps=1e-9, toler.chol = sqrt(.Machine$double.eps)) 
 }
 \arguments{
   \item{formula}{Model formula}
@@ -19,7 +21,8 @@ clogistic(formula, strata, data, weights, subset, na.action, init, offset, model
   \item{na.action}{missing value handling}
   \item{init}{initial values}
   \item{offset}{NOT IMPLEMENTED}
-  \item{model}{a logical value indicating whether \emph{model frame}
+  \item{model}{
+    a logical value indicating whether \emph{model frame}
     should be included as a component of the returned value}
   \item{x,y}{
     logical values indicating whether the response vector and model
@@ -30,13 +33,21 @@ clogistic(formula, strata, data, weights, subset, na.action, init, offset, model
     an optional list. See the \code{contrasts.arg} of
     \code{model.matrix.default}
   }
-  \item{\dots}{additional arguments for controlling the fitting process.
-    These are passed to the \code{nlm} function. Examples are \code{iterlim},
-    \code{steptol}, \code{stepmax}, \code{grad.tol}, \code{print.level}}
+  \item{iter.max}{maximum number of iterations}
+  \item{eps}{
+    Convergence tolerence.  Iteration continues until the relative
+    change in the conditional log likelihood is less than \code{eps}.
+    Must be positive.
+  }
+  \item{toler.chol}{
+    Tolerance used for detection of a singularity during a Cholesky
+    decomposition of the variance martrix. This is used to detect
+    redundant predictor variables. Must be less than \code{eps}.
+  }
 }
 \value{
   An object of class \code{"clogistic"}.
 }
 \author{Martyn Plummer}
-\seealso{\code{\link{glm}}, \code{\link{nlm}}}
+\seealso{\code{\link{glm}}}
 \keyword{models}

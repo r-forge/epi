@@ -98,6 +98,16 @@ clogistic <- function (formula, strata, data, weights, subset, na.action,
     }
     if (missing(init))
         init <- rep(0, ncol(X))
+
+    if (iter.max < 0)
+        stop("'iter.max' must be non-negative")
+    if (eps <= 0)
+        stop("'eps' must be positive")
+    if (toler.chol <= 0)
+        stop("'toler.chol' must be positive")
+    if (eps < toler.chol)
+        stop("'toler.chol' must be smaller than 'eps'")
+    
     fit <- fitClogit(X = X, y = Y, strata=strata, init=init,
                      toler.chol=toler.chol, eps=eps, iter.max=iter.max)
     if (fit$flag <= 0) {
