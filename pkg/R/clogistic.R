@@ -125,6 +125,7 @@ clogistic <- function (formula, strata, data, subset, na.action,
         rep(FALSE, nvar)
     }
     fit$coefficients[which.sing] <- NA
+    fit$flag <- NULL
     
     ## Add back in parameter names
     cfnames <- colnames(X)
@@ -139,8 +140,7 @@ clogistic <- function (formula, strata, data, subset, na.action,
     if (!y) 
         fit$y <- NULL
     fit <- c(fit, list(call = call, formula = formula, terms = mt, 
-        data = data, offset = offset, control = NULL, method = NULL, 
-        contrasts = contrasts, xlevels = .getXlevels(mt, mf)))
+                       contrasts = contrasts, xlevels = .getXlevels(mt, mf)))
     class(fit) <- c("clogistic")
     fit
 }

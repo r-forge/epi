@@ -389,18 +389,15 @@ SEXP clogit(SEXP X, SEXP y, SEXP offset, SEXP init,
 
     beta = (double *) R_alloc(m, sizeof(double));
     for (i = 0; i < m; ++i) {
-	beta[i] = 0;
+	beta[i] = REAL(init)[i];
     }
     score = (double *) R_alloc(m, sizeof(double));
     info = (double *) R_alloc(M, sizeof(double));
 
-    /* Calculate null loglikelihood */
+    /* Calculate initial loglikelihood */
     cloglik(X, y, offset, m, beta, &loglik[0], score, info);
     
     /* Maximize the likelihood */
-    for (i = 0; i < m; ++i) {
-	beta[i] = REAL(init)[i];
-    }
     clogit_fit(X, y, offset, m, beta, &loglik[1], score, info,
 	       &flag, &niter, REAL(eps), REAL(tol_chol));
 

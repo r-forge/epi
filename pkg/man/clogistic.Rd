@@ -3,7 +3,7 @@
 \title{Conditional logistic regression}
 \description{
   Estimates a logistic regression model by maximizing the conditional
-  likelihood.  The conditional likelihood calculations are exact and
+  likelihood.  The conditional likelihood calculations are exact, and
   scale efficiently to strata with large numbers of cases.
 }
 \usage{
@@ -44,7 +44,28 @@ iter.max=20, eps=1e-6, toler.chol = sqrt(.Machine$double.eps))
   }
 }
 \value{
-  An object of class \code{"clogistic"}.
+  An object of class \code{"clogistic"}. This is a list containing
+  the following components:
+  \item{coefficients}{
+    the estimates of the log-odds ratio parameters.  If the model is
+    over-determined there will be missing values in the vector corresponding
+    to the redundant columns in the model matrix.
+  }
+  \item{var}{
+    the variance matrix of the coefficients.  Rows and columns corresponding to 
+    any missing coefficients are set to zero. 
+  }
+  \item{loglik}{
+    a vector of length 2 containing the log-likelihood with the initial
+    values and with the final values of the coefficients. 
+  }
+  \item{iter}{
+    number of iterations used. 
+  }
+  The output will also contain the following, for documentation see the
+  \code{glm} object: \code{terms}, \code{formula},
+  \code{call},  \code{contrasts}, \code{xlevels}, and, optionally,
+  \code{x}, \code{y}, and/or \code{frame}. 
 }
 \examples{
   data(bdendo)
