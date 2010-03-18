@@ -93,6 +93,7 @@ clogistic <- function (formula, strata, data, subset, na.action,
 
     strata <- model.extract(mf, "strata")
 
+    contrasts <- attr(X, "contrasts")
     if (attr(mt, "intercept") > 0) {
         X <- X[,-1, drop=FALSE]
     }
@@ -139,8 +140,7 @@ clogistic <- function (formula, strata, data, subset, na.action,
         fit$y <- NULL
     fit <- c(fit, list(call = call, formula = formula, terms = mt, 
         data = data, offset = offset, control = NULL, method = NULL, 
-        contrasts = attr(X, "contrasts"), xlevels = .getXlevels(mt, 
-            mf)))
+        contrasts = contrasts, xlevels = .getXlevels(mt, mf)))
     class(fit) <- c("clogistic")
     fit
 }
