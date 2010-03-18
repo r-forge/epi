@@ -22,6 +22,7 @@ void chinv2(double **matrix, int m);
             or control (y[t]==0)
    T      Number of individuals in the stratum
    m      Number of covariates
+   offset Vector of offsets for the linear predictor
    beta   m-vector of log odds ratio parameters
 
    Output parameters:
@@ -35,15 +36,16 @@ void chinv2(double **matrix, int m);
    cloglik.
    
 */
-static void cloglik_stratum(double const *X, int const *y, int T, int m, 
-			    double const *beta, double *loglik, double *score, 
-			    double *info)
+static void cloglik_stratum(double const *X, int const *y, double const *offset,
+			    int T, int m, double const *beta, 
+			    double *loglik, double *score, double *info)
 {
-    double *f, *g, *h, *xt, *lpmax, *xmean;
+    double *f, *g, *h, *xt, *xmean;
     int i,j,k,t;
     int K = 0, Kp;
     int iscase = 1;
     double sign = 1;
+    double lpmax;
 
     /* Calculate number of cases */
     for (t = 0; t < T; ++t) {
@@ -60,7 +62,7 @@ static void cloglik_stratum(double const *X, int const *y, int T, int m,
        If there are more cases than controls then define cases to be
        those with y[t] == 0, and reverse the sign of the covariate values.
     */
-    if (2 * K > T/2) {
+    if (2 * K > T ) {
 	K = T - K;
 	iscase = 0;
 	sign = -1;
@@ -72,15 +74,17 @@ static void cloglik_stratum(double const *X, int const *y, int T, int m,
       exponentials for numerical stability. Note that we must correct
       the log-likelihood for this, but not the score or information matrix.
     */
-    lpmax = Calloc(m, double);
+    lpmax = sign * offset[0];
     for (i = 0; i < m; ++i) {
-	lpmax[i] = beta[i] * sign * X[T*i];
+	lpmax += sign * beta[i] * X[T*i];
     }
     for (t = 1; t < T; ++t) {
+	double lp = sign * offset[t];
 	for (i = 0; i < m; ++i) {
-	    double lp = beta[i] * sign * X[t + T*i];
-	    if (lp > lpmax[i])
-		lpmax[i] = lp;
+	    lp += sign * beta[i] * X[t + T*i];
+	}
+	if (lp > lpmax) {
+	    lpmax = lp;
 	}
     }
     /* 
@@ -100,10 +104,12 @@ static void cloglik_stratum(double const *X, int const *y, int T, int m,
     /* Contribution from cases */
     for (t = 0; t < T; ++t) {
 	if (y[t] == iscase) {
+	    loglik[0] += sign * offset[t];
 	    for (i = 0; i < m; ++i) {
-		loglik[0] += sign * X[t + i*T] * beta[i] - lpmax[i];
+		loglik[0] += sign * X[t + i*T] * beta[i]; 
 		score[i] += sign * X[t + i*T] - xmean[i];
 	    }
+	    loglik[0] -= lpmax;
 	}
     }
     
@@ -133,13 +139,12 @@ static void cloglik_stratum(double const *X, int const *y, int T, int m,
 
     for (t = 0; t < T; ++t) {
 
-	double Ct = 0;
+	double Ct = offset[t];
 	for (i = 0; i < m; ++i) {
-	    xt[i] = sign * X[t + T*i];
-	    Ct += beta[i] * xt[i] - lpmax[i];
-	    xt[i] -= xmean[i];
+	    xt[i] = sign * X[t + T*i] - xmean[i];
+	    Ct += sign * beta[i] * X[t + T*i];
 	}
-	Ct = exp(Ct);
+	Ct = exp(Ct - lpmax);
 
 	for (k = imin2(K,t+1); k > 0; --k) {
 
@@ -182,7 +187,6 @@ static void cloglik_stratum(double const *X, int const *y, int T, int m,
     Free(g);
     Free(h);
     Free(xt);
-    Free(lpmax);
     Free(xmean);
 }
 
@@ -205,7 +209,7 @@ static void cloglik_stratum(double const *X, int const *y, int T, int m,
  * info   - contains the information matrix on exit (m*m - vector)
  */
 
-static void cloglik(SEXP X, SEXP y, int m, double *beta, 
+static void cloglik(SEXP X, SEXP y, SEXP offset, int m, double *beta, 
 		    double *loglik, double *score, double *info)
 {
     int i;
@@ -223,7 +227,8 @@ static void cloglik(SEXP X, SEXP y, int m, double *beta,
     for (i = 0; i < length(X); ++i) {
 	SEXP Xi = VECTOR_ELT(X,i);
 	SEXP yi = VECTOR_ELT(y,i);
-	cloglik_stratum(REAL(Xi), INTEGER(yi), nrows(Xi), m, beta, 
+	SEXP oi = VECTOR_ELT(offset, i);
+	cloglik_stratum(REAL(Xi), INTEGER(yi), REAL(oi), nrows(Xi), m, beta, 
 			loglik, score, info);
     }
 }
@@ -255,9 +260,8 @@ static void invert_info(double **imat, int m)
    hold the score and variance-covariance matrix respectively.
 */
 
-//FIXME: weights, offset
-static void clogit_fit(SEXP X, SEXP y, int m, double *beta, 
-		       double *loglik, double *u, double *info, 
+static void clogit_fit(SEXP X, SEXP y, SEXP offset, int m,
+		       double *beta, double *loglik, double *u, double *info, 
 		       int *flag, int *maxiter, double const *eps, 
 		       double const * tol_chol)
 {
@@ -276,7 +280,7 @@ static void clogit_fit(SEXP X, SEXP y, int m, double *beta,
 
     /* Initial iteration */
 
-    cloglik(X, y, m, beta, loglik, u, info);
+    cloglik(X, y, offset, m, beta, loglik, u, info);
     if (*maxiter > 0) {
 	*flag = cholesky2(imat, m, *tol_chol);
 	if (*flag > 0) {
@@ -296,7 +300,7 @@ static void clogit_fit(SEXP X, SEXP y, int m, double *beta,
     for (iter = 1; iter <= *maxiter; iter++) {
 
 	double oldlik = *loglik;
-	cloglik(X, y, m, beta, loglik, u, info);
+	cloglik(X, y, offset, m, beta, loglik, u, info);
 
 	if (fabs(1 - (oldlik / *loglik)) <= *eps && !halving) {
 	    /* Done */
@@ -344,11 +348,12 @@ static void clogit_fit(SEXP X, SEXP y, int m, double *beta,
 
 /* R interface */
 
-SEXP clogit(SEXP X, SEXP y, SEXP coef, SEXP maxiter, SEXP eps, SEXP tol_chol)
+SEXP clogit(SEXP X, SEXP y, SEXP offset, SEXP init, 
+	    SEXP maxiter, SEXP eps, SEXP tol_chol)
 {
     int i;
     int n = length(X);
-    int m = length(coef);
+    int m = length(init);
     int M = m*m;
     int flag = 0;
     int niter = INTEGER(maxiter)[0];
@@ -357,13 +362,17 @@ SEXP clogit(SEXP X, SEXP y, SEXP coef, SEXP maxiter, SEXP eps, SEXP tol_chol)
 
     if (!isNewList(X)) error("'X' must be a list");
     if (!isNewList(y)) error("'y' must be a list");
+    if (!isNewList(offset)) error("'offset' must be a list");
     if (length(X) != length(y)) error("length mismatch between X and y");
+    if (length(X) != length(offset)) 
+	error("length mismatch between X and offset");
 
     for (i = 0; i < n; ++i) {
 
 	int T = nrows(VECTOR_ELT(X,i));
         int xcols = ncols(VECTOR_ELT(X,i));
         int ylen  = length(VECTOR_ELT(y,i));
+	int olen = length(VECTOR_ELT(offset, i));
 
 	if (xcols != m) {
 	    error("Element %d of X has %d columns; expected %d", i, xcols, m);
@@ -371,21 +380,28 @@ SEXP clogit(SEXP X, SEXP y, SEXP coef, SEXP maxiter, SEXP eps, SEXP tol_chol)
 	if (ylen != T) {
 	    error("Element %d of y has length %d; expected %d", i, ylen, T);
 	}
+	if (olen != T) {
+	    error("Element %d of offset has length %d; expected %d", 
+		  i, ylen, T);
+	}
 
     }
 
     beta = (double *) R_alloc(m, sizeof(double));
     for (i = 0; i < m; ++i) {
-	beta[i] = REAL(coef)[i];
+	beta[i] = 0;
     }
     score = (double *) R_alloc(m, sizeof(double));
     info = (double *) R_alloc(M, sizeof(double));
 
     /* Calculate null loglikelihood */
-    cloglik(X, y, m, beta, &loglik[0], score, info);
+    cloglik(X, y, offset, m, beta, &loglik[0], score, info);
     
     /* Maximize the likelihood */
-    clogit_fit(X, y, m, beta, &loglik[1], score, info,
+    for (i = 0; i < m; ++i) {
+	beta[i] = REAL(init)[i];
+    }
+    clogit_fit(X, y, offset, m, beta, &loglik[1], score, info,
 	       &flag, &niter, REAL(eps), REAL(tol_chol));
 
     /* Construct return list */

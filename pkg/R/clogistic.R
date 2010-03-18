@@ -28,7 +28,7 @@ fixEvent <- function(event)
     return(as.integer(status))
 }  
 
-fitClogit <- function(X, y, strata, init, iter.max, eps, toler.chol, ...)
+fitClogit <- function(X, y, offset, strata, init, iter.max, eps, toler.chol)
 {
     ## Safe wrapper around the C function "clogit" that ensures all
     ## arguments have the correct type and storage mode.
@@ -40,19 +40,24 @@ fitClogit <- function(X, y, strata, init, iter.max, eps, toler.chol, ...)
     if (!is.real(X)) {
         X <- matrix(as.real(X), nrow(X), ncol(X))
     }
+    if (is.null(offset)) {
+        offset <- rep(0, nrow(X))
+    }
+    offset <- as.double(offset);
     
     ## Split into strata
     Xsplit <- splitMatrix(X, strata, drop=TRUE)
     ysplit <- split(y, strata, drop=TRUE)
-
-    .Call("clogit", Xsplit, ysplit, as.double(init),
+    osplit <- split(offset, strata, drop=TRUE)
+    
+    .Call("clogit", Xsplit, ysplit, osplit, as.double(init),
           as.integer(iter.max), as.double(eps), as.double(toler.chol),
           PACKAGE="Epi")
 }
 
-clogistic <- function (formula, strata, data, weights, subset, na.action,
-                       init, offset, model = TRUE, x = FALSE, y = TRUE,
-                       contrasts = NULL, iter.max=20, eps=1e-9,
+clogistic <- function (formula, strata, data, subset, na.action,
+                       init, model = TRUE, x = FALSE, y = TRUE,
+                       contrasts = NULL, iter.max=20, eps=1e-6,
                        toler.chol = sqrt(.Machine$double.eps)) 
 {
     ## User interface, edited version of glm
@@ -61,7 +66,7 @@ clogistic <- function (formula, strata, data, weights, subset, na.action,
     if (missing(data)) 
         data <- environment(formula)
     mf <- match.call(expand.dots = FALSE)
-    m <- match(c("formula", "data", "subset", "weights",
+    m <- match(c("formula", "data", "subset",
                  "na.action", "offset", "strata"), names(mf), 0L)
     mf <- mf[c(1, m)]
     mf$drop.unused.levels <- TRUE
@@ -79,11 +84,6 @@ clogistic <- function (formula, strata, data, weights, subset, na.action,
     X <- if (!is.empty.model(mt)) 
         model.matrix(mt, mf, contrasts)
     else matrix(, NROW(Y), 0L)
-    weights <- as.vector(model.weights(mf))
-    if (!is.null(weights) && !is.numeric(weights)) 
-        stop("'weights' must be a numeric vector")
-    if (!is.null(weights) && any(weights < 0)) 
-        stop("negative weights not allowed")
     offset <- as.vector(model.offset(mf))
     if (!is.null(offset)) {
         if (length(offset) != NROW(Y)) 
@@ -108,10 +108,10 @@ clogistic <- function (formula, strata, data, weights, subset, na.action,
     if (eps < toler.chol)
         stop("'toler.chol' must be smaller than 'eps'")
     
-    fit <- fitClogit(X = X, y = Y, strata=strata, init=init,
+    fit <- fitClogit(X = X, y = Y, offset = offset, strata=strata, init=init,
                      toler.chol=toler.chol, eps=eps, iter.max=iter.max)
     if (fit$flag <= 0) {
-        error("Information matrix is not positive definite")
+        stop("Information matrix is not positive definite")
     }
     else if (fit$flag == 1000) {
         warning("Iteration limit exceeded")

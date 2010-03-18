@@ -7,20 +7,18 @@
   scale efficiently to strata with large numbers of cases.
 }
 \usage{
-clogistic(formula, strata, data, weights, subset, na.action, init,
-offset, model = TRUE, x = FALSE, y = TRUE, contrasts = NULL,
-iter.max=20, eps=1e-9, toler.chol = sqrt(.Machine$double.eps)) 
+clogistic(formula, strata, data, subset, na.action, init,
+model = TRUE, x = FALSE, y = TRUE, contrasts = NULL,
+iter.max=20, eps=1e-6, toler.chol = sqrt(.Machine$double.eps)) 
 }
 \arguments{
   \item{formula}{Model formula}
   \item{strata}{Factor describing membership of strata for conditioning}
   \item{data}{data frame containing the variables in the formula and
     strata arguments}
-  \item{weights}{NOT IMPLEMENTED}
   \item{subset}{subset of records to use}
   \item{na.action}{missing value handling}
   \item{init}{initial values}
-  \item{offset}{NOT IMPLEMENTED}
   \item{model}{
     a logical value indicating whether \emph{model frame}
     should be included as a component of the returned value}
@@ -47,6 +45,10 @@ iter.max=20, eps=1e-9, toler.chol = sqrt(.Machine$double.eps))
 }
 \value{
   An object of class \code{"clogistic"}.
+}
+\examples{
+  data(bdendo)
+  clogistic(d ~ cest + dur, strata=set, data=bdendo)
 }
 \author{Martyn Plummer}
 \seealso{\code{\link{glm}}}
