@@ -99,6 +99,7 @@ clogistic <- function (formula, strata, data, subset, na.action,
 
     mt <- attr(mf, "terms")
     Y <- model.response(mf, "any")
+    if (is.null(Y)) stop("missing outcome")
     if (length(dim(Y)) == 1L) {
         nm <- rownames(Y)
         dim(Y) <- NULL
@@ -116,7 +117,8 @@ clogistic <- function (formula, strata, data, subset, na.action,
     }
 
     strata <- model.extract(mf, "strata")
-
+    if (is.null(strata)) stop("argument 'strata' missing")
+    
     contrasts <- attr(X, "contrasts")
     if (attr(mt, "intercept") > 0) {
         X <- X[,-1, drop=FALSE]
