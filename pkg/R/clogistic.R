@@ -28,6 +28,23 @@ fixEvent <- function(event)
     return(as.integer(status))
 }  
 
+isInformative <- function(Xsplit, ysplit, strata)
+{
+    ## Identify which observations are informative in a conditional
+    ## logistic regression.
+    
+    is.homogeneous <- function(x) { all(x==x[1]) }
+    y.bad <- sapply(ysplit, is.homogeneous)
+    X.bad <- sapply(Xsplit, function(x) { all(apply(x, 2, is.homogeneous)) })
+
+    is.informative <- vector("list", length(ysplit))
+    for (i in seq(along=is.informative)) {
+        canuse <- (!y.bad[i]) && (!X.bad[i])
+        is.informative[[i]] <- rep(canuse, length(ysplit[[i]]))
+    }
+    return(unsplit(is.informative, strata))
+}
+        
 fitClogit <- function(X, y, offset, strata, init, iter.max, eps, toler.chol)
 {
     ## Safe wrapper around the C function "clogit" that ensures all
@@ -49,10 +66,17 @@ fitClogit <- function(X, y, offset, strata, init, iter.max, eps, toler.chol)
     Xsplit <- splitMatrix(X, strata, drop=TRUE)
     ysplit <- split(y, strata, drop=TRUE)
     osplit <- split(offset, strata, drop=TRUE)
+
+    info <- isInformative(Xsplit, ysplit, strata)
+    if (!any(info)) {
+        stop("There are no informative observations")
+    }
     
-    .Call("clogit", Xsplit, ysplit, osplit, as.double(init),
-          as.integer(iter.max), as.double(eps), as.double(toler.chol),
-          PACKAGE="Epi")
+    ans <- .Call("clogit", Xsplit, ysplit, osplit, as.double(init),
+                 as.integer(iter.max), as.double(eps), as.double(toler.chol),
+                 PACKAGE="Epi")
+    ans$informative <- info
+    return(ans)
 }
 
 clogistic <- function (formula, strata, data, subset, na.action,
@@ -83,7 +107,7 @@ clogistic <- function (formula, strata, data, subset, na.action,
     }
     X <- if (!is.empty.model(mt)) 
         model.matrix(mt, mf, contrasts)
-    else matrix(, NROW(Y), 0L)
+    else stop("Invalid model matrix")
     offset <- as.vector(model.offset(mf))
     if (!is.null(offset)) {
         if (length(offset) != NROW(Y)) 
@@ -131,9 +155,15 @@ clogistic <- function (formula, strata, data, subset, na.action,
     cfnames <- colnames(X)
     names(fit$coefficients) <- cfnames
     dimnames(fit$var) <- list(cfnames, cfnames)
-    
-    if (model) 
+
+    fit$n <- sum(fit$informative)
+    if (model) {
         fit$model <- mf
+    }
+    else {
+        ## Without model frame this cannot be interpreted
+        fit$informative <- NULL
+    }
     fit$na.action <- attr(mf, "na.action")
     if (x) 
         fit$x <- X
@@ -174,8 +204,8 @@ print.clogistic <- function (x, digits = max(options()$digits - 4, 3), ...)
     else df <- round(sum(x$df), 2)
     cat("\n")
     cat("Likelihood ratio test=", format(round(logtest, 2)), 
-        "  on ", df, " df,", " p=", format(1 - pchisq(logtest, 
-                                                      df)), sep = "")
+        "  on ", df, " df,", " p=", format(1 - pchisq(logtest, df)),
+        ", n=", x$n, sep = "")
     cat("\n")
     invisible()
 }

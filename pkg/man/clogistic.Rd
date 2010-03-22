@@ -62,6 +62,18 @@ iter.max=20, eps=1e-6, toler.chol = sqrt(.Machine$double.eps))
   \item{iter}{
     number of iterations used. 
   }
+  \item{n}{
+    number of observations used. Observations may be dropped
+    either because they are missing, or because they belong to a
+    homogenous stratum. For more details on which observations were
+    used, see \code{informative} below.
+  }
+  \item{informative}{
+    if \code{model=TRUE}, a logical vector of length equal to the number
+    of rows in the model frame.  This indicates whether an observation
+    is informative, in the sense that it makes a non-zero contribution
+    to the log-likelihood. If \code{model=FALSE}, this is NULL.
+  }
   The output will also contain the following, for documentation see the
   \code{glm} object: \code{terms}, \code{formula},
   \code{call},  \code{contrasts}, \code{xlevels}, and, optionally,
