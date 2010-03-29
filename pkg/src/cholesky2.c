@@ -18,6 +18,8 @@
 **  If a column is deemed to be redundant, then that diagonal is set to zero.
 **
 **   Terry Therneau
+*
+* Copied from the survival package by Terry Therneau, version 2.35-7
 */
 
 int cholesky2(double **matrix, int n, double toler)

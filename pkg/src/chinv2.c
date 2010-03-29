@@ -9,6 +9,8 @@
 **            below the diagonal will be F inverse
 **
 **  Terry Therneau
+**
+** Copied from the survival package by Terry Therneau, version 2.35-7
 */
 
 void chinv2(double **matrix , int n)

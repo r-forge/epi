@@ -10,6 +10,8 @@
 **  y is overwriten with b
 **
 **  Terry Therneau
+*
+* Copied from the survival package by Terry Therneau, version 2.35-7
 */
 
 void chsolve2(double **matrix, int n, double *y)
