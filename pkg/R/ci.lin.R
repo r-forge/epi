@@ -10,7 +10,7 @@ function( obj,
 {
 # First extract all the coefficients and the variance-covariance matrix
 #
-if( any( inherits( obj, c("coxph","glm","gls","lm","nls","survreg") ) ) ) {
+if( any( inherits( obj, c("coxph","glm","gls","lm","nls","survreg","clogistic") ) ) ) {
        cf <- coef( obj )
       vcv <- vcov( obj )
 } else if( inherits( obj, c("lme") ) ) {
@@ -42,6 +42,11 @@ if( inherits( obj, c("coxph") ) )
   vcv <- vcv[wh,wh]
   }
 else
+if( inherits( obj, c("clogistic") ) )
+  {
+  cf[is.na(cf)] <- 0
+  }
+else
   {
 vM <- matrix( 0, length( cf ), length( cf ) )
 dimnames( vM ) <- list( names( cf ), names( cf ) )
@@ -50,22 +55,6 @@ cf[is.na(cf)] <- 0
 vcv <- vM
   }
   }
-   
-# If subset is not given, make it the entire set
-#
-# if( is.null( subset ) ) subset <- 1:length( cf )
-
-# Useful function for constructing a matrix linking estimate, s.e. to
-# a confidence interval
-ci.mat <-
-function( alpha = 0.05 ) 
-{
-ciM <- rbind( c(1,1,1), qnorm(1-alpha/2)*c(0,-1,1) )
-colnames( ciM ) <- c("Estimate", 
-   paste( formatC( 100*   alpha/2 , format="f", digits=1 ), "%", sep="" ),
-   paste( formatC( 100*(1-alpha/2), format="f", digits=1 ), "%", sep="" ) )
-ciM
-}
 
 # Function for computing a contrast matrix for all possible
 # differences between a set of parameters.
