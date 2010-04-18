@@ -10,19 +10,19 @@ lll <- ls( pos=pos, pat=pat )
 if( length(lll) > 0 )
 {
 obj.mode <-
-obj.cls <-
-obj.dim <- character(0)
+obj.clas <-
+obj.size <- character(0)
 # Then find mode, class, name and dimension of them and return it
 for(i in 1:length(lll))
 {
 obj.mode[i] <-        eval( parse(t = paste( "mode(", lll[i], ")")))
-obj.cls[i]  <- paste( eval( parse(t = paste("class(", lll[i], ")"))), collapse=" " )
-obj.dim[i]  <- paste( eval( parse(t = paste( "dimx(", lll[i], ")"))), collapse=" " )
+obj.clas[i] <- paste( eval( parse(t = paste("class(", lll[i], ")"))), collapse=" " )
+obj.size[i] <- paste( eval( parse(t = paste( "dimx(", lll[i], ")"))), collapse=" " )
 }
 data.frame( name=lll,
             mode=obj.mode,
-           class=obj.cls,
-             dim=obj.dim )
+           class=obj.clas,
+            size=obj.size )
 }
 }
 
