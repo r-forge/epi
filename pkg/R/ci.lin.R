@@ -6,6 +6,7 @@ function( obj,
          fnam = !diffs,
          vcov = FALSE,
         alpha = 0.05,
+           df = Inf,
           Exp = FALSE ) 
 {
 # First extract all the coefficients and the variance-covariance matrix
@@ -161,7 +162,7 @@ if( !diffs )
     ct <- ctr.mat %*% cf
     vc <- ctr.mat %*% vcv %*% t( ctr.mat )
     se <- sqrt( diag( vc ) )
-    ci <- cbind( ct, se ) %*% ci.mat( alpha=alpha )
+    ci <- cbind( ct, se ) %*% ci.mat( alpha=alpha, df=df )
     t0 <- cbind( se, ct/se, 2 * ( 1 - pnorm( abs( ct / se ) ) ) )
     colnames(t0) <- c("StdErr", "z", "P")
     res <- cbind(ci, t0)[, c(1, 4:6, 2:3), drop=FALSE]

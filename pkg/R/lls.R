@@ -1,11 +1,11 @@
 lls <-
 # A function that expands the functionality of ls()
-function( pos = 1, pat = "" )
+function( pos = 1, pat = "", all=FALSE, print=TRUE )
 {
 # First a function that returns length/dim when you ask for it
 dimx <- function(dd) if (is.null(dim(dd))) length(dd) else dim(dd)
 # A vector of object names
-lll <- ls( pos=pos, pat=pat )
+lll <- ls( pos=pos, pat=pat, all=all )
 # Are there any objects at all?
 if( length(lll) > 0 )
 {
@@ -19,10 +19,13 @@ obj.mode[i] <-        eval( parse(t = paste( "mode(", lll[i], ")")))
 obj.clas[i] <- paste( eval( parse(t = paste("class(", lll[i], ")"))), collapse=" " )
 obj.size[i] <- paste( eval( parse(t = paste( "dimx(", lll[i], ")"))), collapse=" " )
 }
+dfr <-
 data.frame( name=lll,
             mode=obj.mode,
            class=obj.clas,
-            size=obj.size )
+            size=obj.size,
+stringsAsFactors=FALSE )
+print( invisible( dfr ), right=FALSE )
 }
 }
 

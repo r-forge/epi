@@ -1,3 +1,9 @@
+Changes in 1.1.14
+
+o ci.lin now has an argument df to allow for t-quantiles in ci calculations.
+
+o lls() function revised to give nicer (left justified) output.
+
 Changes in 1.1.13
 
 o ci.lin now supports objects of class clogistic.

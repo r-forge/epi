@@ -17,8 +17,9 @@ ci.lin( obj,
        fnam = !diffs,
        vcov = FALSE,
       alpha = 0.05,
+         df = Inf,
         Exp = FALSE )
-ci.mat( alpha = 0.05 )
+ci.mat( alpha = 0.05, df=Inf )
 }
 \arguments{
   \item{obj}{A model object (of class
@@ -48,6 +49,8 @@ ci.mat( alpha = 0.05 )
   \item{vcov}{Should the covariance matrix of the set of parameters be
     returned? If this is set, \code{Exp} is ignored.}
   \item{alpha}{Significance level for the confidence intervals.}
+  \item{df}{Integer. Number of degrees of freedom in the t-distribution used
+    to compute the quantiles used to construct the confidence intervals.}
   \item{Exp}{If \code{TRUE} columns 5:6 are replaced with exp( columns 1,5,6 ).}
   }
 \value{
@@ -65,6 +68,8 @@ ci.mat( alpha = 0.05 )
   columns of estimates and standard errors, so as to produce a p by 3 matrix
   of estimates and confidnece limits. Used internally in \code{ci.lin} and
   \code{ci.cum}.
+  The 1.96 is replaced by the appropriate quantile from the normal or
+  t-distribution when arguments \code{alpha} and/or \code{df} are given.
   }
 \author{
   Bendix Carstensen,
