@@ -1,3 +1,8 @@
+Changes in 1.1.18
+
+o boxes.Lexis has been made a bit more versatile for prodution of
+  box-diagrams from multitste models.
+
 Changes in 1.1.17
 
 o A comma was missing in the code-output from boxes.Lexis
