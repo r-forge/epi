@@ -13,9 +13,9 @@ export(
   ci.pd,
   ci.cum,
   ci.lin,
-  ci.mat,    
+  ci.mat,
   lls,
-  clear,       
+  clear,
   contr.orth,
   contr.2nd,
   contr.cum,
@@ -85,6 +85,7 @@ export(
   ROC,
   tabplot,
   twoby2,
+  Wald,
   stat.table,
   clogistic)
 # Import generic methods
