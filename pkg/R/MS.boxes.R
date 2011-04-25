@@ -180,9 +180,9 @@ subset <- sbst
 
 # Recycling of box-arguments
 if( !missing(ht) )
-if( length(ht         )<n.st ) font       <- rep(ht        ,n.st)[1:n.st]
+if( length(ht         )<n.st ) ht         <- rep(ht        ,n.st)[1:n.st]
 if( !missing(wd) )
-if( length(wd         )<n.st ) font       <- rep(wd        ,n.st)[1:n.st]
+if( length(wd         )<n.st ) wd         <- rep(wd        ,n.st)[1:n.st]
 if( length(font       )<n.st ) font       <- rep(font      ,n.st)[1:n.st]
 if( length(lwd        )<n.st ) lwd        <- rep(lwd       ,n.st)[1:n.st]
 if( length(col.border )<n.st ) col.border <- rep(col.border,n.st)[1:n.st]

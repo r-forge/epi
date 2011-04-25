@@ -14,16 +14,14 @@
 
 }
 \usage{
-cutLexis <- function(data,
-                     cut,
-                     timescale = 1,
+cutLexis( data, cut, timescale = 1,
                      new.state = nlevels(data$lex.Cst)+1,
                      new.scale = FALSE,
                      split.states = FALSE,
                      progressive = FALSE,
                      precursor.states = NULL,
                      count = FALSE)
-  countLexis(data, cut, timescale = 1)
+countLexis(data, cut, timescale = 1)
 }
 \arguments{
   \item{data}{A \code{Lexis} object.}
@@ -31,10 +29,9 @@ cutLexis <- function(data,
     If a time is missing (\code{NA}) then the event is assumed to occur
     at time \code{Inf}. \code{cut} can also be a dataframe, see details.}
   \item{timescale}{The timescale that \code{cut} refers to. Numeric or character.}
-  \item{new.state}{The state to which a transition occur at time \code{cut}.
-    It may be a single value, which is then
-    applied to all rows of \code{data}, or a vector with a separate
-    value for each row}
+  \item{new.state}{The state to which a transition occur at time
+    \code{cut}. It may be a single value, which is then applied to all
+    rows of \code{data}, or a vector with a separate value for each row}
   \item{new.scale}{Name of the timescale defined as "time since entry to
     new.state". If \code{TRUE} a name for the new scale is contructed.
     See details.}

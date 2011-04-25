@@ -1,3 +1,18 @@
+Changes in 1.1.22
+
+o A bug in boxes.Lexis prevented the use of ht= and wd= arguments to
+  set boxes to a prespecified size. The scaling of these is now also
+  clarified in the man file for boxes.Lexis.
+
+Changes in 1.1.21
+
+o Specifying period of cohort effects with only two parmeters caused
+  apc.fit to crash. Fixed by adding a few ",drop=FALSE" in subsetting
+  of matrices.
+
+o Since as.Date.cal.yr was not used anywhere, it has been removed from
+  the package.
+
 Changes in 1.1.20
 
 o CITATION file added.
