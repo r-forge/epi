@@ -83,7 +83,6 @@ export(
   Cplot,
   Relevel,
   ROC,
-  tabplot,
   twoby2,
   Wald,
   stat.table,
