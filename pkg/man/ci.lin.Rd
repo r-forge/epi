@@ -20,7 +20,8 @@ ci.lin( obj,
        vcov = FALSE,
       alpha = 0.05,
          df = Inf,
-        Exp = FALSE )
+        Exp = FALSE,
+     sample = FALSE )
 Wald( obj, H0=0, ... )
 ci.mat( alpha = 0.05, df=Inf )
 }
@@ -54,12 +55,15 @@ ci.mat( alpha = 0.05, df=Inf )
     with the annotation of contrasts? Ignored if \code{diffs==T}. If a
     sting is supplied this will be prefixed to the labels.}
   \item{vcov}{Should the covariance matrix of the set of parameters be
-    returned? If this is set, \code{Exp} is ignored.}
+    returned? If this is set, \code{Exp} is ignored. See details.}
   \item{alpha}{Significance level for the confidence intervals.}
   \item{df}{Integer. Number of degrees of freedom in the t-distribution used
     to compute the quantiles used to construct the confidence intervals.}
   \item{Exp}{If \code{TRUE} columns 5:6 are replaced with exp( columns
     1,5,6 ).}
+  \item{sample}{Logical or numerical. If \code{TRUE} or numerical a
+    sample of the linear parameter function as defined by \code{subset}
+    and \code{ctr.mat} is returned.}
   \item{H0}{The null values for the selected/transformed parameters to
     be tested by a Wald test. Must have the same length as the selected
     parameter vector.}
@@ -77,9 +81,10 @@ ci.mat( alpha = 0.05, df=Inf )
 
   \code{Wald} computes a Wald test for a subset of (possibly linearly
   transformed) parameters. The selection of the subset of parameters is
-  the same as for \code{ci.lin}. Using the \code{ctr.mat} argumant makes
-  it possible to do a Wald test for equality  \code{Wald} returns a nemed numerical
-  vector with components \code{Chisq}, \code{d.f.} and \code{P}.
+  the same as for \code{ci.lin}. Using the \code{ctr.mat} argument makes
+  it possible to do a Wald test for equality of parameters. \code{Wald}
+  returns a named numerical vector of lenght 3, with names \code{Chisq},
+  \code{d.f.} and \code{P}.
 
   \code{ci.mat} returns a 2 by 3 matrix with rows \code{c(1,0,0)} and
   \code{c(0,-1,1)*1.96}, devised to post-multiply to a p by 2 matrix with
@@ -88,7 +93,6 @@ ci.mat( alpha = 0.05, df=Inf )
   \code{ci.cum}.
   The 1.96 is replaced by the appropriate quantile from the normal or
   t-distribution when arguments \code{alpha} and/or \code{df} are given.
-
   }
 \author{
   Bendix Carstensen,
