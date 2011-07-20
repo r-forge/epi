@@ -50,7 +50,7 @@ ftrend(object, ...)
 \references{
   Greenland S, Michels KB, Robins JM, Poole C and Willet WC (1999)
   Presenting statistical uncertainty in trends and dose-response relations,
-  \emph{American Journal of Epidemiology}, \bold{149}, 1077-1086.
+  \emph{American Journal of Epidemiology}, \textbf{149}, 1077-1086.
 }
 \author{Martyn Plummer}
 \seealso{\code{\link{float}}}

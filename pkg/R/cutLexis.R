@@ -1,4 +1,4 @@
-doCutLexis <- function(data, cut, timescale, new.scale ) {
+doCutLexis <- function(data, cut, timescale, new.scale=FALSE ) {
 
     ## new.scale is a character constant with the name of the new timescale
 
@@ -295,6 +295,10 @@ countLexis <- function(data, cut, timescale = 1)
     lx <- lx[lx$lex.dur > 0,]
     ## Remove the lex.cut column
     lx <- lx[,-match("lex.cut",names(lx))]
+    ## Retain the attributes
+    attr( lx, "breaks" )      <- attr( data, "breaks" )
+    attr( lx, "time.scales" ) <- attr( data, "time.scales" )
+    attr( lx, "class" )       <- attr( data, "class" )
 
     return(lx[order(lx$lex.id,lx[,timescale]),])
 }

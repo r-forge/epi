@@ -119,7 +119,11 @@ function( obj, file, detailed=FALSE,
           col.txt.arr = col.arr,
            offset.arr = 2, ... )
 {
-if( inherits(obj,"Lexis") ) tm <- tmat( obj )
+if( inherits(obj,"Lexis") )
+  {
+  obj <- factorize( obj )
+  tm <- tmat( obj )
+  }
 else if( is.matrix(obj) & diff(dim(obj))==0 )
        {
        tm <- obj

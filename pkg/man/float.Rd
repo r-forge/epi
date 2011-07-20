@@ -71,17 +71,17 @@ float(object, factor, iter.max=50)
   Easton DF, Peto J and Babiker GAG (1991) Floating absolute risk: An
   alternative to relative risk in survival and case control analysis
   avoiding an arbitrary reference group. \emph{Statistics in Medicine},
-  \bold{10}, 1025-1035.
+  \textbf{10}, 1025-1035.
 
   Firth D and Mezezes RX (2004)  Quasi-variances.
-  \emph{Biometrika} \bold{91}, 65-80.
+  \emph{Biometrika} \textbf{91}, 65-80.
 
   Menezes RX(1999)  More useful standard errors for group and factor
   effects in generalized linear models.  \emph{D.Phil. Thesis},
   Department of Statistics, University of Oxford.
 
   Plummer M (2003) Improved estimates of floating absolute risk,
-  \emph{Statistics in Medicine}, \bold{23}, 93-104.
+  \emph{Statistics in Medicine}, \textbf{23}, 93-104.
 }
 \author{Martyn Plummer}
 \seealso{\code{\link{ftrend}}, \code{qvcalc}}
