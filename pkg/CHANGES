@@ -1,3 +1,7 @@
+Changes in ...
+
+o Added sd() function to stat.table()
+
 Changes in 1.1.24
 
 o countLexis did not take the "timescales" and "breaks" attribute across to the
