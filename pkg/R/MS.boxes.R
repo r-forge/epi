@@ -88,6 +88,12 @@ invisible( list( x = bx1*(1-pos)+bx2*pos,
 
 boxes <- function (obj, ...) UseMethod("boxes")
 
+boxes.matrix <-
+function( obj, ... )
+  {
+  Epi:::boxes.Lexis( obj, ... )
+  }
+
 boxes.Lexis <-
 function( obj, file, detailed=FALSE,
                boxpos = FALSE,
@@ -122,21 +128,18 @@ function( obj, file, detailed=FALSE,
 if( inherits(obj,"Lexis") )
   {
   obj <- factorize( obj )
-  tm <- tmat( obj )
+  tm <- tmat( obj, Y=TRUE )
   }
 else if( is.matrix(obj) & diff(dim(obj))==0 )
-       {
-       tm <- obj
-       # Put the transitions into D (only potentially used).
-       D <- tm
-       # Numbers in boxes ?
-       if( is.numeric(show.Y) )
-         {
-         Y <- show.Y
-         show.Y <- TRUE
-         }
-       }
+  {
+  tm <- obj
+  }
 else stop( "First argument must be a Lexis object or a square matrix.\n" )
+
+# Put the transitions into D and the diagnonal into Y.
+D <- tm
+diag( D ) <- NA
+Y <- diag( tm )
 
 # Derive state names, no. states and no. transitions
                       st.nam <- colnames( tm )
@@ -145,15 +148,11 @@ if( is.null(st.nam) ) st.nam <- paste(1:ncol(tm))
       n.st <- length( st.nam )
       n.tr <- sum( !is.na(tm) )
 
-# If we want to show person-years and events we compute them
-if( inherits(obj,"Lexis") )
+# Explicitly given numbers in boxes ?
+if( is.numeric(show.Y) )
   {
-  if( show )
-    {
-    SM <- summary(obj,simplify=FALSE,scale=scale.Y)
-    Y <- SM[[1]][1:n.st,"Risk time:"]
-    D <- SM[[1+as.logical(scale.D)]][1:n.st,1:n.st] * ifelse(scale.D,scale.D,1)
-    }
+  Y <- show.Y
+  show.Y <- TRUE
   }
 
 # No extra line with person-years when they are NA
