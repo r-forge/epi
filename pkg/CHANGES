@@ -1,15 +1,35 @@
-Changes in ...
+
+Changes in 1.1.26
+
+o A new function N2Y() added which computes person-years in Lexis
+  triangles from population prevalence data.
+
+o Demographic example data from Denmark added:
+  N.dk - population size at 1 Jan
+  Y.dk - risk time in Lexis triangles
+  M.dk - mortality data
+  B.dk - births in Denmark 1902 ff.
+
+Changes in 1.1.25
 
 o Added sd() function to stat.table()
 
+o tmat.Lexis has an argument Y=FALSE which if set to TRUE will return
+  the person-years in the diagonal.
+
+o boxes() now explicitly defined with methods boxes.Lexis and
+  boxes.matrix that explicitly call boxes.default (which is the function
+  doing the work (almost identical to the former boxes.Lexis).
+
 Changes in 1.1.24
 
-o countLexis did not take the "timescales" and "breaks" attribute across to the
-  resulting Lexis object.
+o countLexis did not take the "timescales" and "breaks" attribute
+  across to the resulting Lexis object.
 
 Changes in 1.1.23
 
 o A missing defualt value for new.scale in doCutLexis caused a crash
+o A missing default value for new.scale in doCutLexis caused a crash
   when using the count=TRUE argument to cutLexis.
 
 Changes in 1.1.23
@@ -18,7 +38,7 @@ o ci.lin and ci.cum now have a sample= argument that causes return of
   a sample from the normal distribution with mean equal to the
   estimates and variance equal to the estimated variance of the
   estimates. To be used to do "parametric bootstrap" of complicated
-  functions of the parameters, such as state occupancey probabilities
+  functions of the parameters, such as state occupancy probabilities
   from multistate models.
 
 o ci.lin now supports objects of class mipo (Multiple Imputation
@@ -94,7 +114,7 @@ o utility function ci.mat() added --- earlier defined inside ci.lin and ci.cum,
   but also useful on its own.
 
 o lls() and clear() added, to ease overview and clearing of workspace
-  (and attachements!)
+  (and attachments!)
 
 o apc.frame now sets the option "apc.frame.par" with the offset and
   scaling of calendar time part of the apc frame. This is recognised
@@ -124,7 +144,7 @@ o apc.fit had a bug in the specification of knots when using the argument
 
 Changes in 1.1.7
 
-o boxes.Lexis has been furter enhanced with the facility to plot rates
+o boxes.Lexis has been further enhanced with the facility to plot rates
   instead of no. transitions on the arrows if required. The code has been
   tidied a bit too.
 
@@ -133,8 +153,8 @@ o The man file for boxes.Lexis and subsidiaries have been renamed to
 
 Changes in 1.1.5
 
-o boxes.Lexis have been enhanced to accomodate two-way transitions between
-  states. Annotation by number of transitions has been improved to accomodate
+o boxes.Lexis have been enhanced to accommodate two-way transitions between
+  states. Annotation by number of transitions has been improved to accommodate
   this too by always putting the number on the left side of the arrow.
 
 Changes in 1.1.3
@@ -153,7 +173,7 @@ o cutLexis crashed if new.state=TRUE and new.scale=FALSE were specified.
 Changes in 1.1.1
 
 o Functions stack.Lexis, tmat.Lexis and mstate.Lexis have been added
-  to facilitate practical multistate modelling. The two latter provides an
+  to facilitate practical multistate modeling. The two latter provides an
   interface to the mstate package.
 
 o Functions tbox, dbox, fillarr, boxarr and boxes.Lexis added to facilitate
@@ -201,7 +221,7 @@ Changes in 1.0.9
 
 o Thanks to Mike Murphy, Professor of Demography, Department of Social Policy,
   London School of Economics, a bug causing a crash of apc.fit if only
-  one row in the model matrix correponds to the reference level was fixed.
+  one row in the model matrix corresponds to the reference level was fixed.
 
 o Also thanks to Mike Murphy, a much more efficient calculation of
   median period and cohort is now used.
@@ -236,7 +256,7 @@ o splitLexis gave wrong results for factor states.
   In split.lexis.1D was the problem with the factor states, they were
   coerced to numeric when stuffed into the new.Xst matrix. Now states are
   turned to numeric before the call to split.lexis.1D and the factor
-  attributes reinstituted after the split.
+  attributes re-instituted after the split.
 
 o Added transform method for Lexis objects.
 
