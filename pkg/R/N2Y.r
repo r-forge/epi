@@ -36,7 +36,7 @@ for(a in 1:na) for(p in 1:np)
    {
               Ytab[a,p,"up"] <- Ntab[a  ,p]/3 + Ntab[a+1,p+1]/6
    if( a > 1) Ytab[a,p,"lo"] <- Ntab[a-1,p]/6 + Ntab[a  ,p+1]/3
-         else Ytab[a,p,"lo"] <- Ntab[a+1,p+1]/2
+         else Ytab[a,p,"lo"] <- Ntab[a  ,p]/2 + Ntab[a  ,p+1]/2 - Ytab[a,p,"up"]
    }
 # Remember to check the follow-up time
 Ytab <- Ytab * A.int

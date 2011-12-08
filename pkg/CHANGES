@@ -1,7 +1,29 @@
+Changes in 1.1.29
+
+o New function gen.exp for generating time-varying exposure variables
+  from drug purchase records.
+
+Changes in 1.1.28
+
+o splitLexis now allows NAs in the timescale on which you split.
+  Records with NAs are simply left untouched, but a warning is
+  printed.
+
+o A bug in boxes.Lexis preventing rates to be printed was issued.
+
+Changes in 1.1.27
+
+o A few typos corrected
+
+o Functions a.lines, a.points, cp.lines and cp.points added to
+  facilitate plotting points and curves from APC-models.
+
+o apc.fit did not return the reference cohort/period if it was not
+  supplied in a model with explicit drift.
 
 Changes in 1.1.26
 
-o A new function N2Y() added which computes person-years in Lexis
+o A new function N2Y added which computes person-years in Lexis
   triangles from population prevalence data.
 
 o Demographic example data from Denmark added:

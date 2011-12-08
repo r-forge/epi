@@ -53,8 +53,8 @@ summary( nic )
 nix <- factorize.Lexis( nic, c("Alive","Lung","Dead"))
 niw <- factorize.Lexis( nix, c("Alive","Pulm","Mort"))
 niz <- factorize.Lexis( nic, states=list("Alive",c("Pulm","Mort")), coll=" \n& ")
-boxes( niw )
+boxes( niw, boxpos=TRUE )
 par( new=TRUE )
-boxes( niz )
+boxes( niz, boxpos=TRUE )
 }
 \keyword{manip}

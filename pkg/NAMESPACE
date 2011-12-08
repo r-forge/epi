@@ -26,6 +26,7 @@ export(
   effx.match,
   float,
   print.floated,
+  gen.exp,
   Icens,
   print.Icens,
   plotevent,

@@ -5,7 +5,8 @@ function( txt, x, y, wd, ht,
           col.border="black",
           col.bg="transparent" )
 {
-rect( x-wd/2, y-ht/2, x+wd/2, y+ht/2, lwd=lwd, border=col.border, col=col.bg )
+rect( x-wd/2, y-ht/2, x+wd/2, y+ht/2,
+      lwd=lwd, border=col.border, col=col.bg )
 text( x, y, txt, font=font, col=col.txt )
 invisible( c( x, y, wd, ht ) )
 }
@@ -148,6 +149,17 @@ if( is.null(st.nam) ) st.nam <- paste(1:ncol(tm))
       n.st <- length( st.nam )
       n.tr <- sum( !is.na(tm) )
 
+# If we want to show person-years and events we compute them
+if( inherits(obj,"Lexis") )
+  {
+  if( show )
+    {
+    SM <- summary(obj,simplify=FALSE,scale=scale.Y)
+    Y <- SM[[1]][1:n.st,"Risk time:"]
+    D <- SM[[1+as.logical(scale.D)]][1:n.st,1:n.st] * ifelse(scale.D,scale.D,1)
+    }
+  }
+
 # Explicitly given numbers in boxes ?
 if( is.numeric(show.Y) )
   {
@@ -281,7 +293,8 @@ for( i in subset ) for( j in subset )
     }
   }
 # Redraw the boxes with white background to remove any arrows
-for( i in subset ) tbox( pl.nam[i], xx[i], yy[i], wd[i], ht[i], col.bg="white" )
+for( i in subset ) tbox( pl.nam[i], xx[i], yy[i], wd[i], ht[i],
+                         lwd=lwd[i], col.bg="white" )
 # Then redraw the boxes again
 for( i in subset ) tbox( pl.nam[i], xx[i], yy[i], wd[i], ht[i],
                                 font=font[i],
