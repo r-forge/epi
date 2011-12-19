@@ -1,3 +1,13 @@
+Changes in 1.1.30
+
+o DMlate expanded with the column dooad
+
+o Documentation for as.Date.cal.yr fixed
+
+o Bug in gen.exp fixed (It was assuming a data frame called dfr
+  existed was wrong, but not spotted by the example because in the
+  example one actually did exist!)
+
 Changes in 1.1.29
 
 o New function gen.exp for generating time-varying exposure variables

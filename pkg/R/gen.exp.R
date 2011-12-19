@@ -56,9 +56,10 @@ exp.end   <- exp.start + drug.dur
 # and put in a simplified dataframe
 eps.time <- 0.0001
 eps.dpt  <- 0.0001
-remove <- ( abs( exp.start[-1]-exp.end[-nrow(dfr)] ) < eps.time ) &
-          ( abs(       dpt[-1]-    dpt[-nrow(dfr)] ) < eps.dpt  ) &
-                      ( id[-1] ==   id[-nrow(dfr)] )
+nr       <- nrow( purchase )
+remove <- ( abs( exp.start[-1]-exp.end[-nr] ) < eps.time ) &
+          ( abs(       dpt[-1]-    dpt[-nr] ) < eps.dpt  ) &
+                      ( id[-1] ==   id[-nr] )
 dfR <- data.frame( cbind(id,dpt,exp.start)[c(TRUE,!remove),],
                            exp.end=exp.end[c(!remove,TRUE)] )
 
