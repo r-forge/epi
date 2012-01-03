@@ -1,20 +1,22 @@
 \name{gen.exp}
 \alias{gen.exp}
 \title{
-Generate covariates for drug-exposure follow-up
+Generate covariates for drug-exposure follow-up from drug purchase records.
 }
 \description{
-From records of drug purchase and assumed treatment intensity, the time
-since first drug use and cumulative dose at prespecified times is
-computed. Optionally, lagged exposures are computed too,
+From records of drug purchase and possibly known treatment intensity,
+the time since first drug use and cumulative dose at prespecified times
+is computed. Optionally, lagged exposures are computed too,
 i.e. cumulative exposure a prespecified time ago.
 }
 \usage{
-gen.exp(purchase, id = "id", dop = "dop", amnt = "amnt", dpt = "dpt",
+gen.exp(purchase, id = "id", dop = "dop", amt = "amt", dpt = "dpt",
               fu, doe = "doe", dox = "dox",
-        push.max = Inf,
           breaks,
+         use.dpt = ( dpt \%in\% names(purchase) ),
             lags = NULL,
+        push.max = Inf,
+        pred.win = Inf,
          lag.dec = 1 )
 }
 \arguments{
@@ -26,35 +28,47 @@ the same as that used in \code{dop}, so despite the name it is not
 necessarily measured per day.}
   \item{id}{Name of the id variable in the data frame.}
   \item{dop}{Name of the date of purchase variable in the data frame.}
-  \item{amnt}{Name of the amount variable in the data frame.}
+  \item{amt}{Name of the amount purchased variable in the data frame.}
   \item{dpt}{Name of the dose-per-time variable in the data frame.}
   \item{fu}{Data frame with follow-up period for each person, the person
     id variable must have the same name as in the \code{purchase} data frame.}
   \item{doe}{Name of the date of entry variable.}
   \item{dox}{Name of the date of exit variable.}
-  \item{push.max}{How much can purchases maximally be pushed forward in
-    time. See details.}
+  \item{use.dpt}{Logical, should we use information on dose per time.}
   \item{breaks}{Numerical vector of time points where the time since exposure and the
   cumulative dose are computed.}
   \item{lags}{Numerical vector of lag-times used in computing lagged cumulative
     doses.}
+  \item{push.max}{How much can purchases maximally be pushed forward in
+    time. See details.}
+  \item{pred.win}{The length of the window used for constructing the
+    average dose per time used to compute the duration of the last purchase}
   \item{lag.dec}{How many decimals to use in the construction of
     names for the lagged exposure variables}
 }
 
 \details{
-Each purchase record is converted into a time-interval of
-exposure. Exposure intervals are stacked, that is each interval is put
+  Each purchase record is converted into a time-interval of exposure.
+
+  If \code{use.dpt} is \code{TRUE} then the dose per time informatin is
+  used to compute the exposure interval associated with each purchase.
+Exposure intervals are stacked, that is each interval is put
 after any previous. This means that the start of exposure to a given
 purchase can be pushed into the future. The parameter \code{push.max}
 indicates the maximally tolerated push. If this is reached by a person,
 the assumption is that some of the purchased drug is not counted in the
-exposure calculations..
+exposure calculations.
 
 The \code{dpt} can either be a constant, basically translating the
 purchased amount into exposure time the same way for all persons, or it
 can be a vector with different treatment intensities for each purchase.
 In any case the cumulative dose is computed taking this into account.
+
+  If \code{use.dpt} is \code{FALSE} then the exposure from one purchase
+  is assumed to stretch over the time to the next purchase, so we are
+  effectively assuming different rates of dose per time between any two
+  adjacent purchases. Moreover, with theis approach, periods of
+  non-exposure does not exist.
 
 The intention of this function is to generate covariates for a
 particular drug for the entire follow-up of each person. The reason that
@@ -101,17 +115,22 @@ fu  <- data.frame( id = 1:3,
                   doe = c(1995,1997,1996)+1:3/4,
                   dox = c(2001,2003,2002)+1:3/5 )
 round( fu, 3 )
-xpos <- gen.exp( dfr,
+dpos <- gen.exp( dfr, amt="amnt",
                   fu = fu,
-              breaks = seq(1990,2015,0.25),
-                lags = 1:5/5 )
-xpos
+              breaks = seq(1990,2015,0.5),
+                lags = 2:3/5 )
+xpos <- gen.exp( dfr, amt="amnt",
+                  fu = fu,
+             use.dpt = FALSE,
+              breaks = seq(1990,2015,0.5),
+                lags = 2:3/5 )
+cbind( xpos, dpos )
 
 # How many relevant columns
 nvar <- ncol(xpos)-3
 clrs <- rainbow(nvar)
 
-# Show how the variables realte to the follow-up time
+# Show how the variables relate to the follow-up time
 par( mfrow=c(3,1), mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, bty="n" )
 for( i in unique(xpos$id) )
 matplot( xpos[xpos$id==i,"dof"],

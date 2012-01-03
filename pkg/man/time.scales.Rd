@@ -1,10 +1,12 @@
 \name{timeScales}
 \alias{timeScales}
+\alias{time.scales}
 \title{The time scales of a Lexis object}
 \description{
   Function to get the names of the time scales of a \code{Lexis} object.
 }
 \usage{
+time.scales(x)
 timeScales(x)
 }
 \arguments{
@@ -12,7 +14,11 @@ timeScales(x)
 }
 \value{
   A character vector containing the names of the variables in \code{x}
-  that represent the time scales
+  that represent the time scales. Extracted from the \code{time.scales}
+  attribute of the object.
+}
+\details{
+  The two functions are identical.
 }
 \author{Martyn Plummer}
 \seealso{\code{\link{Lexis}}, \code{\link{splitLexis}}}

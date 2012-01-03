@@ -1,3 +1,16 @@
+Changes in 1.1.32
+
+o gen.exp was re-written and simplified.
+
+o time.scales added as an alias for the function timeScales to extract
+  the "times-scales" attribute of a Lexis object.
+
+Changes in 1.1.31
+
+o The extractor functions entry, exit, status and dur have now an
+  argument by.id=FALSE. If set to TRUE, only one record per lex.id is
+  returned and the resulting object has lex.id as (row)names attribute.
+
 Changes in 1.1.30
 
 o DMlate expanded with the column dooad

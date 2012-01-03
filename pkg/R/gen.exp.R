@@ -1,156 +1,157 @@
-gen.exp <-
-function( purchase, id="id", dop="dop", amnt="amnt", dpt="dpt",
-                fu, doe="doe", dox="dox",
+use.amt.dpt <-
+function( purchase,
           push.max = Inf,
             breaks,
               lags = NULL,
            lag.dec = 1 )
 {
-# Make sure that fu has the right names
-names( fu )[match(c(id,doe,dox),names(fu))] <- c("id","doe","dox")
+do.call( "rbind",
+lapply( split( purchase, purchase$id ),
+        function(set)
+        {
+        np <- nrow(set)
+        if( np==1 ) return( NULL )
+        set <- set[order(set$dop),]
+        # Compute length of exposure periods
+        drug.dur  <- set$amt / set$dpt
+        # Put the exposed period head to foot
+        new.start <- min( set$dop ) + c(0,cumsum(drug.dur[-np]))
+        # Move them out so that the start of a period is never earlier than
+        # the dop
+        exp.start <- new.start + cummax( pmax(set$dop-new.start,0) )
+        # Compute the pushes
+        push.one <- exp.start - set$dop
+        # Revise them to the maximally acceptable
+        push.adj <- pmin( push.one, push.max )
+        # Revise the starting dates of exposure
+        exp.start <- exp.start - push.one + push.adj
+        # Revise the durations to be at most equal to differences between the
+        # revised starting dates
+        drug.dur  <- pmin( drug.dur, c(diff(exp.start),Inf) )
+        # Compute the end of the intervals
+        exp.end   <- exp.start + drug.dur
+        # Intervals in the middle not covered by the drug exposures - note
+        # also that we make a record for the last follow-date
+        followed.by.gap <- c( exp.start[-1]-exp.end[-length(exp.end)] > 0, TRUE )
+        # To facilitate
+        dfR <- rbind( data.frame( id = set$id[1],
+                                 dof = exp.start,
+                                 dpt = set$dpt ),
+                      data.frame( id = set$id[1],
+                                 dof = exp.end[followed.by.gap],
+                                 dpt = 0 ) )
+        dfR <- dfR[order(dfR$dof),]
+        # We now compute the cumulative dose at the end of the interval using
+        # interval length and dpt:
+        dfR$cum.amt <- with( dfR, cumsum( c(0, diff(dof)*dpt[-length(dpt)]) ) )
+        return( dfR )
+        } ) )
+}
 
-# Let all vectors be local
-# First sort them all
-purchase <- purchase[order(purchase$id,purchase$dop),]
-# Make local copies
-id   <- factor( purchase[,id] )
-dop  <- purchase[,dop]
-amnt <- purchase[,amnt]
-# The dpt
-if( is.numeric(dpt) )
+use.only.amt <-
+function( purchase,
+          pred.win = Inf,
+            breaks,
+              lags = NULL,
+           lag.dec = 1 )
+{
+# Compute the cumulative dose at all purcase dates and at the last
+# (unknown) future expiry date, computed based on previous
+# consumption.  The resulting data frame has one more line per person
+# than no. of purchases.
+do.call( "rbind",
+lapply( split( purchase, purchase$id ),
+        function(set)
+        {
+        np <- nrow(set)
+        if( np==1 ) return( NULL )
+        set <- set[order(set$dop),]
+        # The points to include in the calculation:
+        # All dates after pred.win before last purchase,
+        # but at least the last two purchase dates,
+        wp <- ( set$dop > pmin( max(set$dop)-pred.win,
+                               sort(set$dop,decreasing=TRUE)[2] ) )
+        # Cumulative amount consumed at each dop
+        cum.amt <- cumsum(c(0,set$amt))
+        # Average slope to use to project the duration last purchase
+        avg.slp <- diff(range(cum.amt[c(wp,FALSE)]))/
+                   diff(range(set$dop[wp]))
+        # Purchase dates and the date of last consumption
+        dof <- c( set$dop, set$dop[np]+set$amt[np]/avg.slp )
+        return( data.frame( id = set$id[1],
+                           dof = dof,
+                       cum.amt = cum.amt ) )
+        } ) )
+}
+
+gen.exp <-
+function( purchase, id="id", dop="dop", amt="amt", dpt="dpt",
+                fu, doe="doe", dox="dox",
+            breaks,
+           use.dpt = ( dpt %in% names(purchase) ),
+              lags = NULL,
+          push.max = Inf,
+          pred.win = Inf,
+           lag.dec = 1 )
+{
+# Make sure that the data fames have the right column names
+wh <- match( c(id,dop,amt), names(purchase) )
+if( any( is.na(wh) ) ) stop("Wrong column names for the purchase data frame")
+names( purchase )[wh] <- c("id","dop","amt")
+wh <- match( c(id,doe,dox), names(fu) )
+if( any( is.na(wh) ) ) stop("Wrong column names for the follow-up data frame")
+names( fu )[wh] <- c("id","doe","dox")
+
+if( use.dpt )
   {
-  if( length(dpt)!=length(id) )
-      dpt <- rep( dpt[1], nrow(purchase) )
+  # This is to allow dpt to be entered as numerical scalar common for all
+  if( is.numeric(dpt) )
+    {
+    if( length(dpt) > 1 ) stop( "If dpt is numeric it must have lenght 1" )
+    purchase$dpt <- dpt
+    }
+  else
+  names( purchase )[match(c(dpt),names(purchase))] <- "dpt"
+  tmp.dfr <- Epi:::use.amt.dpt( purchase,
+                                    lags = lags,
+                                push.max = push.max,
+                                 lag.dec = lag.dec )
   }
 else
-  {
-  if( dpt %in% names(purchase) )
-      dpt  <- purchase[,dpt]
-  else
-      dpt  <- rep( 1, nrow(purchase) )
-  }
+  tmp.dfr <- Epi:::use.only.amt( purchase,
+                                     lags = lags,
+                                 pred.win = pred.win,
+                                  lag.dec = lag.dec )
 
-# Compute length of exposure periods
-drug.dur  <- amnt/dpt
-# Put the exposed period head to foot
-new.start <- ave( dop     , id, FUN=min ) +
-             ave( drug.dur, id, FUN = function(x){
-                                              c(0,cumsum(x[-length(x)]))} )
-# Move them out so that no start of a period is earlier than the dop
-exp.start <- new.start + ave( dop-new.start, id,
-                              FUN=function(x) cummax(pmax(x,0)) )
-# Compute the pushes
-push.one <- exp.start - dop
-# Revise them to the maximally acceptable
-push.adj <- pmin( push.one, push.max )
-# Revise the starting dates of exposure
-exp.start <- exp.start - push.one + push.adj
-# Revise the durations to be at most equal to differences between starting dates
-drug.dur  <- pmin( drug.dur,
-                   ave( exp.start, id,
-                        FUN = function(x) c(diff(x),Inf) ) )
-# Compute the end of the intervals
-exp.end   <- exp.start + drug.dur
 
-# Amalgamate records of adjoining intervals on the same amnt
-# and put in a simplified dataframe
-eps.time <- 0.0001
-eps.dpt  <- 0.0001
-nr       <- nrow( purchase )
-remove <- ( abs( exp.start[-1]-exp.end[-nr] ) < eps.time ) &
-          ( abs(       dpt[-1]-    dpt[-nr] ) < eps.dpt  ) &
-                      ( id[-1] ==   id[-nr] )
-dfR <- data.frame( cbind(id,dpt,exp.start)[c(TRUE,!remove),],
-                           exp.end=exp.end[c(!remove,TRUE)] )
+# Merge in the follow-up period for the persons
+tmp.dfr <- merge( tmp.dfr, fu, all=T )
 
-# Follow-up intervals before first drug exposure
-first.dfr <- data.frame( exp.end = zz <- with( dfR, tapply(exp.start,id,min) ),
-                              id = factor( names( zz ) ),
-                             dpt = 0 )
-first.dfr <- merge( first.dfr, fu, all.x=TRUE )
-names(first.dfr)[match("doe",names(first.dfr))] <- "exp.start"
-first.dfr <- subset( first.dfr, exp.end > exp.start )
-# Follow-up intervals after last drug exposure
-last.dfr <- data.frame( exp.start = zz <- with( dfR, tapply(exp.end,id,max) ),
-                               id = factor( names( zz ) ),
-                              dpt = 0 )
-last.dfr <- merge( last.dfr, fu, all.x=TRUE )
-names(last.dfr)[match("dox",names(last.dfr))] <- "exp.end"
-last.dfr <- subset( last.dfr, exp.end > exp.start )
-# Intervals in the middle not covered by the drug exposures
-gap <- with( dfR, exp.start[-1]-exp.end[-nrow(dfR)] > 0 )
-holes.dfr <- with( dfR,
-             data.frame( exp.end   = exp.start[c(FALSE,gap)],
-                         exp.start = exp.end[c(gap,FALSE)],
-                                id = id[c(FALSE,gap)],
-                                di = id[c(gap,FALSE)],
-                               dpt = 0 ) )
-holes.dfr <- subset( holes.dfr, id==di )
-cols <- c( "id", "dpt", "exp.start", "exp.end" )
-dfR <- rbind( first.dfr[,cols],
-               last.dfr[,cols],
-              holes.dfr[,cols],
-                    dfR[,cols] )
-dfR <- dfR[order(dfR$id,dfR$exp.start),]
-## So far, we have a datframe, dfR, with one record per epoch of particular
-## exposure status for a given person
-drug.L <-  Lexis( data = dfR,
-                    id = id,
-                 entry = list( dof=exp.start ),
-                  exit = list( dof=exp.end ) )
-# Then we split the records at breaks
-drug.S <- splitLexis( drug.L,
-                      breaks=breaks )
-# Time since first start of the drug at the start of each interval
-drug.S$evxp <- with( drug.S, ave( dpt>0,
-                                  id,
-                                  FUN=function(x) cumsum(x)>0 ) )
-drug.S$tfi  <- with( drug.S, ave( lex.dur * evxp,
-                                  id,
-                                  FUN = function(x) c(0,cumsum(x)[-length(x)] ) ) )
-# Time since last cessation of the drug at the start of each interval
-drug.S$tfc  <- with( drug.S, ave( lex.dur * (dpt==0),
-                                  id,
-                                  FUN=function(x) ave( x,
-                                                       factor(cumsum(x==0)),
-                                                       FUN=cumsum ) ) )
-drug.S$tfc  <- pmin( drug.S$tfc, drug.S$tfi )
-# Cumulative time on a drug at the start of each interval
-drug.S$cdur <- with( drug.S, ave( lex.dur * (dpt>0),
-                                  id,
-                                  FUN = function(x) c(0,cumsum(x)[-length(x)] ) ) )
-# Cumulative dose-exposure on a drug at the start of each interval
-drug.S$cdos <- with( drug.S, ave( lex.dur * dpt,
-                                  id,
-                                  FUN = function(x)
-                                  c(0,cumsum(x)[-length(x)] ) ) )
-# Cumulative dose-exposure at the lagged values
-if( !is.null(lags) )
-{
-lnam <- paste( "lag", formatC(lags,format="f",digits=lag.dec), sep="." )
-for( i in 1:length(lags) )
-{
-drug.Sl <- splitLexis( drug.L,
-                       breaks=breaks-lags[i] )
-drug.Sl <- drug.Sl[order(drug.Sl$id,drug.Sl$dof),]
-drug.Sl[,lnam] <- with( drug.Sl, ave( dpt*lex.dur,
-                                      factor(id),
-                                      FUN = function(x) c(0,cumsum(x)[-length(x)] ) ) )
-drug.Sl$dof <- drug.Sl$dof+lags[i]
-drug.S  <- merge( drug.S, drug.Sl[,c("id","dof",lnam[i])], all.x=TRUE )
+# Interpolate to find the cumulative doses at the dates in breaks
+do.call( "rbind",
+lapply( split( tmp.dfr, tmp.dfr$id ),
+        function(set)
+        {
+        # All values of these are identical within each set (=person)
+        doe <- set$doe[1]
+        dox <- set$dox[1]
+        # The first and last date of exposure according to the assumption
+        doi <- min(set$dof)
+        doc <- max(set$dof)
+        # Get the breakpoints and the entry end exit dates
+        breaks <- sort( unique( c(breaks,doe,dox) ) )
+        xval   <- breaks[breaks>=doe & breaks<=dox]
+        dfr    <- data.frame( id = set$id[1],
+                             dof = xval )
+        dfr$tfi  <- pmax(0,xval-doi)
+        dfr$tfc  <- pmax(0,xval-doc)
+        dfr$cdos <- approx( set$dof, set$cum.amt, xout=xval, rule=2 )$y
+        for( lg in lags )
+           dfr[,paste( "ldos",
+                       formatC(lg,format="f",digits=lag.dec),
+                       sep="." )] <-
+           approx( set$dof, set$cum.amt, xout=xval-lg, rule=2 )$y
+        dfr
+        } ) )
 }
-drug.S[,lnam][is.na(drug.S[,lnam])] <- 0
-}
-# Recover the exit date from the fu data frame - used only to compute
-# FU in the last interval.
-drug.S <- merge( drug.S, fu[,c("id","dox")] )
-# Restrict to the times where we actually computed cumulative doses
-drug.S <- drug.S[drug.S$dof %in% breaks,]
-drug.S <- drug.S[order(drug.S$id,drug.S$dof),]
-# Then the lengths of each of the follow-up intervals
-drug.S$Y <- with( drug.S, ave( dof, id, FUN=function(x) diff(c(x,NA) ) ) )
-drug.S$Y[is.na(drug.S$Y)] <- (drug.S$dox - drug.S$dof )[is.na(drug.S$Y)]
-#Invisibl(
-drug.S[order(drug.S$id,drug.S$dof),c("id","dof","Y","tfi","tfc",
-                                     "cdur","cdos",lnam)]
-}
+

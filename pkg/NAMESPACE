@@ -59,6 +59,7 @@ export(
   exit,
   status,
   timeBand,
+  time.scales,
   timeScales,
   breaks,
   merge.data.frame,
