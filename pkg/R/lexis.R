@@ -604,7 +604,10 @@ status <- function(x, at="exit", by.id = FALSE)
   res
 }
 
-time.scales <-
+# The time.scales method
+time.scales <- function (x) UseMethod("time.scales")
+# The Lexis version of this
+time.scales.Lexis <-
 timeScales <- function(x)
 {
   return (attr(x,"time.scales"))

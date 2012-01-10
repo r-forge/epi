@@ -3,7 +3,7 @@ Changes in 1.1.32
 o gen.exp was re-written and simplified.
 
 o time.scales added as an alias for the function timeScales to extract
-  the "times-scales" attribute of a Lexis object.
+  the "time.scales" attribute of a Lexis object.
 
 Changes in 1.1.31
 
