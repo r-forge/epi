@@ -53,7 +53,8 @@ data( N.dk )
 # Show the data in tabular form
 xtabs( N ~ A + P, data=Nx )
 # Lexis triangles as data frame
-N2Y( data=Nx, return.dfr=TRUE )
+Nt <- N2Y( data=Nx, return.dfr=TRUE )
+xtabs( Y ~ round(A,2) + round(P,2), data=Nt )
 # Lexis triangles as a 3-dim array
 ftable( N2Y( data=Nx, return.dfr=FALSE ) )
 }

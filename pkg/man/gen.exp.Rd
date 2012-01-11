@@ -21,7 +21,7 @@ gen.exp(purchase, id = "id", dop = "dop", amt = "amt", dpt = "dpt",
 }
 \arguments{
   \item{purchase}{Data frame with columns \code{id}-person id,
-    \code{dop}-date of purchase, \code{amnt}-amount purchased, and
+    \code{dop}-date of purchase, \code{amt}-amount purchased, and
     optionally \code{dpt}-defined daily dose, that is how much is assumed
   to be ingested per unit time. The time unit used here is assumed to be
 the same as that used in \code{dop}, so despite the name it is not
@@ -50,7 +50,7 @@ necessarily measured per day.}
 \details{
   Each purchase record is converted into a time-interval of exposure.
 
-  If \code{use.dpt} is \code{TRUE} then the dose per time informatin is
+  If \code{use.dpt} is \code{TRUE} then the dose per time information is
   used to compute the exposure interval associated with each purchase.
 Exposure intervals are stacked, that is each interval is put
 after any previous. This means that the start of exposure to a given
@@ -67,7 +67,7 @@ In any case the cumulative dose is computed taking this into account.
   If \code{use.dpt} is \code{FALSE} then the exposure from one purchase
   is assumed to stretch over the time to the next purchase, so we are
   effectively assuming different rates of dose per time between any two
-  adjacent purchases. Moreover, with theis approach, periods of
+  adjacent purchases. Moreover, with this approach, periods of
   non-exposure does not exist.
 
 The intention of this function is to generate covariates for a
@@ -107,7 +107,7 @@ amt <- sample(   1:3/15, sum(n), replace=TRUE )
 dpt <- sample( 15:20/25, sum(n), replace=TRUE )
 dfr <- data.frame( id = rep(1:3,n),
                   dop,
-                 amnt = amt,
+                  amt = amt,
                   dpt = dpt )
 round( dfr, 3 )
 # Construct a simple dataframe for follow-up periods for these 3 persons
@@ -115,11 +115,11 @@ fu  <- data.frame( id = 1:3,
                   doe = c(1995,1997,1996)+1:3/4,
                   dox = c(2001,2003,2002)+1:3/5 )
 round( fu, 3 )
-dpos <- gen.exp( dfr, amt="amnt",
+dpos <- gen.exp( dfr,
                   fu = fu,
               breaks = seq(1990,2015,0.5),
                 lags = 2:3/5 )
-xpos <- gen.exp( dfr, amt="amnt",
+xpos <- gen.exp( dfr,
                   fu = fu,
              use.dpt = FALSE,
               breaks = seq(1990,2015,0.5),

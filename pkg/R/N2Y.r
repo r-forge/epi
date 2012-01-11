@@ -22,14 +22,13 @@ if( length(P.int)!=1 ) stop( "Non-uniform period interval lengths:\n", P.int )
 if( A.int!=P.int ) stop( "Unequal age and period interval lengths:\n",
                          "age: ", A.int, ", period: ", P.int )
 # Put population prevalence data in a table
-# Ntab <- with( N.dk, xtabs( N ~ A+P ) )
-Ntab <- xtabs( N ~ A+P )
-# Devise a table for the risk times - note one less age and period category
-Ydim <- c(dimnames(Ntab),list(wh=c("up","lo")))
-# str( Ydim )
+Ntab <- xtabs( N ~ A + P )
+# Devise a table for the risk times
+Ydim <- c(dimnames(Ntab),list(wh=c("lo","up")))
+# note one less age and period category
 Ytab <- array( NA, dim=sapply(Ydim,length),
                    dimnames = Ydim )[-dim(Ntab)[1],-dim(Ntab)[2],]
-# str(Ytab)
+# How manu age and period classes
 na <- nrow(Ytab)
 np <- ncol(Ytab)
 for(a in 1:na) for(p in 1:np)

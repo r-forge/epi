@@ -48,7 +48,6 @@ export(
            splitLexis,
       transform.Lexis,
       factorize.Lexis,
-    time.scales.Lexis,
              cutLexis,
            countLexis,
           stack.Lexis,

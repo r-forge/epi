@@ -604,16 +604,11 @@ status <- function(x, at="exit", by.id = FALSE)
   res
 }
 
-# The time.scales method
-time.scales <- function (x) UseMethod("time.scales")
-# The Lexis version of this
-time.scales.Lexis <-
 timeScales <- function(x)
 {
   return (attr(x,"time.scales"))
 }
 
-time.band <-
 timeBand <- function(lex, time.scale, type="integer")
 {
   time.scale <- check.time.scale(lex, time.scale)[1]
