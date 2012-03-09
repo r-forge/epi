@@ -18,25 +18,24 @@ provided by \code{etm.Lexis}.
 }
 \usage{
 msdata(obj, ...)
-\method{msdata}{Lexis}(obj, time.scale = timeScales(obj)[1], ...)
+\method{msdata}{Lexis}(obj,
+                time.scale = timeScales(obj)[1],
+                       ... )
 \method{etm}{Lexis}( obj,
-   time.scale = timeScales(obj)[1],
-    cens.name = "cens",
-            s = 0,
-            t = "last",
-   covariance = TRUE,
-     delta.na = TRUE,
-          ...
-         )
-
-
+              time.scale = timeScales(obj)[1],
+               cens.name = "cens",
+                       s = 0,
+                       t = "last",
+              covariance = TRUE,
+                delta.na = TRUE,
+                     ... )
 }
 \arguments{
   \item{obj}{A \code{\link{Lexis}} object.}
   \item{time.scale}{Name or number of timescale in the \code{Lexis}
     object.}
   \item{cens.name}{Name of the code for censoring used by \code{etm}. It
-  is only necessary to change this if of of the states in the
+  is only necessary to change this if one of the states in the
   \code{Lexis} object has name "\code{cens}".}
   \item{s}{Passed on to \code{etm}.}
   \item{t}{Passed on to \code{etm}.}
