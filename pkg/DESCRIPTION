@@ -4,7 +4,7 @@ Date: 2012-02-16
 Title: A package for statistical analysis in epidemiology.
 Author: Bendix Carstensen, Martyn Plummer, Esa Laara, Michael Hills et. al.
 Maintainer: Bendix Carstensen <bxc@steno.dk>
-Depends: utils
+Depends: R (>= 2.10.0), utils
 Suggests: splines, nlme, survival, mstate, etm, MASS
 Description: Functions for demographic and epidemiological
   analysis in the Lexis diagram, i.e. register and cohort follow-up
