@@ -221,10 +221,10 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
 
   ## Drop rows with short duration for consistency with splitLexis
   short.dur <- lex$lex.dur <= tol
-  if (short.dur) {
+  if (any(short.dur)) {
       warning("Dropping ", sum(short.dur),
               " rows with duration of follow up < tol")
-      lex <- subset(lex, short.dur)
+      lex <- subset(lex, !short.dur)
   }
 
   ## Return Lexis object
