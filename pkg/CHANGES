@@ -1,10 +1,8 @@
-Changes in 1.1.38
-
-o Array problems in stat.table fixed
-
 Changes in 1.1.36
 
 o A bug in boxes.Lexis causing arrow-coloring to go out of sync fixed
+
+o Array problems in stat.table fixed
 
 Changes in 1.1.35
 
