@@ -1,6 +1,6 @@
 Package: Epi
-Version: 1.1.36
-Date: 2012-06-16
+Version: 1.1.39
+Date: 2012-09-16
 Title: A package for statistical analysis in epidemiology.
 Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
              email = "bxc@steno.dk"),
@@ -8,6 +8,7 @@ Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
                     email = "plummerm@iarc.fr"),
              person("Michael", "Hills", role = "aut"),
              person("Esa", "Laara", role = "ctb"))
+Maintainer: Bendix Carstensen <bxc@steno.dk>
 Depends: R (>= 2.14.0), utils
 Suggests: splines, nlme, survival, mstate, etm, MASS
 Description: Functions for demographic and epidemiological
