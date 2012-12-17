@@ -7,25 +7,43 @@ factorize.default <- Relevel.default
 # The Lexis version of this
   Relevel.Lexis <-
 factorize.Lexis <-
-function (x, states=NULL, print=TRUE, ...)
+function (x, states=NULL, print=TRUE, ... )
 {
 # Is this really a Lexis object
 if( !inherits(x,"Lexis") ) stop( "First argument must be a Lexis object" )
 
-# Make the state variables into factors with the same levels set
+# If lex.Cst and lex.Xst are not factors, make them:
+if( !is.factor(x$lex.Cst) | !is.factor(x$lex.Xst) )
+  {
 Cst <- factor(x$lex.Cst)
 Xst <- factor(x$lex.Xst)
+  }
+else # just use the factors as they are
+  {
+Cst <- x$lex.Cst
+Xst <- x$lex.Xst
+  }
+# - but amend them to have the same sety of levels
 all.levels = union(levels(Cst), levels(Xst))
 Cst <- factor(Cst, levels = all.levels)
 Xst <- factor(Xst, levels = all.levels)
-x$lex.Cst <- Cst
-x$lex.Xst <- Xst
+
+# A table of actually occurring levels and their names
+tCX <- table(Cst) + table(Xst)
+all.levels <- names( tCX[tCX>0] )
+
+# If states are not given, just return factors with reduced levels
+if( is.null(states) )
+  {
+x$lex.Cst <- factor( Cst, levels = all.levels )
+x$lex.Xst <- factor( Xst, levels = all.levels )
+  }
 
 # If new state names are given as a list it implies merging of them
 if( !is.null( states ) & is.list( states ) )
   {
-  x$lex.Cst <- Relevel( x$lex.Cst, states, ... )
-  x$lex.Xst <- Relevel( x$lex.Xst, states, ... )
+  x$lex.Cst <- Relevel( Cst, states, ... )
+  x$lex.Xst <- Relevel( Xst, states, ... )
   if( print )
     {
     # Construct translation table between old and grouped states to print
@@ -41,24 +59,94 @@ if( !is.null( states ) & is.list( states ) )
                        new=c( apply( cC, 1, paste, collapse="" ),
                               apply( cX, 1, paste, collapse="" ) ) ) )
     }
-  return( x )
   }
 
-# If states are just given as a vector we assume that it's just new names
-if( !is.null( states ) & !is.list( states ) )
+# If states is a character vector we assume that it's just new names
+if( !is.null( states ) & is.character( states ) )
   {
   if( length( states ) != nlevels(Cst) )
     stop( "Second argument is a vector of length ", length(states),
           ", but it should be the joint no. of states, ",
          length(all.levels),
           "\ncorresponding to ", all.levels )
-  levels( x$lex.Cst ) <-
-  levels( x$lex.Xst ) <- states
+  levels( Cst ) <- levels( Xst ) <- states
+  x$lex.Cst <- Cst
+  x$lex.Xst <- Xst
   if( print )
     {
     cat( "New levels for lex.Xst and lex.Cst generated:\n" )
     print( data.frame( old=all.levels, new=levels(x$lex.Cst) ) )
     }
+  }
+
+# If states is a numeric vector we assume that it's just reordering
+if( !is.null( states ) & is.numeric( states ) )
+  {
+  x$lex.Cst <- Relevel( Cst, states )
+  x$lex.Xst <- Relevel( Xst, states )
+  }
+
+return( x )
+}
+
+############################################################
+# The stacked.Lexis version of this
+#
+Relevel.stacked.Lexis <-
+function (x, states=NULL, print=TRUE, ... )
+{
+# Is this really a stacked.Lexis object
+if( !inherits(x,"stacked.Lexis") ) stop( "First argument must be a stacked.Lexis object" )
+
+# What were the initial levels
+all.levels <- levels( x$lex.Tr )
+Tr <- factor(x$lex.Tr)
+
+# If new state names are given as a list it implies merging of them
+if( !is.null( states ) & is.list( states ) )
+  {
+  x$lex.Tr <- Relevel( x$lex.Tr, states, ... )
+  if( print )
+    {
+    # Construct translation table between old and grouped states to print
+    tT <- table( Tr, x$lex.Xst )
+    cT <- matrix( colnames(tC), nrow(tC), ncol(tC), byrow=T )
+    cT[tT==0] <- ""
+    print( data.frame( old=rownames(tT),
+                       new=c( apply(cT, 1, paste, collapse="" ) ) ) )
+    }
+  }
+
+# If states are just given as a vector we assume that it's just new names
+if( !is.null( states ) & is.character( states ) )
+  {
+  if( length( states ) != nlevels( Tr ) )
+    stop( "Second argument is a vector of length ", length(states),
+          ", but the length should be equal to the no. of states (transitions), ",
+         length(all.levels),
+          "\ncorresponding to: ", all.levels )
+  x$lex.Tr <- Tr
+  levels( x$lex.Tr ) <- states
+  if( print )
+    {
+    cat( "New levels for lex.Tr generated:\n" )
+    print( data.frame( old=all.levels, new=levels(x$lex.Tr) ) )
+    }
+  }
+
+# If states is a numeric vector we assume that it's just reordering of
+# the transitions
+if( !is.null( states ) & is.numeric( states ) )
+  x$lex.Tr <- Relevel( x$lex.Tr, states )
+
+# If states is not given, shave down the no. of levels of the original state indicators:
+if( is.null(states) )
+  {
+x$lex.Tr  <- factor( x$lex.Tr )
+tt <- table( x$lex.Cst ) + table( x$lex.Xst )
+tl <- names( tt[tt>0] )
+x$lex.Cst <- factor( x$lex.Cst, levels = tl )
+x$lex.Xst <- factor( x$lex.Xst, levels = tl )
   }
 
 return( x )

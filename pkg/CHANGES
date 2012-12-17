@@ -1,3 +1,21 @@
+Changes in 1.2.41
+
+o boxes.Lexis now returns an object of class MS, which easily allows
+  plotting of slightly modified multistate displays using the new
+  command boxes.MS. The facility in boxes.Lexis to produce weedy code
+  for the same purpose has been removed.
+
+o boxes.Lexis now allows to show *both* number of transitions *and*
+  rates between the states.
+
+o stack.Lexis now takes the Lexis attributes "time.scales" and "breaks"
+  across from the Lexis object to the stacked.Lexis object.
+
+Changes in 1.1.40
+
+o subset, transform and Relevel methods have been added for objects of
+  type stacked.Lexis.
+
 Changes in 1.1.39
 
 o effx has been expanded with an extra argument eff=, which defaults
