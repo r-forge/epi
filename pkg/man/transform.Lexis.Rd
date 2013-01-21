@@ -2,7 +2,6 @@
 \alias{transform.Lexis}
 \alias{Relevel.Lexis}
 \alias{transform.stacked.Lexis}
-\alias{Relevel.stacked.Lexis}
 \alias{factorize}
 \alias{factorize.Lexis}
 \title{Transform a Lexis (or stacked.Lexis) objects}
@@ -15,7 +14,6 @@
 \method{Relevel}{Lexis}( x, states, print = TRUE, \dots )
 \method{factorize}{Lexis}( x, states, print = TRUE, \dots )
 \method{transform}{stacked.Lexis}( `_data`, \dots)
-\method{Relevel}{stacked.Lexis}( x, states, print = TRUE, \dots )
 }
 \arguments{
   \item{_data}{an object of class \code{Lexis}.}
@@ -38,9 +36,6 @@
   \code{\link{Relevel}}, but for both the factors \code{lex.Cst} and
   \code{lex.Xst}. A default sideeffect is to produce a table of old
   states versus new states if \code{states} is a list.
-
-  \code{Relevel} for a \code{\link[=stack.Lexis]{stacked.Lexis}} object
-  relevels the factor \code{lex.Tr} of transitions.
 
   If \code{states} is \code{NULL}, as when for example the argument is
   not passed to the function, the returned object have levels of
@@ -75,5 +70,7 @@ niz <- factorize.Lexis( niw, states=list("Alive",c("Pulm","Mort")), coll=" \n& "
 boxes( niw, boxpos=TRUE )
 par( new=TRUE )
 boxes( niz, boxpos=TRUE )
+siw <- stack( niw )
+str( siw )
 }
 \keyword{manip}

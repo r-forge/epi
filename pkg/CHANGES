@@ -1,3 +1,12 @@
+Changes in 1.2.43
+
+o N2Y fixed so that local variable binings are recognized (M. Plummer)
+
+o summary.Lexis expanded with the argument by=, allowing a summary by a
+  factor. Also, the default behaviour is now to return only the
+  transition summary, and only optionally the transition rates;
+  giverned by the Rates= argument
+
 Changes in 1.2.42
 
 o Bug that caused a crash of ROC when vaiables in the "form" argument

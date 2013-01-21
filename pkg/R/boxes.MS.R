@@ -159,7 +159,7 @@ if( inherits(obj,"Lexis") )
   {
   if( show )
     {
-    SM <- summary(obj,simplify=FALSE,scale=scale.Y)
+    SM <- summary(obj,simplify=FALSE,scale=scale.Y,Rates=TRUE)
     Y <- SM[[1]][1:n.st,"Risk time:"]
     D <- SM$Transitions[1:n.st,1:n.st]
     R <- SM$Rates[1:n.st,1:n.st] * ifelse(scale.R,scale.R,1)
