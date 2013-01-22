@@ -29,14 +29,16 @@ Lexis.diagram <- function( age = c( 0, 60),
 #
 # BxC, 2002, revsions in 2005
 
-# If there is a dataframe argument, attach it so that arguments are matched
-#
-if( !is.null( data ) )
-  {
-  attach( data, 2 )
-  on.exit( detach( pos=2 ) )
-  }
-  
+    ## Get variables from data argument, if supplied, or from parent
+    ## frame if not.
+    entry.date <- eval(substitute(entry.date), data)
+    entry.age <-  eval(substitute(entry.age), data)
+    exit.date <-  eval(substitute(exit.date), data)
+    exit.age <-   eval(substitute(exit.age), data)
+    risk.time <-  eval(substitute(birth.date), data)
+    birth.date <- eval(substitute(birth.date), data)
+    fail <-       eval(substitute(fail), data)
+    
 # First expand intervals to both dimensions
 #
     int[1:2] <- c(    int,    int)[1:2]
