@@ -10,7 +10,7 @@ export(
    pc.matlines,
           cal.yr,
   as.Date.cal.yr,
-  ccwc,
+#  ccwc,
   ci.pd,
   ci.cum,
   ci.lin,

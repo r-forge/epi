@@ -2,25 +2,24 @@ summary.Lexis <-
 function( object, simplify=TRUE, scale=1, by=NULL, Rates=FALSE, ... )
 {
 # If we have a by argument find out what to do
-if( !is.null(by) )
-  {
-  if( is.character(by) )
-    {
-    if( !(by %in% names(object)) )
-      stop( "Wrong `by` argument: must be a name of a variable in the Lexis object" )
-    else return( lapply( split( object, object[,by] ),
-                         summary.Lexis,
-                         by=NULL, simplify=simplify, scale=scale, Rates=Rates, ... ) )
+    if (!is.null(by)) {
+        if (is.character(by)) {
+            if (!all(by %in% names(object)))
+                stop("Wrong 'by' argument: '", paste(by,collapse="','"),
+                     "' - must be name(s) of variable(s) in the Lexis object")
+            else return(lapply(split(object, object[, by]), summary.Lexis,
+                by = NULL, simplify = simplify, scale = scale,
+                Rates = Rates, ...))
+        }
+        else {
+            if (length(by) != nrow(object))
+                stop("Wrong length of 'by' argument:", length(by),
+                     "must be same length as rows of the Lexis object:", nrow(object) )
+            else return(lapply(split(object, by), summary.Lexis,
+                by = NULL, simplify = simplify, scale = scale,
+                Rates = Rates, ...))
+        }
     }
-  else
-    {
-    if( length(by) != nrow(object) )
-      stop(  "Wrong `by` argument: must be same length as rows of the Lexis object" )
-    else return( lapply( split( object, by ),
-                         summary.Lexis,
-                         by=NULL, simplify=simplify, scale=scale, Rates=Rates, ... ) )
-    }
-  }
 
 # Table(s) of all transitions (no. records)
 tr <- trans <- with( object, table(lex.Cst,lex.Xst) )

@@ -101,27 +101,25 @@ function ( test = NULL,
 # Form the empirical distribution function for test for each of
 # the two categories of resp.
 
-# First a table of the test (continuous variable) vs. the response
+# First a table of the test (continuous variable) vs. the response and
+# adding a row of 0s so that we have all points
   m  <- as.matrix( base:::table( switch( PS+1, test, lr$fit ), resp ) )
-# What values do they refer to
-  fv <-     sort( unique( switch( PS+1, test, lr$fit ) ) )
-# How may different values of the test variable do we have?
-  nr <- dim( m )[1]
-# Number in the two outcome categories
-  a <- apply( m, 2, sum )
-# Add a the sum for each value of test
-  m <- addmargins( m, 2 )
-# The calculate the empirical distribution functions:
-  m <- apply( m[nr:1,], 2, cumsum )[nr:1,]
+  m  <- addmargins( rbind( 0, m ), 2 )
+# What values of test/eta do the rows refer to
+  fv <- c( -Inf, sort( unique( switch( PS+1, test, lr$fit ) ) ) )
+# How many rows in this matrix
+  nr <- nrow(m)
+# Calculate the empirical distribution functions:
+  m <- apply( m, 2, cumsum )
 # Then the relevant measures are computed.
-  sn <- c( m[,2] / a[2], 0 )
-  sp <- c( (a[1]-m[,1]) / a[1], 1 )
-  pvp <- c( m[,2] / m[,3], 1 )
-  pvn <- (a[1] - m[,1]) / ( sum(a) - m[,3] )
-  pvn <- c( pvn, rev( pvn )[1] )
-  res <- data.frame( cbind( sn, sp, pvp, pvn, c(NA,fv) ) )
-  auc <- sum( ( res[-1,1] + res[-nr,1] ) / 2 * diff( res[,2] ) )
-  names( res ) <- c( "sens", "spec", "PV+", "PV-", rnam )
+  sns <- (m[nr,2]-m[,2]) /   m[nr,2]
+  spc <-          m[,1]  /   m[nr,1]
+  pvp <-          m[,2]  /           m[,3]
+  pvn <- (m[nr,1]-m[,1]) / ( m[nr,3]-m[,3] )
+  res <- data.frame( cbind( sns, spc, pvp, pvn, fv ) )
+  names( res ) <- c( "sens", "spec", "pvp", "pvn", rnam )
+  # AUC by triangulation
+  auc <- sum( (res[-1,"sens"]+res[-nr,"sens"])/2 * abs(diff(1-res[,"spec"])) )
 
 # Plot of sens, spec, PV+, PV-:
 if ( any( !is.na( match( c( "SP", "SNSP", "SPV" ), toupper( plot ) ) ) ) )
@@ -138,13 +136,13 @@ if ( PS ) {
        steplines( fv, res[,j], lty=1, lwd=lwd, col=gray((j+1)/7)) }
        text( 0, 1.01, "Sensitivity", cex=0.7, adj=c(0,0), font=2 )
        text( 1, 1.01, "Specificity", cex=0.7, adj=c(1,0), font=2 )
-       text( 0,  a[2]/sum(a)-0.01, "PV+", cex=0.7, adj=c(0,1), font=2 )
-       text( 0 + strwidth( "PV+", cex=0.7 ),  a[2]/sum(a)-0.01,
-             paste( " (= ", a[2],"/", sum(a), " =",
-                    formatC( 100*a[2]/sum(a), digits=3 ),
+       text( 0,  m[nr,2]/m[nr,3]-0.01, "PV+", cex=0.7, adj=c(0,1), font=2 )
+       text( 0 + strwidth( "PV+", cex=0.7 ),  m[nr,2]/m[nr,3]-0.01,
+             paste( " (= ", m[nr,2],"/", m[nr,3], " =",
+                    formatC( 100*m[nr,2]/m[nr,3], digits=3 ),
                     "%)", sep=""),
              adj=c(0,1), cex=0.7 )
-       text( 1, 1-a[2]/sum(a)-0.01, "PV-", cex=0.7, adj=c(1,1), font=2 )
+       text( 1, 1-m[nr,2]/m[nr,3]-0.01, "PV-", cex=0.7, adj=c(1,1), font=2 )
             }
 # then for test-variable scale
 else {
@@ -161,13 +159,13 @@ else {
        steplines( fv, res[,j], lty=1, lwd=lwd, col=gray((j+1)/7))}
        text( xl[1], 1.01, "Sensitivity", cex=0.7, adj=c(0,0), font=2 )
        text( xl[2], 1.01, "Specificity", cex=0.7, adj=c(1,0), font=2 )
-       text( xl[1],  a[2]/sum(a)-0.01, "PV+", cex=0.7, adj=c(0,1), font=2 )
-       text( xl[1] + strwidth( "PV+", cex=0.7 ),  a[2]/sum(a)-0.01,
-             paste( " (= ", a[2],"/", sum(a), " =",
-                    formatC( 100*a[2]/sum(a), digits=3 ),
+       text( xl[1],  m[nr,2]/m[nr,3]-0.01, "PV+", cex=0.7, adj=c(0,1), font=2 )
+       text( xl[1] + strwidth( "PV+", cex=0.7 ),  m[nr,2]/m[nr,3]-0.01,
+             paste( " (= ", m[nr,2],"/", m[nr,3], " =",
+                    formatC( 100*m[nr,2]/m[nr,3], digits=3 ),
                     "%)", sep=""),
              adj=c(0,1), cex=0.7 )
-       text( xl[2], 1-a[2]/sum(a)-0.01, "PV-", cex=0.7, adj=c(1,1), font=2 )
+       text( xl[2], 1-m[nr,2]/m[nr,3]-0.01, "PV-", cex=0.7, adj=c(1,1), font=2 )
        }
 }
 
@@ -181,7 +179,7 @@ if ( any( !is.na( match( "ROC", toupper( plot ) ) ) ) )
        if( is.numeric( grid ) ) abline( h=grid/100, v=grid/100, col=gray( 0.9 ) )
        abline( 0, 1, col=gray( 0.4 ) )
        box()
-       lines( 1-res[,2], res[,1], lwd=lwd )
+       lines( 1-res[,"spec"], res[,"sens"], lwd=lwd )
 
   # Tickmarks on the ROC-curve
        if ( !is.null(cuts) )

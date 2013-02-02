@@ -17,10 +17,13 @@
   \item{simplify}{Should rows with 0 follow-up time be dropped?}
   \item{scale}{Scaling factor for the rates. The calculated rates are
     multiplied by this number.}
-  \item{by}{Either a name of a variable in \code{object} (so, a
-    character string) or a vector. Used to give a separate summaries for
-    subsets of \code{object}.}
-  \item{Rates}{Should a component with transition rates be returned (and
+  \item{by}{Character vector of name(s) of variable(s) in
+    \code{object}. Used to give a separate summaries for subsets of
+    \code{object}. If longer than than 1, the interaction between that
+    variables is used to stratify the summary. It is also possible to
+    supply a vector of length \code{nrow(object)}, and the distinct
+    values of this will be used to stratify the summary.}
+\item{Rates}{Should a component with transition rates be returned (and
   printed) too?}
   \item{x}{A \code{summary.Lexis} object.}
   \item{digits}{How many digits should be used for printing?}
