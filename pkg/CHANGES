@@ -1,17 +1,16 @@
 Changes in 1.2.44
 
-o attach() purged from Lexis.diagram, Lexis.lines
-  (and ccwc - temporarily removed).
+o attach() purged from Lexis.diagram, Lexis.lines and ccwc
 
 o Bug in computing AUC in ROC fixed, thanks to Karl Ove Hufthammer.
-  Documantation clarified with respect to definition of test.
+  Documentation clarified with respect to definition of test.
 
-o Bug fix to remove warning when more than one variable name were
+o Bug fix to remove warning when more than one variable name was
   supplied in the by= argument of summary.Lexis.
 
 Changes in 1.2.43
 
-o N2Y fixed so that local variable binings are recognized (M. Plummer)
+o N2Y fixed so that local variable bindings are recognized (M. Plummer)
 
 o summary.Lexis expanded with the argument by=, allowing a summary by a
   factor. Also, the default behaviour is now to return only the
