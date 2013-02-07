@@ -57,7 +57,7 @@ maximal) be indicated on the ROC curve?}
     ROC-curve. Passed on to \code{plot}}
 }
 \details{
- As an alternative to a \code{test} and a \code{status} vraiable, a
+ As an alternative to a \code{test} and a \code{status} variable, a
 model formula may given, in which case the the linear predictor is the
 test variable and the response is taken as the true status variable.
 The test used to derive  sensitivity, specificity, PV+ and PV- as a

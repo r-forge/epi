@@ -102,14 +102,14 @@ function ( test = NULL,
 # the two categories of resp.
 
 # First a table of the test (continuous variable) vs. the response and
-# adding a row of 0s so that we have all points
+# adding a row of 0s so that we have all points fro the ROC curve
   m  <- as.matrix( base:::table( switch( PS+1, test, lr$fit ), resp ) )
   m  <- addmargins( rbind( 0, m ), 2 )
 # What values of test/eta do the rows refer to
   fv <- c( -Inf, sort( unique( switch( PS+1, test, lr$fit ) ) ) )
 # How many rows in this matrix
   nr <- nrow(m)
-# Calculate the empirical distribution functions:
+# Calculate the empirical distribution functions (well, cumulative numbers):
   m <- apply( m, 2, cumsum )
 # Then the relevant measures are computed.
   sns <- (m[nr,2]-m[,2]) /   m[nr,2]
