@@ -49,7 +49,7 @@ a factor with levels made up of combinations of the levels of
 joined by a "\code{->}".}
 
 \author{
-Bendix Carstensen, \email{bxc@steno.dk}, \url{www.biostat.ku.dk/~bxc}
+Bendix Carstensen, \email{bxc@steno.dk}, \url{http://BendixCarstensen.com}
 }
 \examples{
 data(DMlate)

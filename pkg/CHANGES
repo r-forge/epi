@@ -1,6 +1,8 @@
 Changes in 1.2.44
 
-o attach() purged from Lexis.diagram, Lexis.lines and ccwc
+o A number of dead links in the documentation have been resurrected.
+
+o attach() purged from Lexis.diagram, Lexis.lines and ccwc.
 
 o Bug in computing AUC in ROC fixed, thanks to Karl Ove Hufthammer.
   Documentation clarified with respect to definition of test.
