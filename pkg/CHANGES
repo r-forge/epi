@@ -1,3 +1,9 @@
+Changes in 1.2.45
+
+o simLexis introduced. Allows simulation from multiple timescale
+  mulitste models. Accompanying utilities supplied too: pr.Lexis, prev
+  and plot.prev.
+
 Changes in 1.2.44
 
 o A number of dead links in the documentation have been resurrected.
