@@ -14,7 +14,6 @@ function( rt, init, time.pts )
 # rt with columns lex.id and timescales. Each row in rt is the id,
 # followed by the set of estimated transition rates to the different
 # states reachable from the current one.
-# Only works because time.pts and ini is present in the calling environment of sim1.
 ci <- apply( rt[,-1,drop=FALSE], 2, cummid, time.pts )
 tt <- uu <- -log( runif(ncol(ci)) )
 for( i in 1:ncol(ci) ) tt[i] <- approx( ci[,i], time.pts, uu[i], rule=2 )$y

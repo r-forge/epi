@@ -14,17 +14,11 @@
   persons.}
 
 \usage{
-simLexis( Tr,
-        init,
-    time.pts = 0:50/2,
-           N = 1,
-        type = "glm-mult" )
- nState( obj,
-          at,
-        from,
-  time.scale = 1 )
-pState( nSt,
-       perm = 1:ncol(nSt) )
+simLexis( Tr, init, time.pts = 0:50/2, N = 1,
+          type = "glm-mult" )
+ nState( obj, at, from, time.scale = 1 )
+ pState( nSt,
+         perm = 1:ncol(nSt) )
 \method{plot}{pState}( x,
                      col = rainbow(ncol(x)),
                   border = col,
@@ -49,21 +43,14 @@ pState( nSt,
     \code{nrow(init)}, in which case \code{N[i]} persons of
     configuration \code{init[i,]} are simulated.}
   \item{type}{Not implemented (yet); \code{simLexis} only works if
-    elements of \code{Tr} are glm objects. What type of objects are in
-    \code{Tr}? "\code{glm-mult}" refers to a generalized linear model
-    with Poisson error and \code{log(lex.dur)} as offset. \code{rate} or
-    \code{inc} indicates that elements of \code{Tr} are functions that
-    return the rate at prespecified points, while "\code{cum}" indicates
-    that they are function that return the cumulative rates (integrated
-    intensity). Only the first letter is significant, and case is
-    ignored.}
+    elements of \code{Tr} are glm objects.}
   \item{obj}{A \code{Lexis} object.}
   \item{from}{The point on the time scale \code{time.scale} from which
     we start counting.}
   \item{time.scale}{The timescale to which \code{from} refer.}
   \item{at}{Timepoints (after \code{from}) where the number of persons
     in each state is to be computed.}
-  \item{nSt}{A table obtained by \code{nState.Lexis}.}
+  \item{nSt}{A table obtained by \code{nState}.}
   \item{perm}{A permutation of columns used before cumulating row-wise and
   taking percentages.}
   \item{x}{An object of class \code{pState}, e.g. created by \code{pState}.}
