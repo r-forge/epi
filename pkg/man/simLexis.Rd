@@ -5,23 +5,20 @@
 \alias{plot.pState}
 \title{Simulate a Lexis object representing follow-up in a multistate
   model.}
-\description{A Lexis object describes a current status for patients if
-  we ignore \code{lex.dur} (the sojourn time in the current state) and
-  \code{lex.Xst} (the state occupied after \code{lex.dur} in the current
-  state, \code{lex.Cst}). Based on a restricted \code{Lexis} object like
-  this and a full specification of transition intensities between
-  states, this function simulates transition times and -types for
-  persons.}
+
+\description{Based on a (pre-)\code{Lexis} object representing persosn
+  at given states and tines, and full specification of transition
+  intensities between states in the form of fitted Poisson models, this
+  function simulates transition times and -types for persons and returns
+  a \code{Lexis} object representing the simulted cohort.}
 
 \usage{
 simLexis( Tr, init, time.pts = 0:50/2, N = 1,
-          type = "glm-mult" )
+              lex.id = 1:(N*nrow(init)), type = "glm-mult" )
  nState( obj, at, from, time.scale = 1 )
- pState( nSt,
-         perm = 1:ncol(nSt) )
-\method{plot}{pState}( x,
-                     col = rainbow(ncol(x)),
-                  border = col,
+ pState( nSt, perm = 1:ncol(nSt) )
+\method{plot}{pState}( x, col = rainbow(ncol(x)),
+                  border = "transparent",
                     xlab = "Time",
                     ylab = "Probability", ... )
    }
@@ -29,30 +26,31 @@ simLexis( Tr, init, time.pts = 0:50/2, N = 1,
   \item{Tr}{A named list of named lists. The names of the lists are
     names of the transient states in the model, and the names of the
     list elements are the names of the states reachable from this. See details.}
-  \item{init}{A (restricted) \code{\link{Lexis}} object representing the initial
+  \item{init}{A (pre-)\code{\link{Lexis}} object representing the initial
     state of the persons whose trajectories through the multiple states
     we want to simulate. Must have an attribute "time.since" --- see
-    details. Duplicate values of \code{lex.id} is non-sensical and not accepted.}
+    details. Duplicate values of \code{lex.id} is non-sensical and not
+    accepted.}
   \item{time.pts}{Numerical vector of times since start. Cumulative
     rates for transitions are computed at these times after stater and
     entry state. Simulation is only done till time \code{max(time.pts)}
     after start, where persons are censored.}
-  \item{N}{Numeric. How many persons should be simulated. If \code{N} is
-    a scalar, \code{N} persons with covariate configuration of each line
-    in \code{init} will be simulated. Can also be a vector of length
-    \code{nrow(init)}, in which case \code{N[i]} persons of
-    configuration \code{init[i,]} are simulated.}
+  \item{N}{Numeric. How many persons should be simulated. \code{N}
+    persons with covariate configuration of each row in \code{init}
+    will be simulated.}
+  \item{lex.id}{Vector of ids of the simulated persons. Useful when
+    simulating in chunks.}
   \item{type}{Not implemented (yet); \code{simLexis} only works if
     elements of \code{Tr} are glm objects.}
   \item{obj}{A \code{Lexis} object.}
   \item{from}{The point on the time scale \code{time.scale} from which
     we start counting.}
   \item{time.scale}{The timescale to which \code{from} refer.}
-  \item{at}{Timepoints (after \code{from}) where the number of persons
+  \item{at}{Time points (after \code{from}) where the number of persons
     in each state is to be computed.}
   \item{nSt}{A table obtained by \code{nState}.}
-  \item{perm}{A permutation of columns used before cumulating row-wise and
-  taking percentages.}
+  \item{perm}{A permutation of columns used before cumulating row-wise
+    and taking percentages.}
   \item{x}{An object of class \code{pState}, e.g. created by \code{pState}.}
   \item{col}{Colors for filling the areas between curves.}
   \item{border}{Colors for outline of the areas between curves.}
@@ -63,18 +61,21 @@ simLexis( Tr, init, time.pts = 0:50/2, N = 1,
 \details{The simulation command \code{simLexis} is not defined as a
   method for \code{Lexis} objects, because the input is not really a
   \code{Lexis} object, the \code{Lexis}-like object is merely
-  representing a prevalent population, and the core input is the list
-  \code{Tr} giving the transitions.
+  representing a prevalent population and a specification of which
+  variables that are timescales. The variables \code{lex.dur} and
+  \code{lex.Xst} are ignored (and overwritten) if present. The core
+  input is the list \code{Tr} giving the transitions.
 
-  The components of \code{Tr} represents the transition
-  intensities between states. Currently only implemented for \code{type
-  = "glm-mult"} which means that they are assumed to be \code{glm}
+  The components of \code{Tr} represents the transition intensities
+  between states. Currently only implemented for \code{type =
+  "glm-mult"} which means that they are assumed to be \code{glm}
   objects, specifically Poisson models with \code{log(lex.dur)} as
   offset. Thus the transition from state \code{A} to \code{B}, say, is
   assumed modelled by a glm with Poisson family, log link and an offset
   \code{log(lex.dur)}. The resulting model object is assumed stored in
-  \code{Tr$A$B}. Thus names of \code{Tr} are names of transient states,
-  and the names of these are the names of states reachable from these.
+  \code{Tr$A$B}. Thus names of the elements of \code{Tr} are names of
+  transient states, and the names of the elements of these are the names
+  of states reachable from these.
 
   The \code{\link{Lexis}} object \code{init} must contain values of all
   variables used in any of the \code{glm} objects in \code{Tr}. Moreover
@@ -107,14 +108,14 @@ simLexis( Tr, init, time.pts = 0:50/2, N = 1,
   the experience of a population starting as \code{init} followed
   through the states according to the transitions in \code{Tr}.
 
-  \code{pr.Lexis} returns a table of persons classified by states and
-  \code{at}. Note that this function can easily produce meaningless
-  results, for example if applied to a \code{Lexis} object not created
-  by simulation. If you apply it to a \code{Lexis} object generated by
-  \code{simLexis}, you must make sure that you start (\code{from}) the
-  point where you started the simulation on the correct timescale. The
-  resulting object has class \code{"pState"} and inherits from
-  \code{"matrix"}.
+  The function \code{nState} returns a table of persons classified by
+  states at each of the times in \code{at}. Note that this function can
+  easily produce meaningless results, for example if applied to a
+  \code{Lexis} object not created by simulation. If you apply it to a
+  \code{Lexis} object generated by \code{simLexis}, you must make sure
+  that you start (\code{from}) the point where you started the
+  simulation on the correct timescale. The resulting object has class
+  \code{"pState"} and inherits from \code{"matrix"}.
 }
 
 \author{Bendix Carstensen, \url{BendixCarstensen.com}.}
@@ -174,10 +175,12 @@ Ins.Dead <- glm( (lex.Xst=="Dead(Ins)") ~ ns( Age  , knots=ad.kn[2:(nk-1)], Bo=a
 Tr <- list( "DM" = list( "Ins"       = DM.Ins,
                          "Dead"      = DM.Dead  ),
            "Ins" = list( "Dead(Ins)" = Ins.Dead ) )
+lapply( Tr, names )
 
-# Define an initial object
+# Define an initial object - note the combination of "select=" and NULL
+# which ensures that the relevant attributes from the Lexis object 'Si'
+# are carried over to 'ini':
 ini <- subset(Si,select=1:9)[NULL,]
-ini[1:2,"lex.id"] <- 1:2
 ini[1:2,"lex.Cst"] <- "DM"
 ini[1:2,"Per"] <- 1995
 ini[1:2,"Age"] <- 60
@@ -185,8 +188,8 @@ ini[1:2,"DMdur"] <- 5
 ini[1:2,"sex"] <- c("M","F")
 str(ini)
 
-# Simulate 500 of each sex using the estimated model
-simL <- simLexis( Tr, ini, time.pts=seq(0,50,0.5), N=500 )
+# Simulate 200 of each sex using the estimated model
+simL <- simLexis( Tr, ini, time.pts=seq(0,50,0.5), N=200 )
 summary( simL, by="sex" )
 
 # Give the number of persons in each state at a set of times
@@ -195,7 +198,7 @@ nSt <- nState( subset(simL,sex=="M"),
 nSt
 
 # Show the cumulative prevalences in a different order than that of the
-# state-level ordering and plot them
+# state-level ordering and plot them using all defaults
 pp <- pState( nSt, perm=c(1,2,4,3) )
 head( pp )
 plot( pp )

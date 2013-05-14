@@ -27,25 +27,33 @@ data.frame( lex.id  = rt[1,1],
 simX <-
 function( nd, init, Tr, time.pts )
 {
-# Simulation is done from nd by chunks of starting state, lex.Cst
-# Necessary because different states have different (sets of) exit
-# rates. Therefore, this simulates for a set of persons from
-# the same starting state.
+# Simulation is done from the data frame nd, in chunks of starting
+# state, lex.Cst. This is necessary because different states have
+# different (sets of) exit rates. Therefore, this function simulates
+# for a set of persons from the same starting state.
 np <- length( time.pts )
 nr <- nrow( nd )
 if( nr==0 ) return( NULL )
-cst <- unique( nd$lex.Cst )
+
+# The as.character below is necessary because indexing by a factor
+# by default is by the number of the level, and we are not indexing by
+# this, but by components of Tr which just happens to have  names that
+# are a subset of the levels of lex.Cst.
+cst <- as.character( unique(nd$lex.Cst) )
 if( length(cst)>1 ) stop( "More than one lex.Cst present.\n" )
+
 # Expand each person by the timepoints
 nx <- nd[rep(1:nrow(nd),each=np),]
 nx[,timeScales(init)] <- nx[,timeScales(init)] + rep(time.pts,nr)
 nx$lex.dur <- 1
+
 # Make a dataframe with predicted rates for each of the transitions
 # out of this state for these times
 rt <- data.frame( lex.id=nx$lex.id )
 for( i in 1:length(Tr[[cst]]) ) rt <- cbind( rt, exp(predict(Tr[[cst]][[i]],newdata=nx)) )
 names( rt )[-1] <- names( Tr[[cst]] )
-# Then we find the transition time and exit state for each person:
+
+# Then find the transition time and exit state for each person:
 xx <- match( c("lex.dur","lex.Xst"), names(nd) )
 if( any( !is.na(xx) ) ) nd <- nd[,-xx[!is.na(xx)]]
 merge( nd, do.call( "rbind", lapply( split(rt,rt$lex.id), sim1, init, time.pts ) ), by="lex.id" )
@@ -55,9 +63,9 @@ get.next <-
 function( sf, init, tr.st )
 {
 # Procduces an initial Lexis object for the next simulation for those
-# who have ended up in a transient state
+# who have ended up in a transient state.
 # Note that this exploits the existance of the "time.since" attribute
-# for Lexis objects and assumes that a charcter vector naming the
+# for Lexis objects and assumes that a character vector naming the
 # transient states is supplied as argument.
 if( nrow(sf)==0 ) return( sf )
 nxt <- sf[sf$lex.Xst %in% tr.st,]
@@ -94,20 +102,14 @@ function( Tr, # List of lists of glm objects
                        # simulation
            N = 1, # How many persons should each line in
                   # init represent?
-        type = "glm-mult"
+      lex.id = 1:(N*nrow(init)), # What should be the ids of the simulated persons?
+        type = "glm-mult" # Not used currently
          )
 {
-# Expand the input data frame using N
-if( length(N)>1 )
-  {
-  if( length(N)!=nrow(init) ) stop( "N has ", length(N) , " elements, but\n",
-                                 "init has ", nrow(init), " rows; must be the same.\n" )
-  else init <- init[rep(1:nrow(init),N),]
-  }
-else if( N>1 ) init <- init[rep(1:nrow(init),each=N),]
-
-# Make sure that each line represents one person
-init$lex.id <- 1:nrow(init)
+# Expand the input data frame using N and put in lex.id
+foo <- lex.id
+init <- init[rep(1:nrow(init),each=N),]
+init$lex.id <- foo
 
 # Fix attributes
 if( is.null( nts <- attr(init,"time.scales") ) )
@@ -138,6 +140,7 @@ nxt <- get.next( nx, init, tr.st )
 
 # Doctor lex.Xst for the censored, and supply attributes
 sf$lex.Xst[is.na(sf$lex.Xst)] <- sf$lex.Cst[is.na(sf$lex.Xst)]
+
 # Finally, nicely order the output by persons, then times and states
 nord <- match( c( "lex.id", timeScales(sf),
                   "lex.dur",
@@ -157,22 +160,33 @@ function ( obj,
           from,
      time.scale = 1 )
 {
+# counte the number of persons in each state of the Lexis object 'obj'
+# at the times 'at' from the time 'from' in the time scale
+# 'time.scale'
+
+# Determin timescales and absorbing and transient states
 tmsc <- Epi:::check.time.scale(obj,time.scale)
 TT <- tmat(obj)
 absorb <- rownames(TT)[apply(!is.na(TT),1,sum)==0]
 transient <- setdiff( rownames(TT), absorb )
+
 # Expand each record length(at) times
-tab.frm <- obj[rep(1:nrow(obj),each=length(at)),c(tmsc,"lex.dur","lex.Cst","lex.Xst")]
+tab.frm <-
+    obj[rep(1:nrow(obj),each=length(at)),c(tmsc,"lex.dur","lex.Cst","lex.Xst")]
+
 # Stick in the correponding times on the chosen time scale
 tab.frm$when <- rep( at, nrow(obj) ) + from
+
 # For transient states keep records that includes these points in time
 tab.tr <- tab.frm[tab.frm[,tmsc]                 <= tab.frm$when &
                   tab.frm[,tmsc]+tab.frm$lex.dur >  tab.frm$when,]
 tab.tr$State <- tab.tr$lex.Cst
+
 # For absorbing states keep records where follow-up ended before
 tab.ab <- tab.frm[tab.frm[,tmsc]+tab.frm$lex.dur <= tab.frm$when &
                   tab.frm$lex.Xst %in% absorb,]
 tab.ab$State <- tab.ab$lex.Xst
+
 # Make a table using the combination of those in transient and
 # absorbing states.
 with( rbind( tab.ab, tab.tr ), table( when, State ) )
@@ -181,6 +195,8 @@ with( rbind( tab.ab, tab.tr ), table( when, State ) )
 pState <-
 function( nSt, perm=1:ncol(nSt) )
 {
+# Compute cumulative proportions of persons across states in order
+# designate by 'perm'
 tt <- t( apply( nSt[,perm], 1, cumsum ) )
 tt <- sweep( tt, 1, tt[,ncol(tt)], "/" )
 class( tt ) <- c("pState","matrix")
@@ -190,10 +206,12 @@ tt
 plot.pState <-
 function( x,
         col = rainbow(ncol(x)),
-     border = col,
+     border = "transparent",
        xlab = "Time",
        ylab = "Probability", ... )
 {
+# Function to plot cumulative probabilities along the time scale.
+
 # Just for coding convenience when plotting polygons
 pSt <- cbind( 0, x )
 matplot( as.numeric(rownames(pSt)), pSt, type="n",
