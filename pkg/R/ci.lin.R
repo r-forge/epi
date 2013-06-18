@@ -178,7 +178,7 @@ if( !diffs )
     if( sample ) res <- t( mvrnorm( sample, ct, vc ) ) else {
     se <- sqrt( diag( vc ) )
     ci <- cbind( ct, se ) %*% ci.mat( alpha=alpha, df=df )
-    t0 <- cbind( se, ct/se, 2 * ( 1 - pnorm( abs( ct / se ) ) ) )
+    t0 <- cbind( se, ct/se, 2 * ( pnorm( -abs( ct / se ) ) ) )
     colnames(t0) <- c("StdErr", "z", "P")
     res <- cbind(ci, t0)[, c(1, 4:6, 2:3), drop=FALSE]
     if( Exp )
