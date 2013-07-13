@@ -87,6 +87,8 @@ export(
   mh,
   ncut,
   nice,
+  NArray,
+  Ns,
   pctab,
   plotEst,
   pointsEst,

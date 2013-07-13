@@ -43,7 +43,7 @@
                    scale.D = FALSE,
                   digits.D = as.numeric(as.logical(scale.D)),
                     show.R = is.numeric(scale.R),
-                   scale.R = scale.D,
+                   scale.R = 1,
                   digits.R = as.numeric(as.logical(scale.R)),
                     DR.sep = if( show.D ) c("\n(",")") else c("",""),
                      eq.wd = TRUE,
@@ -63,7 +63,8 @@
                    pos.arr = 0.45,
                    txt.arr = NULL,
                col.txt.arr = col.arr,
-                offset.arr = 2, ... )
+                offset.arr = 2,
+                             ... )
 \method{boxes}{matrix}( obj, ... )
 \method{boxes}{MS}( obj, sub.st, sub.tr, cex=1.5, ... )
    fillarr( x1, y1, x2, y2, gap=2, fr=0.8,

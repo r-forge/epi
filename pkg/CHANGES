@@ -1,3 +1,16 @@
+Changes in 1.1.52
+
+o Relevel did not issue warning or error when a given level was being
+  specified as member of more than one new level. It not stops with an
+  error.
+
+o The convenience functions Ns and NArray have been added
+
+Changes in 1.1.51
+
+o boxes.Lexis fixed so that rates could be computed from matrix input
+  to.
+
 Changes in 1.1.50
 
 o Calculation of p-values in ci.lin has been modified, thyanks to
