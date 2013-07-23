@@ -1,10 +1,20 @@
+Changes in 1.1.53
+
+o Population figures in N.dk, M.dk and Y.dk updated
+
 Changes in 1.1.52
 
+o col.txt argument to plotEst was not working properly. Fixed
+
+o txt argument to plotEst can now be an expression vector allowing
+  sub- and superscripts and mathematical expressions.
+
 o Relevel did not issue warning or error when a given level was being
-  specified as member of more than one new level. It not stops with an
+  specified as member of more than one new level. It now stops with an
   error.
 
-o The convenience functions Ns and NArray have been added
+o The convenience wrappers Ns (for ns) and NArray (for array) have
+  been added 
 
 Changes in 1.1.51
 
