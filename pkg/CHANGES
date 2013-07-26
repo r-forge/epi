@@ -1,3 +1,12 @@
+Changes in 1.1.54
+
+o apc.fit updated to use the Ns wrapper, and automatically use knots
+  located so that the marginal number of events is the same between
+  knots.
+
+o plot.apc and lines.apc defined as methods for apc objects. They are
+  just wrappers for apc.plot and apc.lines.
+
 Changes in 1.1.53
 
 o Population figures in N.dk, M.dk and Y.dk updated
@@ -14,7 +23,7 @@ o Relevel did not issue warning or error when a given level was being
   error.
 
 o The convenience wrappers Ns (for ns) and NArray (for array) have
-  been added 
+  been added
 
 Changes in 1.1.51
 

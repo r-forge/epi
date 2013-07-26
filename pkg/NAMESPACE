@@ -4,6 +4,8 @@ export(
   apc.fit,
   apc.plot,
   apc.lines,
+ plot.apc,
+lines.apc,
    pc.points,
    pc.lines,
    pc.matpoints,
@@ -108,6 +110,8 @@ export(
 importFrom( utils, stack )
 # importFrom( mstate, mstate )
 # register S3 methods
+S3method(     plot, apc)
+S3method(    lines, apc)
 S3method(     plot, Lexis)
 S3method(     plot, pState)
 S3method(   points, Lexis)
