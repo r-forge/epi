@@ -1,6 +1,6 @@
 Package: Epi
-Version: 1.1.54
-Date: 2013-07-24
+Version: 1.1.56
+Date: 2013-09-14
 Title: A package for statistical analysis in epidemiology.
 Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
                     email = "bxc@steno.dk"),

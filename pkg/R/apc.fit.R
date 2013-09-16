@@ -269,7 +269,7 @@ else {
         rc <- update(m.0, . ~ . - 1 + xC, offset = predict(ap,type = "link"))
         A.eff <- ci.exp(ap, subset = "MA", ctr.mat = MA[A.pos,], alpha = alpha)
         P.eff <- ci.exp(ap, subset = "lP", ctr.mat = lP[P.pos,], alpha = alpha)
-        C.eff <- ci.(rc, subset = "xC", ctr.mat = xC[C.pos,], alpha = alpha)
+        C.eff <- ci.exp(rc, subset = "xC", ctr.mat = xC[C.pos,], alpha = alpha)
         Model <- list( ap, rc )
     }
     Age <- cbind(Age = A.pt, A.eff)[order(A.pt),]

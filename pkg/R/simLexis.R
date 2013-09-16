@@ -3,15 +3,15 @@
 cummid <-
 function( x, time.pts=1:length(x) )
 {
-# Computes the cumulative area under a curve vith values x at time.pts
+# Computes the cumulative area under a curve with values x at time.pts
 cumsum( c(0, (x[-1]-diff(x)/2)*diff(time.pts) ) )
 }
 
 sim1 <-
 function( rt, init, time.pts )
 {
-# Simulates a single transition time and state based on the dataframe
-# rt with columns lex.id and timescales. Each row in rt is the id,
+# Simulates a single transition time and state based on the data frame
+# rt with columns lex.id and timescales. The rows in rt are the id,
 # followed by the set of estimated transition rates to the different
 # states reachable from the current one.
 ci <- apply( rt[,-1,drop=FALSE], 2, cummid, time.pts )
@@ -20,8 +20,11 @@ for( i in 1:ncol(ci) ) tt[i] <- approx( ci[,i], time.pts, uu[i], rule=2 )$y
 # Note this resulting data frame has 1 row
 data.frame( lex.id  = rt[1,1],
             lex.dur = min(tt,na.rm=TRUE),
-            lex.Xst = factor( if( min(tt)<max(time.pts) ) colnames(ci)[tt==min(tt)]
-                              else NA, levels=levels(init$lex.Cst) ) )
+            lex.Xst = factor( if( min(tt)<max(time.pts) )
+                                colnames(ci)[tt==min(tt)]
+                              else
+                                NA,
+                              levels=levels(init$lex.Cst) ) )
 }
 
 simX <-
@@ -35,19 +38,19 @@ np <- length( time.pts )
 nr <- nrow( nd )
 if( nr==0 ) return( NULL )
 
-# The as.character below is necessary because indexing by a factor
+# The 'as.character' below is necessary because indexing by a factor
 # by default is by the number of the level, and we are not indexing by
-# this, but by components of Tr which just happens to have  names that
+# this, but by components of Tr which just happens to have names that
 # are a subset of the levels of lex.Cst.
 cst <- as.character( unique(nd$lex.Cst) )
-if( length(cst)>1 ) stop( "More than one lex.Cst present.\n" )
+if( length(cst)>1 ) stop( "More than one lex.Cst present:\n", cst, "\n" )
 
-# Expand each person by the timepoints
+# Expand each person by the time points
 nx <- nd[rep(1:nrow(nd),each=np),]
 nx[,timeScales(init)] <- nx[,timeScales(init)] + rep(time.pts,nr)
 nx$lex.dur <- 1
 
-# Make a dataframe with predicted rates for each of the transitions
+# Make a data frame with predicted rates for each of the transitions
 # out of this state for these times
 rt <- data.frame( lex.id=nx$lex.id )
 for( i in 1:length(Tr[[cst]]) ) rt <- cbind( rt, exp(predict(Tr[[cst]][[i]],newdata=nx)) )
@@ -56,15 +59,22 @@ names( rt )[-1] <- names( Tr[[cst]] )
 # Then find the transition time and exit state for each person:
 xx <- match( c("lex.dur","lex.Xst"), names(nd) )
 if( any( !is.na(xx) ) ) nd <- nd[,-xx[!is.na(xx)]]
-merge( nd, do.call( "rbind", lapply( split(rt,rt$lex.id), sim1, init, time.pts ) ), by="lex.id" )
+merge( nd,
+       do.call( "rbind",
+                lapply( split( rt,
+                               rt$lex.id ),
+                        sim1,
+                        init,
+                        time.pts ) ),
+       by="lex.id" )
 }
 
 get.next <-
 function( sf, init, tr.st )
 {
-# Procduces an initial Lexis object for the next simulation for those
+# Produces an initial Lexis object for the next simulation for those
 # who have ended up in a transient state.
-# Note that this exploits the existance of the "time.since" attribute
+# Note that this exploits the existence of the "time.since" attribute
 # for Lexis objects and assumes that a character vector naming the
 # transient states is supplied as argument.
 if( nrow(sf)==0 ) return( sf )
@@ -126,14 +136,22 @@ np <- length( time.pts )
 tr.st <- names( Tr )
 
 # The first set of sojourn times in the initial states
-sf <- do.call( "rbind", lapply( split(init,init$lex.Cst), simX, init, Tr, time.pts ) )
+sf <- do.call( "rbind",
+               lapply( split( init,
+                              init$lex.Cst ),
+                       simX,
+                       init, Tr, time.pts ) )
 
 # Then we must update those who have ended in transient states
 # and keep on doing that till all are in absorbing states or censored
 nxt <- get.next( sf, init, tr.st )
 while( nrow(nxt) > 0 )
 {
-nx <- do.call( "rbind", lapply( split(nxt,nxt$lex.Cst), simX, init, Tr, time.pts ) )
+nx <- do.call( "rbind",
+               lapply( split( nxt,
+                              nxt$lex.Cst ),
+                       simX,
+                       init, Tr, time.pts ) )
 sf <- rbind( sf, nx )
 nxt <- get.next( nx, init, tr.st )
 }
@@ -160,11 +178,11 @@ function ( obj,
           from,
      time.scale = 1 )
 {
-# counte the number of persons in each state of the Lexis object 'obj'
+# Counts the number of persons in each state of the Lexis object 'obj'
 # at the times 'at' from the time 'from' in the time scale
 # 'time.scale'
 
-# Determin timescales and absorbing and transient states
+# Determine timescales and absorbing and transient states
 tmsc <- Epi:::check.time.scale(obj,time.scale)
 TT <- tmat(obj)
 absorb <- rownames(TT)[apply(!is.na(TT),1,sum)==0]
@@ -174,7 +192,7 @@ transient <- setdiff( rownames(TT), absorb )
 tab.frm <-
     obj[rep(1:nrow(obj),each=length(at)),c(tmsc,"lex.dur","lex.Cst","lex.Xst")]
 
-# Stick in the correponding times on the chosen time scale
+# Stick in the corresponding times on the chosen time scale
 tab.frm$when <- rep( at, nrow(obj) ) + from
 
 # For transient states keep records that includes these points in time
@@ -211,6 +229,11 @@ function( x,
        ylab = "Probability", ... )
 {
 # Function to plot cumulative probabilities along the time scale.
+
+# Fixing the colors:
+nc <- ncol(x)
+col    <- rep( col   , nc )[1:nc]
+border <- rep( border, nc )[1:nc]
 
 # Just for coding convenience when plotting polygons
 pSt <- cbind( 0, x )

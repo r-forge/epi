@@ -1,3 +1,19 @@
+Changes in 1.1.56
+
+o Typos in documentation corrected.
+
+o When records with too short follow-up are encountered by Lexis, they
+  are dropped from the resulting object, but they will be availabe in
+  the object drop.sh in the global environment.
+
+o The col and border arguments to plot.pState were not repeated
+  automatically, so needed fixing.
+
+Changes in 1.1.55
+
+o Documentation of clogistic is clarified w.r.t. likelihood
+  contributions of matched sets.
+
 Changes in 1.1.54
 
 o apc.fit updated to use the Ns wrapper, and automatically use knots
@@ -6,6 +22,8 @@ o apc.fit updated to use the Ns wrapper, and automatically use knots
 
 o plot.apc and lines.apc defined as methods for apc objects. They are
   just wrappers for apc.plot and apc.lines.
+
+o gen.exp example slightly modified to give better output.
 
 Changes in 1.1.53
 

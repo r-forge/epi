@@ -6,30 +6,34 @@
 \title{Simulate a Lexis object representing follow-up in a multistate
   model.}
 
-\description{Based on a (pre-)\code{Lexis} object representing persosn
-  at given states and tines, and full specification of transition
+\description{Based on a (pre-)\code{Lexis} object representing persons
+  at given states and times, and full specification of transition
   intensities between states in the form of fitted Poisson models, this
   function simulates transition times and -types for persons and returns
-  a \code{Lexis} object representing the simulted cohort.}
+  a \code{Lexis} object representing the simulated cohort. The
+  simulation scheme also accommodates multiple timescales, including
+  time since entry into an intermediate state.}
 
 \usage{
 simLexis( Tr, init, time.pts = 0:50/2, N = 1,
               lex.id = 1:(N*nrow(init)), type = "glm-mult" )
- nState( obj, at, from, time.scale = 1 )
- pState( nSt, perm = 1:ncol(nSt) )
+nState( obj, at, from, time.scale = 1 )
+pState( nSt, perm = 1:ncol(nSt) )
 \method{plot}{pState}( x, col = rainbow(ncol(x)),
                   border = "transparent",
                     xlab = "Time",
                     ylab = "Probability", ... )
    }
 \arguments{
-  \item{Tr}{A named list of named lists. The names of the lists are
-    names of the transient states in the model, and the names of the
-    list elements are the names of the states reachable from this. See details.}
+  \item{Tr}{A named list of named lists. The names of the list are names
+    of the transient states in the model. Each list element is again a
+    named list. The names of the elements of this inner list are the
+    names of the states reachable from the state with name equal to the
+    list. See details.}
   \item{init}{A (pre-)\code{\link{Lexis}} object representing the initial
     state of the persons whose trajectories through the multiple states
     we want to simulate. Must have an attribute "time.since" --- see
-    details. Duplicate values of \code{lex.id} is non-sensical and not
+    details. Duplicate values of \code{lex.id} are not sensible and not
     accepted.}
   \item{time.pts}{Numerical vector of times since start. Cumulative
     rates for transitions are computed at these times after stater and
@@ -74,8 +78,8 @@ simLexis( Tr, init, time.pts = 0:50/2, N = 1,
   assumed modelled by a glm with Poisson family, log link and an offset
   \code{log(lex.dur)}. The resulting model object is assumed stored in
   \code{Tr$A$B}. Thus names of the elements of \code{Tr} are names of
-  transient states, and the names of the elements of these are the names
-  of states reachable from these.
+  transient states, and the names of the elements of each these are the names
+  of states reachable from the corresponding transient state.
 
   The \code{\link{Lexis}} object \code{init} must contain values of all
   variables used in any of the \code{glm} objects in \code{Tr}. Moreover
@@ -154,19 +158,19 @@ nk <- 4
 
 # Fit Poisson models to transition rates
 library( splines )
-DM.Ins <- glm( (lex.Xst=="Ins") ~ ns( Age  , knots=ai.kn[2:(nk-1)], Bo=ai.kn[c(1,nk)] ) +
-                                  ns( DMdur, knots=di.kn[2:(nk-1)], Bo=di.kn[c(1,nk)] ) +
+DM.Ins <- glm( (lex.Xst=="Ins") ~ Ns( Age  , knots=ai.kn ) +
+                                  Ns( DMdur, knots=di.kn ) +
                                   I(Per-2000) + sex,
                family=poisson, offset=log(lex.dur),
                data = subset(Si,lex.Cst=="DM") )
-DM.Dead <- glm( (lex.Xst=="Dead") ~ ns( Age  , knots=ad.kn[2:(nk-1)], Bo=ad.kn[c(1,nk)] ) +
-                                    ns( DMdur, knots=dd.kn[2:(nk-1)], Bo=dd.kn[c(1,nk)] ) +
+DM.Dead <- glm( (lex.Xst=="Dead") ~ Ns( Age  , knots=ad.kn ) +
+                                    Ns( DMdur, knots=dd.kn ) +
                                     I(Per-2000) + sex,
                family=poisson, offset=log(lex.dur),
                data = subset(Si,lex.Cst=="DM") )
-Ins.Dead <- glm( (lex.Xst=="Dead(Ins)") ~ ns( Age  , knots=ad.kn[2:(nk-1)], Bo=ad.kn[c(1,nk)] ) +
-                                          ns( DMdur, knots=dd.kn[2:(nk-1)], Bo=dd.kn[c(1,nk)] ) +
-                                          ns( t.Ins, knots=td.kn[2:(nk-1)], Bo=td.kn[c(1,nk)] ) +
+Ins.Dead <- glm( (lex.Xst=="Dead(Ins)") ~ Ns( Age  , knots=ad.kn ) +
+                                          Ns( DMdur, knots=dd.kn ) +
+                                          Ns( t.Ins, knots=td.kn ) +
                                           I(Per-2000) + sex,
                family=poisson, offset=log(lex.dur),
                data = subset(Si,lex.Cst=="Ins") )
@@ -179,7 +183,7 @@ lapply( Tr, names )
 
 # Define an initial object - note the combination of "select=" and NULL
 # which ensures that the relevant attributes from the Lexis object 'Si'
-# are carried over to 'ini':
+# are carried over to 'ini' ( Si[NULL,1:9] will lose essential attributes ):
 ini <- subset(Si,select=1:9)[NULL,]
 ini[1:2,"lex.Cst"] <- "DM"
 ini[1:2,"Per"] <- 1995

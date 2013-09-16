@@ -176,10 +176,11 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
       stop("Duration is not the same on all time scales")
     }
   }
-  ## Check that duration is positive
-  if (any(duration<0)) {
-    stop("Duration must be non-negative")
-  }
+#  Taken care of by the code that detects whether lex.du <= tol
+#  ## Check that duration is positive
+#  if (any(duration<0)) {
+#    stop("Duration must be non-negative")
+#  }
 
   ## Make sure id value - if supplied - is valid. Otherwise supply default id
 
@@ -219,11 +220,13 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
     lex <- cbind(lex, data)
   }
 
-  ## Drop rows with short duration for consistency with splitLexis
+  ## Drop rows with short or negantive duration for consistency with splitLexis
   short.dur <- lex$lex.dur <= tol
   if (any(short.dur)) {
       warning("Dropping ", sum(short.dur),
-              " rows with duration of follow up < tol")
+              " rows with duration of follow up < tol\n",
+              "  The dropped rows are available in the object 'drop.sh'")
+  drop.sh <<- subset(lex, short.dur)
       lex <- subset(lex, !short.dur)
   }
 
