@@ -9,6 +9,9 @@ o When records with too short follow-up are encountered by Lexis, they
 o The col and border arguments to plot.pState were not repeated
   automatically, so needed fixing.
 
+o Moreelaborate warning and error-messages if inintiators in absorbing
+  states are handed to simLexis. simLexis groomed a bit.
+
 Changes in 1.1.55
 
 o Documentation of clogistic is clarified w.r.t. likelihood

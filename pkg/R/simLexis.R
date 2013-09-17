@@ -135,16 +135,26 @@ if( is.null( attr(init,"time.since") ) )
 np <- length( time.pts )
 tr.st <- names( Tr )
 
-# The first set of sojourn times in the initial states
-sf <- do.call( "rbind",
-               lapply( split( init,
-                              init$lex.Cst ),
-                       simX,
-                       init, Tr, time.pts ) )
+# Set up a NULL object to hold the follow-up records
+sf <- NULL
 
-# Then we must update those who have ended in transient states
+# Take only those who start in a transient state, and not if some are not
+nxt <- init[init$lex.Cst %in% tr.st,]
+if( nrow(nxt) < nrow(init) )
+  {
+  tt <- table(init$lex.Cst)
+  tt <- tt[tt>0]
+  nt <- length(tt)
+  warning("\nSome initiators start in a absorbing state\n",
+          "Initiator states represented are: ",
+          paste( rbind( names(tt), rep(":",nt),
+                        paste(tt), rep(" ",nt) ), collapse="" ), "\n",
+          "Transient states are: ", paste( names( Tr ), coll=" " ) )
+  if( nrow(nxt)==0 ) stop( "\nNo initiators in transient states!" )
+  }
+# Then we must update those who are in a transient states
 # and keep on doing that till all are in absorbing states or censored
-nxt <- get.next( sf, init, tr.st )
+# nxt <- subset( init, lex.Cst %in% tr.st )
 while( nrow(nxt) > 0 )
 {
 nx <- do.call( "rbind",
