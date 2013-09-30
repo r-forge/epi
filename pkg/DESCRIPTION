@@ -1,7 +1,8 @@
 Package: Epi
-Version: 1.1.56
-Date: 2013-09-14
+Version: 1.1.57
+Date: 2013-09-30
 Title: A package for statistical analysis in epidemiology.
+Author: Bendix Carstensen et al.
 Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
                     email = "bxc@steno.dk"),
              person("Martyn", "Plummer", role = "aut",
@@ -9,7 +10,7 @@ Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
              person("Michael", "Hills", role = "aut"),
              person("Esa", "Laara", role = "ctb"))
 Maintainer: Bendix Carstensen <bxc@steno.dk>
-Depends: R (>= 2.14.0), utils
+Depends: R (>= 3.0.0), utils
 Suggests: splines, nlme, survival, mstate, etm, MASS
 Description: Functions for demographic and epidemiological
   analysis in the Lexis diagram, i.e. register and cohort follow-up

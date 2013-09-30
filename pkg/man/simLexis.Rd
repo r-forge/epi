@@ -8,18 +8,25 @@
 
 \description{Based on a (pre-)\code{Lexis} object representing persons
   at given states and times, and full specification of transition
-  intensities between states in the form of fitted Poisson models, this
-  function simulates transition times and -types for persons and returns
-  a \code{Lexis} object representing the simulated cohort. The
-  simulation scheme also accommodates multiple timescales, including
-  time since entry into an intermediate state.}
+  intensities between states in the form of models for the transition
+  rates, this function simulates transition times and -types for persons
+  and returns a \code{Lexis} object representing the simulated
+  cohort. The simulation scheme accommodates multiple timescales,
+  including time since entry into an intermediate state, and accepts
+  fitted Poisson models, Cox-models or just a function as specification
+  of rates.}
 
 \usage{
-simLexis( Tr, init, time.pts = 0:50/2, N = 1,
-              lex.id = 1:(N*nrow(init)), type = "glm-mult" )
+simLexis( Tr, init,
+           N = 1,
+      lex.id,
+     t.range = 20,
+       n.int = 101,
+    time.pts = seq(0,t.range,length.out=n.int) )
 nState( obj, at, from, time.scale = 1 )
 pState( nSt, perm = 1:ncol(nSt) )
-\method{plot}{pState}( x, col = rainbow(ncol(x)),
+\method{plot}{pState}( x,
+                     col = rainbow(ncol(x)),
                   border = "transparent",
                     xlab = "Time",
                     ylab = "Probability", ... )
@@ -29,23 +36,26 @@ pState( nSt, perm = 1:ncol(nSt) )
     of the transient states in the model. Each list element is again a
     named list. The names of the elements of this inner list are the
     names of the states reachable from the state with name equal to the
-    list. See details.}
+    list. Elements of the intter lists represent transitions. See details.}
   \item{init}{A (pre-)\code{\link{Lexis}} object representing the initial
     state of the persons whose trajectories through the multiple states
     we want to simulate. Must have an attribute "time.since" --- see
     details. Duplicate values of \code{lex.id} are not sensible and not
     accepted.}
+  \item{N}{Numeric. How many persons should be simulated. \code{N}
+    persons with covariate configuration of each row in \code{init}
+    will be simulated. Either a scalar or a vector of length \code{nrwo(init)}.}
+  \item{lex.id}{Vector of ids of the simulated persons. Useful when
+    simulating in chunks.}
+  \item{t.range}{Numerical scalar. The range of time over which to
+    compute the cumulative rates when simulating. Simulted times
+    beyond this will result in an obervation censored at \code{t.range}
+    after entry.}
+  \item{n.int}{Number of intervals to use when computing (cumulative) rates.}
   \item{time.pts}{Numerical vector of times since start. Cumulative
     rates for transitions are computed at these times after stater and
     entry state. Simulation is only done till time \code{max(time.pts)}
-    after start, where persons are censored.}
-  \item{N}{Numeric. How many persons should be simulated. \code{N}
-    persons with covariate configuration of each row in \code{init}
-    will be simulated.}
-  \item{lex.id}{Vector of ids of the simulated persons. Useful when
-    simulating in chunks.}
-  \item{type}{Not implemented (yet); \code{simLexis} only works if
-    elements of \code{Tr} are glm objects.}
+    after start, where persons are censored. Must start with 0.}
   \item{obj}{A \code{Lexis} object.}
   \item{from}{The point on the time scale \code{time.scale} from which
     we start counting.}
@@ -63,7 +73,7 @@ pState( nSt, perm = 1:ncol(nSt) )
   \item{...}{Further arguments passed on to \code{plot}.}
 }
 \details{The simulation command \code{simLexis} is not defined as a
-  method for \code{Lexis} objects, because the input is not really a
+  method for \code{Lexis} objects, because the input is not a
   \code{Lexis} object, the \code{Lexis}-like object is merely
   representing a prevalent population and a specification of which
   variables that are timescales. The variables \code{lex.dur} and
@@ -71,19 +81,25 @@ pState( nSt, perm = 1:ncol(nSt) )
   input is the list \code{Tr} giving the transitions.
 
   The components of \code{Tr} represents the transition intensities
-  between states. Currently only implemented for \code{type =
-  "glm-mult"} which means that they are assumed to be \code{glm}
-  objects, specifically Poisson models with \code{log(lex.dur)} as
-  offset. Thus the transition from state \code{A} to \code{B}, say, is
-  assumed modelled by a glm with Poisson family, log link and an offset
-  \code{log(lex.dur)}. The resulting model object is assumed stored in
-  \code{Tr$A$B}. Thus names of the elements of \code{Tr} are names of
-  transient states, and the names of the elements of each these are the names
-  of states reachable from the corresponding transient state.
+  between states. The transition from state \code{A} to \code{B}, say,
+  is assumed stored in \code{Tr$A$B}. Thus names of the elements of
+  \code{Tr} are names of transient states, and the names of the elements
+  of each these are the names of states reachable from the corresponding
+  transient state.
+
+  The transition intensities are assumed modelled by either a glm with Poisson
+  family or a Cox-model. In both cases the timescale(s) must be aming
+  the timescales in a Lexis object representng the follow-up in a
+  cohort, and the risk time must be taken from the variable
+  \code{lex.dur} --- see the example.
+
+  Alternatively, an element in \code{Tr} could be a function
+  that from a data frame produces transition rates, or specifically
+  cumulative transition rates over intervals of length \code{lex.dur}.
 
   The \code{\link{Lexis}} object \code{init} must contain values of all
-  variables used in any of the \code{glm} objects in \code{Tr}. Moreover
-  the attributes \code{time.scales} and \code{time.since} must be
+  variables used in any of the objects in \code{Tr}. Moreover the
+  attributes \code{time.scales} and \code{time.since} must be
   present. The attribute \code{time.since} is a character vector of the
   same length as \code{time.scales} and the elements value \code{"A"} if
   the corresponding time scale is defined as "time since entry into
@@ -118,8 +134,12 @@ pState( nSt, perm = 1:ncol(nSt) )
   \code{Lexis} object not created by simulation. If you apply it to a
   \code{Lexis} object generated by \code{simLexis}, you must make sure
   that you start (\code{from}) the point where you started the
-  simulation on the correct timescale. The resulting object has class
-  \code{"pState"} and inherits from \code{"matrix"}.
+  simulation on the correct timescale, and you will get funny results if
+  you try to tabulate beyond the censoring time for the simulation.
+  The resulting object has class \code{"table"}.
+
+  The result from using \code{pState} on the result from \code{nState}
+  has class \code{c("pState","matrix")}.
 }
 
 \author{Bendix Carstensen, \url{BendixCarstensen.com}.}
@@ -183,7 +203,8 @@ lapply( Tr, names )
 
 # Define an initial object - note the combination of "select=" and NULL
 # which ensures that the relevant attributes from the Lexis object 'Si'
-# are carried over to 'ini' ( Si[NULL,1:9] will lose essential attributes ):
+# are carried over to 'ini' ( Si[NULL,1:9] will lose essential
+# attributes ):
 ini <- subset(Si,select=1:9)[NULL,]
 ini[1:2,"lex.Cst"] <- "DM"
 ini[1:2,"Per"] <- 1995
@@ -193,12 +214,13 @@ ini[1:2,"sex"] <- c("M","F")
 str(ini)
 
 # Simulate 200 of each sex using the estimated model
-simL <- simLexis( Tr, ini, time.pts=seq(0,50,0.5), N=200 )
-summary( simL, by="sex" )
+simL <- simLexis( Tr, ini, time.pts=seq(0,11,0.5), N=200 )
+summary( simL )
 
-# Give the number of persons in each state at a set of times
+# Find the number of persons in each state at a set of times.
+# Note that the times are shirter than the time-span simulated.
 nSt <- nState( subset(simL,sex=="M"),
-               at=seq(0,15,0.2), from=1995, time.scale="Per" )
+               at=seq(0,10,0.1), from=1995, time.scale="Per" )
 nSt
 
 # Show the cumulative prevalences in a different order than that of the
@@ -217,5 +239,29 @@ mtext( "Survival curve", side=3, line=1.5, adj=0 )
 mtext( "DM, no insulin   DM, Insulin", side=3, line=0.5, adj=0, col=clr[1] )
 mtext( "DM, no insulin", side=3, line=0.5, adj=0, col=clr[2] )
 axis( side=4 )
+
+# Using a Cox-model for the mortality rates assuming the two mortality
+# rates to be proportional:
+# When we fit a Cox-model, lex.dur must be used in the Surv() function,
+# and the I() constrction must be used when specifying intermediate
+# states as covariates, since factors with levels not present in the
+# data will create NAs in the parameter vector returned by coxph, which
+# in return will crash the simulation machinery.
+library( survival )
+Cox.Dead <- coxph( Surv( DMdur, DMdur+lex.dur,
+                         lex.Xst \%in\% c("Dead(Ins)","Dead")) ~
+                   Ns( Age-DMdur, knots=ad.kn ) +
+                   I(lex.Cst=="Ins") +
+                   I(Per-2000) + sex,
+               data = Si )
+Cr <- list( "DM" = list( "Ins"       = DM.Ins,
+                         "Dead"      = Cox.Dead  ),
+           "Ins" = list( "Dead(Ins)" = Cox.Dead ) )
+simL <- simLexis( Cr, ini, time.pts=seq(0,11,0.2), N=200 )
+summary( simL )
+nSt <- nState( subset(simL,sex=="M"),
+               at=seq(0,10,0.2), from=1995, time.scale="Per" )
+pp <- pState( nSt, perm=c(1,2,4,3) )
+plot( pp )
 }
 \keyword{survival}

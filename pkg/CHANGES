@@ -1,3 +1,8 @@
+Changes in 1.1.57
+
+o simLexis substantially updated and groomed to accept Cox-models for
+  transitions too. Example in the documentation is expanded accordingly.
+
 Changes in 1.1.56
 
 o Typos in documentation corrected.
@@ -9,8 +14,8 @@ o When records with too short follow-up are encountered by Lexis, they
 o The col and border arguments to plot.pState were not repeated
   automatically, so needed fixing.
 
-o Moreelaborate warning and error-messages if inintiators in absorbing
-  states are handed to simLexis. simLexis groomed a bit.
+o More elaborate warning and error-messages if initiators in absorbing
+  states are handed to simLexis.
 
 Changes in 1.1.55
 
