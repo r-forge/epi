@@ -3,6 +3,7 @@
 \alias{nState}
 \alias{pState}
 \alias{plot.pState}
+\alias{lines.pState}
 \title{Simulate a Lexis object representing follow-up in a multistate
   model.}
 
@@ -29,7 +30,11 @@ pState( nSt, perm = 1:ncol(nSt) )
                      col = rainbow(ncol(x)),
                   border = "transparent",
                     xlab = "Time",
+                    ylim = 0:1,
                     ylab = "Probability", ... )
+\method{lines}{pState}( x,
+                      col = rainbow(ncol(x)),
+                   border = "transparent", ... )
    }
 \arguments{
   \item{Tr}{A named list of named lists. The names of the list are names
@@ -69,6 +74,7 @@ pState( nSt, perm = 1:ncol(nSt) )
   \item{col}{Colors for filling the areas between curves.}
   \item{border}{Colors for outline of the areas between curves.}
   \item{xlab}{Label on x-axis}
+  \item{ylim}{Limits on y-axis}
   \item{ylab}{Label on y-axis}
   \item{...}{Further arguments passed on to \code{plot}.}
 }

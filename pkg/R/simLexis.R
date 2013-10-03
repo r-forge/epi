@@ -303,7 +303,24 @@ function( x,
         col = rainbow(ncol(x)),
      border = "transparent",
        xlab = "Time",
+       ylim = 0:1,
        ylab = "Probability", ... )
+{
+# Function to plot cumulative probabilities along the time scale.
+matplot( as.numeric(rownames(x)), x, type="n",
+         ylim=ylim, yaxs="i", xaxs="i",
+         xlab=xlab, ylab=ylab, ... )
+lines.pState( x,
+        col = col,
+     border = border, ... )
+}
+
+
+######################################################################
+lines.pState <-
+function( x,
+        col = rainbow(ncol(x)),
+     border = "transparent", ... )
 {
 # Function to plot cumulative probabilities along the time scale.
 
@@ -314,9 +331,6 @@ border <- rep( border, nc )[1:nc]
 
 # Just for coding convenience when plotting polygons
 pSt <- cbind( 0, x )
-matplot( as.numeric(rownames(pSt)), pSt, type="n",
-         ylim=c(0,1), yaxs="i", xaxs="i",
-         xlab=xlab, ylab=ylab, ... )
 for( i in 2:ncol(pSt) )
    {
    polygon( c(    as.numeric(rownames(pSt)) ,

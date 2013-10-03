@@ -66,6 +66,7 @@ lines.apc,
          subset.stacked.Lexis,
       transform.stacked.Lexis,
            plot.pState,
+          lines.pState,
   entry,
   exit,
   status,
@@ -114,6 +115,7 @@ S3method(     plot, apc)
 S3method(    lines, apc)
 S3method(     plot, Lexis)
 S3method(     plot, pState)
+S3method(    lines, pState)
 S3method(   points, Lexis)
 S3method(    lines, Lexis)
 S3method(   PY.ann, Lexis)
