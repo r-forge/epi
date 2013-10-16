@@ -25,7 +25,7 @@ function( rt, time.pts )
 # rt with columns lex.id and timescales. The rows in rt are the id,
 # followed by the set of estimated transition rates to the different
 # states reachable from the current one.
-ci <- apply( rt[,-1,drop=FALSE], 2, cumsum )
+ci <- apply( rbind(0,rt[,-1,drop=FALSE]), 2, cumsum )[1:nrow(rt),,drop=FALSE]
 tt <- uu <- -log( runif(ncol(ci)) )
 for( i in 1:ncol(ci) ) tt[i] <- lint( ci[,i], time.pts, uu[i] )
 # Note this resulting data frame has 1 row
@@ -60,7 +60,7 @@ if( length(cst)>1 ) stop( "More than one lex.Cst present:\n", cst, "\n" )
 prfrm <- nd[rep(1:nr,each=np),]
 prfrm[,tS] <- prfrm[,tS] + rep(time.pts,nr)
 prfrm$lex.dur <- il <- min( diff(time.pts) )
-# Poisson-models shoudl use the estimated rate at the midpoint of the
+# Poisson-models should use the estimated rate at the midpoint of the
 # intervals:
 prfrp <- prfrm
 prfrp[,tS] <- prfrp[,tS]+il/2

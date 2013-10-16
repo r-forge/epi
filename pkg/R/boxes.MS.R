@@ -111,6 +111,8 @@ function( obj, boxpos = FALSE,
                show.Y = show,
               scale.Y = 1,
              digits.Y = 1,
+              show.BE = FALSE,
+               BE.pre = c("B:","        ","E:"),
                show.D = show,
               scale.D = FALSE,
              digits.D = as.numeric(as.logical(scale.D)),
@@ -142,6 +144,9 @@ if( inherits(obj,"Lexis") )
   if( !is.factor(obj$lex.Cst) | !is.factor(obj$lex.Xst) ) obj <- factorize( obj )
   tm <- tmat( obj, Y=TRUE )
   tt <- tmat( obj, Y=FALSE )
+  # Derive the persons at start and at end of study
+  Beg <- table( status( obj, at="entry", by.id=TRUE ) )
+  End <- table( status( obj, at="exit" , by.id=TRUE ) )
   }
 else if( is.matrix(obj) & diff(dim(obj))==0 )
   {
@@ -149,10 +154,11 @@ else if( is.matrix(obj) & diff(dim(obj))==0 )
   }
 else stop( "First argument must be a Lexis object or a square matrix.\n" )
 
-# Put the transitions into D and the diagnonal into Y.
+# Put the transitions into D and the diagonal into Y.
 D <- tm
 diag( D ) <- NA
 Y <- diag( tm ) / scale.Y
+
 # Explicitly given numbers to be put in boxes ?
 if( is.numeric(show.Y) )
   {
@@ -172,13 +178,15 @@ if( is.null(st.nam) ) st.nam <- paste(1:ncol(tm))
       n.tr <- sum( !is.na(tm) ) - sum( !is.na(diag(tm)) )
 
 # No extra line with person-years when they are NA
-if( show.Y ) pl.nam <- gsub( "\\\nNA",
-                             "",
+if( show.Y ) pl.nam <- gsub( "\\\nNA", "",
                              paste( st.nam,
                                     formatC( Y,
                                              format="f",
                                              digits=digits.Y,
                                              big.mark="," ),
+               if( show.BE ) paste( BE.pre[1], Beg,
+                                    BE.pre[2],
+                                    BE.pre[3], End ),
                                     sep="\n" ) )
 
 # Any subsetting:

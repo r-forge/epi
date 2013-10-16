@@ -1,5 +1,11 @@
 Changes in 1.1.57
 
+o boxes.Lexis updated with arguments show.BE and BE.pre, allowing
+  annotation of boxes by the *number* of persons strating and ending
+  in different states.
+
+Changes in 1.1.57
+
 o simLexis substantially updated and groomed to accept Cox-models for
   transitions too. Example in the documentation and vignette is
   expanded accordingly.

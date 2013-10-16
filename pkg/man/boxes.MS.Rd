@@ -39,6 +39,8 @@
                     show.Y = show,
                    scale.Y = 1,
                   digits.Y = 1,
+                   show.BE = FALSE,
+                    BE.pre = c("B:","        ","E:"),
                     show.D = show,
                    scale.D = FALSE,
                   digits.D = as.numeric(as.logical(scale.D)),
@@ -118,6 +120,10 @@
   \item{scale.Y}{What scale should be used for annotation of person-years.}
   \item{digits.Y}{How many digits after the decimal point should be used for the
                   person-years.}
+  \item{show.BE}{Logical. Should number of persons beginning
+    resp. ending follow up in each state be shown?}
+  \item{BE.pre}{Character vector of length 3, used for annotation of the
+    number of persons beginning and ending in each state.}
   \item{show.D}{Should no. transitions be put alongside the arrows.
                 Ignored if \code{obj} is not a \code{Lexis} object.}
   \item{scale.D}{Synonumous with \code{scale.R}, retained for compatability.}
