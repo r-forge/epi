@@ -104,15 +104,15 @@ function( obj, ... )
 
 boxes.Lexis <-
 function( obj, boxpos = FALSE,
-                wmult = 1.5,
-                hmult = 1.5*wmult,
+                wmult = 1.3,
+                hmult = 1.3*wmult,
                   cex = 1.5,
                show   = inherits( obj, "Lexis" ),
                show.Y = show,
               scale.Y = 1,
              digits.Y = 1,
               show.BE = FALSE,
-               BE.pre = c("B:","        ","E:"),
+               BE.sep = c("","","          ",""),
                show.D = show,
               scale.D = FALSE,
              digits.D = as.numeric(as.logical(scale.D)),
@@ -128,10 +128,10 @@ function( obj, boxpos = FALSE,
               exclude = NULL,
                  font = 2,
                   lwd = 2,
-              col.txt = par("fg"),
+           col.txt    = par("fg"),
            col.border = col.txt,
-               col.bg = "transparent",
-              col.arr = par("fg"),
+           col.bg     = "transparent",
+           col.arr    = par("fg"),
               lwd.arr = 2,
              font.arr = 2,
               pos.arr = 0.45,
@@ -144,9 +144,36 @@ if( inherits(obj,"Lexis") )
   if( !is.factor(obj$lex.Cst) | !is.factor(obj$lex.Xst) ) obj <- factorize( obj )
   tm <- tmat( obj, Y=TRUE )
   tt <- tmat( obj, Y=FALSE )
-  # Derive the persons at start and at end of study
-  Beg <- table( status( obj, at="entry", by.id=TRUE ) )
-  End <- table( status( obj, at="exit" , by.id=TRUE ) )
+  # If show.BE is a character, check if zeros should be printed
+  noz <- FALSE
+  if( is.character( show.BE ) )
+    {
+    noz <- ( tolower(show.BE) %in% c("nz","noz","nozero","nozeros") )
+    show.BE <- TRUE
+    }
+  if( show.BE )
+    {
+    # Derive the persons at start and at end of study in each state
+    Beg <- table( status( obj, at="entry", by.id=TRUE ) )
+    End <- table( status( obj, at="exit" , by.id=TRUE ) )
+    BE.line <- paste( ifelse( noz & Beg==0,
+                              rep("  ",nchar(BE.sep[1])+2),
+                              paste(BE.sep[1],
+                                    formatC( Beg,
+                                             format="f",
+                                             digits=0,
+                                             big.mark="," ),
+                                    BE.sep[2],sep="") ),
+                      ifelse( noz & End==0,
+                              rep("  ",nchar(BE.sep[2])+nchar(BE.sep[3])+2),
+                              paste(BE.sep[3],
+                                    formatC( End,
+                                             format="f",
+                                             digits=0,
+                                             big.mark="," ),
+                                    BE.sep[4],sep="") ),
+                      sep="" )
+    }
   }
 else if( is.matrix(obj) & diff(dim(obj))==0 )
   {
@@ -165,8 +192,10 @@ if( is.numeric(show.Y) )
   Y <- show.Y
   show.Y <- TRUE
   }
-# Compute the rates - vectors are automaticallyexpanded to matrices columnwise
+
+# Compute the rates - vectors are automatically expanded to matrices columnwise
 R <- D / Y * ifelse(scale.R,scale.R,1)
+
 # If no person-years available anywhere, they or rates cannot be shown
 if( all(is.na(Y)) ) show.Y <- show.R <- FALSE
 
@@ -177,17 +206,16 @@ if( is.null(st.nam) ) st.nam <- paste(1:ncol(tm))
       n.st <- length( st.nam )
       n.tr <- sum( !is.na(tm) ) - sum( !is.na(diag(tm)) )
 
-# No extra line with person-years when they are NA
+# No extra line with person-years when they are NA, put in no at
+# beginnning / end of study
 if( show.Y ) pl.nam <- gsub( "\\\nNA", "",
                              paste( st.nam,
                                     formatC( Y,
                                              format="f",
                                              digits=digits.Y,
                                              big.mark="," ),
-               if( show.BE ) paste( BE.pre[1], Beg,
-                                    BE.pre[2],
-                                    BE.pre[3], End ),
                                     sep="\n" ) )
+if( show.BE ) pl.nam <- paste( pl.nam, BE.line, sep="\n" )
 
 # Any subsetting:
 sbst <- 1:nrow(tm)

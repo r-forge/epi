@@ -1,3 +1,8 @@
+Changes in 1.1.59
+
+o boxes.Lexis updated so that also no. of beginners and enders are
+  properly formatted if larger than 999
+
 Changes in 1.1.57
 
 o boxes.Lexis updated with arguments show.BE and BE.pre, allowing

@@ -32,15 +32,15 @@
    boxarr( b1, b2, offset=FALSE, pos=0.45, ... )
 \method{boxes}{Lexis}( obj,
                     boxpos = FALSE,
-                     wmult = 1.5,
-                     hmult = 1.5*wmult,
+                     wmult = 1.3,
+                     hmult = 1.3*wmult,
                        cex = 1.5,
                     show   = inherits( obj, "Lexis" ),
                     show.Y = show,
                    scale.Y = 1,
                   digits.Y = 1,
                    show.BE = FALSE,
-                    BE.pre = c("B:","        ","E:"),
+                    BE.sep = c("","","          ",""),
                     show.D = show,
                    scale.D = FALSE,
                   digits.D = as.numeric(as.logical(scale.D)),
@@ -122,8 +122,10 @@
                   person-years.}
   \item{show.BE}{Logical. Should number of persons beginning
     resp. ending follow up in each state be shown?}
-  \item{BE.pre}{Character vector of length 3, used for annotation of the
-    number of persons beginning and ending in each state.}
+  \item{BE.sep}{Character vector of length 4, used for annotation of the
+    number of persons beginning and ending in each state: 1st elemet
+    precedes no. beginning, 2nd trails it, 3rd precedes the no. ending
+    (defaults to 8 spaces), and the 4th trails the no. ending.}
   \item{show.D}{Should no. transitions be put alongside the arrows.
                 Ignored if \code{obj} is not a \code{Lexis} object.}
   \item{scale.D}{Synonumous with \code{scale.R}, retained for compatability.}
@@ -303,12 +305,15 @@ dml <- Lexis( entry=list(Per=dodm, Age=dodm-dobth, DMdur=0 ),
         exit.status=factor(!is.na(dodth),labels=c("DM","Dead")),
                data=DMlate[1:1000,] )
 
-# Split follow-up at Insulin
+# Cut follow-up at Insulin
 dmi <- cutLexis( dml, cut=dml$doins, new.state="Ins", pre="DM" )
 summary( dmi )
 boxes( dmi, boxpos=TRUE )
+boxes( dmi, boxpos=TRUE, show.BE=TRUE )
+boxes( dmi, boxpos=TRUE, show.BE="nz" )
+boxes( dmi, boxpos=TRUE, show.BE="nz", BE.sep=c("In:","      Out:","") )
 
-# Set up a bogus recovery date jut to illustrate two-way transitions
+# Set up a bogus recovery date just to illustrate two-way transitions
 dmi$dorec <- dmi$doins + runif(nrow(dmi),0.5,10)
 dmi$dorec[dmi$dorec>dmi$dox] <- NA
 dmR <- cutLexis( dmi, cut=dmi$dorec, new.state="DM", pre="Ins" )
