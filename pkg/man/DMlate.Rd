@@ -10,7 +10,8 @@ The Danish National Diabetes Register.
 These two datasets each contain a random sample of 10,000 persons from
 the Danish National Diabetes Register. \code{DMrand} is a random sample
 from the register, whereas \code{DMlate} is a random sample among those
-with date of diagnosis after 1.1.1995.
+with date of diagnosis after 1.1.1995. All dates are radomly jittered by
+adding a U(-7,7) (days).
 }
 \usage{data(DMrand)
        data(DMlate)}

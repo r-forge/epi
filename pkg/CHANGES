@@ -1,3 +1,11 @@
+Changes in 1.1.61
+
+o ci.lin updated to recognize objects of class "lmerMod" from lmer.
+
+Changes in 1.1.60
+
+o Documentation for DMlate updated.
+
 Changes in 1.1.59
 
 o boxes.Lexis updated so that also no. of beginners and enders are

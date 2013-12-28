@@ -20,7 +20,7 @@ if( any( inherits( obj, c("coxph","glm","gls","lm","nls","survreg","clogistic","
 } else if( inherits( obj, c("lme") ) ) {
        cf <- fixed.effects( obj )
       vcv <- vcov( obj )
-} else if( inherits( obj, c("mer") ) ) {
+} else if( inherits( obj, c("mer","lmerMod") ) ) {
        cf <- fixef( obj )
       vcv <- as.matrix( vcov( obj ) )
 } else if (inherits(obj, "MIresult")) {
