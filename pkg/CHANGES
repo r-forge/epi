@@ -1,3 +1,7 @@
+Changes in 1.1.62
+
+o Bug fix in the example code for boxes.Lexis
+
 Changes in 1.1.61
 
 o ci.lin updated to recognize objects of class "lmerMod" from lmer.
