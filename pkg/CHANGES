@@ -1,3 +1,8 @@
+Changes in 1.1.64
+
+o Added function ZArray, which generates an array of 0s just as NArray
+  generates an array of NAs.
+
 Changes in 1.1.62
 
 o Bug fix in the example code for boxes.Lexis

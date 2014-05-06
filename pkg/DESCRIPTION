@@ -1,6 +1,6 @@
 Package: Epi
-Version: 1.1.63
-Date: 2014-02-19
+Version: 1.1.64
+Date: 2014-04-25
 Title: A package for statistical analysis in epidemiology.
 Author: Bendix Carstensen et al.
 Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),

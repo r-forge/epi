@@ -1,9 +1,11 @@
 NArray <-
-function( x )
+function( x, cells=NA )
 {
 if( !is.list(x) ) stop("Argument must be a (named) list." )
-array( NA, dimnames=x, dim=sapply( x, length ) )
+array( cells, dimnames=x, dim=sapply( x, length ) )
 }
+
+ZArray <- function( x, cells=0 ) NArray( x, cells=cells )
 
 larray <-
 function( data=NA, dim, dimnames )
