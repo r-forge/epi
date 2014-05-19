@@ -256,7 +256,7 @@ function ( obj,
 # 'time.scale'
 
 # Determine timescales and absorbing and transient states
-tS <- Epi:::check.time.scale(obj,time.scale)
+tS <- check.time.scale(obj,time.scale)
 TT <- tmat(obj)
 absorb <- rownames(TT)[apply(!is.na(TT),1,sum)==0]
 transient <- setdiff( rownames(TT), absorb )

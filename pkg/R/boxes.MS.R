@@ -99,7 +99,7 @@ boxes <- function (obj, ...) UseMethod("boxes")
 boxes.matrix <-
 function( obj, ... )
   {
-  Epi:::boxes.Lexis( obj, ... )
+  Epi::boxes.Lexis( obj, ... )
   }
 
 boxes.Lexis <-

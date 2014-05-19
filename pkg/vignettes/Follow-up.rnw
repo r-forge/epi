@@ -28,8 +28,8 @@
 \raggedleft
 \pagestyle{empty}
 \vspace*{0.1\textheight}
-\Huge 
-{\bf Follow-up data with the\\ \texttt{Epi} package} 
+\Huge
+{\bf Follow-up data with the\\ \texttt{Epi} package}
 \noindent\rule[-1ex]{\textwidth}{5pt}\\[2.5ex]
 \Large
 Spring 2009.
@@ -40,10 +40,10 @@ Spring 2009.
                & Highgate, London \\[1em]
 Martyn Plummer & International Agency for Research on Cancer, Lyon\\
                & \texttt{plummer@iarc.fr} \\[1em]
-Bendix Carstensen & Steno Diabetes Center, Gentofte, Denmark\\   
+Bendix Carstensen & Steno Diabetes Center, Gentofte, Denmark\\
                   & \small \& Department of Biostatistics,
                     University of Copenhagen\\
-                  & \normalsize \texttt{bxc@steno.dk} \\ 
+                  & \normalsize \texttt{bxc@steno.dk} \\
                   & \url{www.pubhealth.ku.dk/~bxc}
 \end{tabular}
 \normalsize
@@ -62,9 +62,11 @@ Bendix Carstensen & Steno Diabetes Center, Gentofte, Denmark\\
 \fancyfoot{}
 \renewcommand{\headrulewidth}{0.1pt}
 
-<<echo=false>>=
+<<>>=
 library(Epi)
+print( sessionInfo(), l=F )
 @
+
 \section{Follow-up data in the \texttt{Epi} package}
 
 In the \texttt{Epi}-package, follow-up data is represented by adding
@@ -119,6 +121,7 @@ follow-up (usually ``alive'').
 \end{figure}
 
 \section{Timescales}
+
 A timescale is a variable that varies deterministically \emph{within}
 each person during follow-up, \textit{e.g.}:
 \begin{itemize}
@@ -139,16 +142,16 @@ point on each of the time scale, for example:
 In the \texttt{Epi} package, follow-up in a cohort is represented in a
 \texttt{Lexis} object.  A \texttt{Lexis} object is a dataframe with a
 bit of extra structure representing the follow-up. For the
-\texttt{nickel} data we would construct a \texttt{Lexis} object by: 
-<<>>= 
-data( nickel ) 
+\texttt{nickel} data we would construct a \texttt{Lexis} object by:
+<<>>=
+data( nickel )
 nicL <- Lexis( entry = list( per=agein+dob,
-                             age=agein, 
+                             age=agein,
                              tfh=agein-age1st ),
                 exit = list( age=ageout ),
          exit.status = ( icd %in% c(162,163) )*1,
                 data = nickel )
-@ 
+@
 The \texttt{entry} argument is a \emph{named} list with the entry
 points on each of the timescales we want to use. It defines the names
 of the timescales and the entry points. The \texttt{exit} argument
@@ -171,7 +174,7 @@ list the numer of transitions and records as well as the total
 follow-up time:
 <<>>=
 summary( nicL )
-@ 
+@
 We defined the exit status to be death from lung cancer (ICD7
 162,163), i.e. this variable is 1 if follow-up ended with a death from
 this cause. If follow-up ended alive or by death from another cause,
@@ -189,20 +192,20 @@ using the function \texttt{plot()} on it means that \R\ will look for
 the function \texttt{plot.Lexis} and use this function.
 <<nicL1,fig=TRUE>>=
 plot( nicL )
-@ 
+@
 The function allows a lot of control over the output, and a
 \texttt{points.Lexis} function allows plotting of the endpoints of
 follow-up:
-<<nicL2,fig=TRUE>>= 
-par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6 ) 
-plot( nicL, 1:2, lwd=1, col=c("blue","red")[(nicL$exp>0)+1], 
-      grid=TRUE, lty.grid=1, col.grid=gray(0.7), 
-      xlim=1900+c(0,90), xaxs="i", 
-      ylim=  10+c(0,90), yaxs="i", las=1 ) 
+<<nicL2,fig=TRUE>>=
+par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6 )
+plot( nicL, 1:2, lwd=1, col=c("blue","red")[(nicL$exp>0)+1],
+      grid=TRUE, lty.grid=1, col.grid=gray(0.7),
+      xlim=1900+c(0,90), xaxs="i",
+      ylim=  10+c(0,90), yaxs="i", las=1 )
 points( nicL, 1:2, pch=c(NA,3)[nicL$lex.Xst+1],
-        col="lightgray", lwd=3, cex=1.5 ) 
-points( nicL, 1:2, pch=c(NA,3)[nicL$lex.Xst+1], 
-        col=c("blue","red")[(nicL$exp>0)+1], lwd=1, cex=1.5 ) 
+        col="lightgray", lwd=3, cex=1.5 )
+points( nicL, 1:2, pch=c(NA,3)[nicL$lex.Xst+1],
+        col=c("blue","red")[(nicL$exp>0)+1], lwd=1, cex=1.5 )
 @
 The results of these two plotting commands are in figure \ref{fig:Lexis-diagram}.
 \begin{figure}[tb]
@@ -214,7 +217,7 @@ The results of these two plotting commands are in figure \ref{fig:Lexis-diagram}
   the default version, the right one with bells
   and whistles. The red lines are for persons with exposure$>0$, so it
   is pretty evident that the oldest ones are the exposed part of the
-  cohort.}  
+  cohort.}
 \end{figure}
 
 \section{Splitting the follow-up time along a timescale}
@@ -227,7 +230,7 @@ timescale and the breakpoints on this timescale are supplied. Try:
 nicS1 <- splitLexis( nicL, "age", breaks=seq(0,100,10) )
 summary( nicL )
 summary( nicS1 )
-@ 
+@
 So we see that the number of events and the amount of follow-up is the
 same in the two datasets; only the number of records differ.
 
@@ -235,7 +238,7 @@ To see how records are split for each individual, it is useful to list
 the results for a few individuals:
 <<>>=
 round( subset( nicS1, id %in% 8:10 ), 2 )
-@ 
+@
 The resulting object, \texttt{nicS1}, is again a \texttt{Lexis}
 object, and so follow-up may be split further along another
 timescale. Try this and list the results for individuals 8, 9 and 10 again:
@@ -273,7 +276,7 @@ exposure exceeds 50 exposure years:
 <<>>=
 subset( nicL, id %in% 8:10 )
 agehi <- nicL$age1st + 50 / nicL$exposure
-nicC <- cutLexis( data=nicL, cut=agehi, timescale="age", 
+nicC <- cutLexis( data=nicL, cut=agehi, timescale="age",
                   new.state=2, precursor.states=0 )
 subset( nicC, id %in% 8:10 )
 @
@@ -284,10 +287,10 @@ the split dataset \texttt{nicS2} instead of \texttt{nicL}, try:
 <<>>=
 subset( nicS2, id %in% 8:10 )
 agehi <- nicS2$age1st + 50 / nicS2$exposure
-nicS2C <- cutLexis( data=nicS2, cut=agehi, timescale="age", 
+nicS2C <- cutLexis( data=nicS2, cut=agehi, timescale="age",
                     new.state=2, precursor.states=0 )
 subset( nicS2C, id %in% 8:10 )
-@ 
+@
 Note that follow-up subsequent to the event is classified as being
 in state 2, but that the final transition to state 1 (death from lung
 cancer) is preserved. This is the point of the \texttt{precursor.states=}
@@ -306,10 +309,10 @@ time-dependent variable, and \texttt{lex.Xst==1} as the event.
 
 If we want to consider death from lung cancer and death from other
 causes as separate events we can code these as for example 1 and 2.
-<<>>= 
-data( nickel ) 
+<<>>=
+data( nickel )
 nicL <- Lexis( entry = list( per=agein+dob,
-                             age=agein, 
+                             age=agein,
                              tfh=agein-age1st ),
                 exit = list( age=ageout ),
          exit.status = ( icd > 0 ) + ( icd %in% c(162,163) ),
@@ -341,10 +344,10 @@ the date classified as being in the new state if the exit
 \texttt{precursor.states}:
 <<>>=
 nicL$agehi <- nicL$age1st + 50 / nicL$exposure
-nicC <- cutLexis( data = nicL, 
-                   cut = nicL$agehi, 
-             timescale = "age", 
-             new.state = "HiExp", 
+nicC <- cutLexis( data = nicL,
+                   cut = nicL$agehi,
+             timescale = "age",
+             new.state = "HiExp",
       precursor.states = "Alive" )
 subset( nicC, id %in% 8:10 )
 summary( nicC, scale=1000 )
@@ -366,15 +369,15 @@ timescale indicating the time since intermediate event. This can be
 done by the argument \texttt{new.scale=TRUE}, alternatively
 \texttt{new.scale="tfevent"}, as illustrated here:
 <<>>=
-nicC <- cutLexis( data = nicL, 
-                   cut = nicL$agehi, 
-             timescale = "age", 
+nicC <- cutLexis( data = nicL,
+                   cut = nicL$agehi,
+             timescale = "age",
              new.state = "Hi",
            split.states=TRUE, new.scale=TRUE,
       precursor.states = "Alive" )
 subset( nicC, id %in% 8:10 )
 summary( nicC, scale=1000 )
-@ 
+@
 
 \section{Multiple events of the same type (recurrent events)}
 Sometimes more events of the same type are recorded for each person and

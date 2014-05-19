@@ -225,9 +225,10 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
   if (any(short.dur)) {
       warning("Dropping ", sum(short.dur),
               " rows with duration of follow up < tol\n",
-              "  The dropped rows are available in the object 'drop.sh'")
-  drop.sh <<- subset(lex, short.dur)
+              "  The dropped rows are in the attribute 'dropped'")
+  drop.sh <- subset(lex,  short.dur)
       lex <- subset(lex, !short.dur)
+  attr(lex,"dropped") <- all.time.scales
   }
 
   ## Return Lexis object
@@ -248,12 +249,12 @@ is.Lexis <- function(x)
 check.time.scale <- function(lex, time.scale=NULL)
 {
 
-  ##Utility function, returns the names of the time scales in a Lexis object
-  ##lex - a Lexis object
-  ##time.scale - a numeric or character vector. The function checks that
-  ##             these are valid time scales for the Lexis object.
-  ##Return value is a character vector containing the  names of the requested
-  ##time scales
+  ## Utility function, returns the names of the time scales in a Lexis object
+  ## lex - a Lexis object
+  ## time.scale - a numeric or character vector. The function checks that
+  ##              these are valid time scales for the Lexis object.
+  ## Return value is a character vector containing the  names of the requested
+  ## time scales
 
   all.names <- timeScales(lex)
   if (is.null(time.scale))
@@ -264,12 +265,12 @@ check.time.scale <- function(lex, time.scale=NULL)
   if (is.character(time.scale)) {
     for (i in 1:nscale) {
       if (is.null(lex[[time.scale[i]]]))
-        stop("invalid time scale name")
+        stop(time.scale[i], " is not a valid time scale name")
     }
   }
   else if (is.numeric(time.scale)) {
     if (any(time.scale > length(all.names))  || any(time.scale < 1))
-      stop("invalid time scale column number")
+      stop(time.scale, " not valid time scale column number(s)")
     time.scale <- all.names[time.scale]
   }
   else {

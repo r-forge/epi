@@ -49,7 +49,7 @@ pState( nSt, perm = 1:ncol(nSt) )
     accepted.}
   \item{N}{Numeric. How many persons should be simulated. \code{N}
     persons with covariate configuration of each row in \code{init}
-    will be simulated. Either a scalar or a vector of length \code{nrwo(init)}.}
+    will be simulated. Either a scalar or a vector of length \code{nrow(init)}.}
   \item{lex.id}{Vector of ids of the simulated persons. Useful when
     simulating in chunks.}
   \item{t.range}{Numerical scalar. The range of time over which to
@@ -93,30 +93,30 @@ pState( nSt, perm = 1:ncol(nSt) )
   of each these are the names of states reachable from the corresponding
   transient state.
 
-  The transition intensities are assumed modelled by either a glm with Poisson
-  family or a Cox-model. In both cases the timescale(s) must be aming
-  the timescales in a Lexis object representng the follow-up in a
-  cohort, and the risk time must be taken from the variable
-  \code{lex.dur} --- see the example.
+  The transition intensities are assumed modelled by either a glm with
+  Poisson family or a Cox-model. In both cases the timescale(s) in the
+  model must be using the names fo the timescales in a Lexis object
+  representng the follow-up in a cohort, and the risk time must be taken
+  from the variable \code{lex.dur} --- see the example.
 
   Alternatively, an element in \code{Tr} could be a function
   that from a data frame produces transition rates, or specifically
   cumulative transition rates over intervals of length \code{lex.dur}.
 
-  The \code{\link{Lexis}} object \code{init} must contain values of all
+  The pre-\code{Lexis} object \code{init} must contain values of all
   variables used in any of the objects in \code{Tr}. Moreover the
   attributes \code{time.scales} and \code{time.since} must be
   present. The attribute \code{time.since} is a character vector of the
-  same length as \code{time.scales} and the elements value \code{"A"} if
+  same length as \code{time.scales} and an element has value \code{"A"} if
   the corresponding time scale is defined as "time since entry into
-  state A", otherwise the value is \code{""}. If not present it will be
+  state \code{A}", otherwise the value is \code{""}. If not present it will be
   set to a vector of \code{""}s, which is only OK if no time scales are
   defined as time since entry to a state.
 
   The function \code{\link{Lexis}} automatically generates an attribute
   \code{time.since}, and \code{\link{cutLexis}} updates it when new time
   scales are defined. Hence, the simplest way of defining a initial
-  (pre-)Lexis object representing a current state of a (set of) persons
+  pre-\code{Lexis} object representing a current state of a (set of) persons
   to be followed through a multistate model is to take \code{NULL} rows
   of an existing Lexis object (normally the one used for estimation),
   and so ensuring that all relevant attributes and state levels are
@@ -219,7 +219,7 @@ ini[1:2,"DMdur"] <- 5
 ini[1:2,"sex"] <- c("M","F")
 str(ini)
 
-# Simulate 200 of each sex using the estimated model
+# Simulate 200 of each sex using the estimated models in Tr
 simL <- simLexis( Tr, ini, time.pts=seq(0,11,0.5), N=200 )
 summary( simL )
 

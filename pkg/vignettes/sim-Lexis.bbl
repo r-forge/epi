@@ -1,0 +1,19 @@
+\begin{thebibliography}{1}
+
+\bibitem{Carstensen.2011a}
+Bendix Carstensen and Martyn Plummer.
+\newblock Using {L}exis objects for multi-state models in {R}.
+\newblock {\em Journal of Statistical Software}, 38(6):1--18, 1 2011.
+
+\bibitem{Iacobelli.2013}
+S.~Iacobelli and B.~Carstensen.
+\newblock {{M}ultiple time scales in multi-state models}.
+\newblock {\em Stat Med}, 32(30):5315--5327, Dec 2013.
+
+\bibitem{Plummer.2011}
+Martyn Plummer and Bendix Carstensen.
+\newblock Lexis: An {R} class for epidemiological studies with long-term
+  follow-up.
+\newblock {\em Journal of Statistical Software}, 38(5):1--12, 1 2011.
+
+\end{thebibliography}
