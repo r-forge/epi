@@ -3,6 +3,10 @@ Changes in 1.1.64
 o Added function ZArray, which generates an array of 0s just as NArray
   generates an array of NAs.
 
+o Updated code to avoid "::" and ":::" as far as possible, as well as
+  "<<-". Hence excluded records from construction of a Lexis object is
+  now put in an attribute "dropped" of the Lexis object.
+
 Changes in 1.1.62
 
 o Bug fix in the example code for boxes.Lexis
