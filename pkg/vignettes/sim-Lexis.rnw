@@ -1,4 +1,5 @@
-\SweaveOpts{results=verbatim,keep.source=TRUE,include=FALSE,eps=FALSE,prefix.string=./sL}
+\SweaveOpts{results=verbatim,keep.source=TRUE,include=FALSE,eps=FALSE,prefix.string=sL}
+%\VignetteIndexEntry{Simulation of multistate models with multiple timescales: simLexis}
 \documentclass[a4paper,twoside,12pt]{report}
 
 %----------------------------------------------------------------------
@@ -46,7 +47,7 @@ Bendix Carstensen
 \providecommand{\pmat}[1]{\text{\rm P}\left\{#1\right\}}
 \providecommand{\dif}{{\,\mathrm d}}
 % Simple insertion of figures
-\newcommand{\rwpre}{./sL}
+\newcommand{\rwpre}{sL}
 \newcommand{\insfig}[3]{
 \begin{figure}[h]
   \centering
@@ -1068,15 +1069,27 @@ plot.pState
 lines.pState
 @ %
 
-% \clearpage
-% \section{Running it all}
-% \insout{sim-Lexis.rwl}
-
 \bibliographystyle{plain}
-\bibliography{%
-c:/bendix/artikler/bibtex/BxC,%
-c:/bendix/artikler/bibtex/diabetes%
-}
+  \begin{thebibliography}{1}
+
+\bibitem{Carstensen.2011a}
+B.~Carstensen and M.~Plummer.
+\newblock Using {L}exis objects for multi-state models in {R}.
+\newblock {\em Journal of Statistical Software}, 38(6):1--18, 1 2011.
+
+\bibitem{Iacobelli.2013}
+S.~Iacobelli and B.~Carstensen.
+\newblock {{M}ultiple time scales in multi-state models}.
+\newblock {\em Stat Med}, 32(30):5315--5327, Dec 2013.
+
+\bibitem{Plummer.2011}
+M.~Plummer and B.~Carstensen.
+\newblock Lexis: An {R} class for epidemiological studies with long-term
+  follow-up.
+\newblock {\em Journal of Statistical Software}, 38(5):1--12, 1 2011.
+
+\end{thebibliography}
+
 \addcontentsline{toc}{chapter}{References}
 
 \end{document}

@@ -1,5 +1,9 @@
 Changes in 1.1.64
 
+o Fixed the sim-Lexis vignette
+
+Changes in 1.1.64
+
 o Added function ZArray, which generates an array of 0s just as NArray
   generates an array of NAs.
 
