@@ -1,6 +1,7 @@
 Lexis <-
 function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
-         merge=TRUE, states, tol=.Machine$double.eps^0.5)
+         merge=TRUE, states, tol=.Machine$double.eps^0.5,
+         keep.dropped=FALSE )
 {
   nmissing <- missing(entry) + missing(exit) + missing(duration)
   if (nmissing > 2)
@@ -222,14 +223,16 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
 
   ## Drop rows with short or negantive duration for consistency with splitLexis
   short.dur <- lex$lex.dur <= tol
-  if (any(short.dur)) {
+  if ( any(short.dur) ) {
       warning("Dropping ", sum(short.dur),
               " rows with duration of follow up < tol\n",
-              "  The dropped rows are in the attribute 'dropped'")
-  drop.sh <- subset(lex,  short.dur)
+      if( keep.dropped ) "  The dropped rows are in the attribute 'dropped'\n",
+      if( keep.dropped ) "  To see them type attr(Obj,'dropped'),\n",
+      if( keep.dropped ) "  to get rid of them type attr(Obj,'dropped') <- NULL\n",
+      if( keep.dropped ) "  - where 'Obj' is the name of your Lexis object" )
       lex <- subset(lex, !short.dur)
-  attr(lex,"dropped") <- all.time.scales
-  }
+      if( keep.dropped ) attr(lex,"dropped") <- subset(data, short.dur)
+      }
 
   ## Return Lexis object
   attr(lex,"time.scales") <- all.time.scales
@@ -614,7 +617,7 @@ status <- function(x, at="exit", by.id = FALSE)
    ave( x[,timeScales(x)[1]], x$lex.id, FUN=if(by.id)
                                              switch(at,
                                                     "entry"=min,
-                                                    "exit"=max)
+                                                     "exit"=max)
                                              else I )
   res <- switch(at, "entry"=x$lex.Cst, "exit"=x$lex.Xst)[wh]
   if( by.id ) names( res ) <- x$lex.id[wh]
@@ -679,4 +682,3 @@ transform.Lexis <- function(`_data`, ... )
     attributes(y) <- save.at
     y
 }
-

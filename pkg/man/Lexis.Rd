@@ -6,8 +6,8 @@
   multiple states on multiple time scales.
 }
 \usage{
-Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
-      merge=TRUE, states, tol=.Machine$double.eps^0.5 )
+Lexis( entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
+       merge=TRUE, states, tol=.Machine$double.eps^0.5, keep.dropped=FALSE )
 }
 \arguments{
   \item{entry}{a named list of entry times. Each element of the list is
@@ -35,6 +35,8 @@ Lexis(entry, exit, duration, entry.status = 0, exit.status = 0, id, data,
     identical levels attributes equal to \code{states}.}
   \item{tol}{Numerical tolerance for follow-up time. Rows with duration
     less than this value are automatically dropped.}
+  \item{keep.dropped}{Logical. Should dropped rows from \code{data} be
+    saved as an attribute with the object for inspection?}
 }
 \details{
   The analysis of long-term population-based follow-up studies typically
