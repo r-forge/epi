@@ -26,7 +26,7 @@ yl <-      apply( yl, 2, function(x) exp(mean(log(x))+c(-1,1)*log(mr)/2*yshr))
 if( plot )
   {
 ## Plot the effects side by side
-  par( mfrow=c(1,nt), mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, bty="n", las=1 )
+  par( mfrow=c(1,nt), mar=c(3,3,1,1), mgp=c(3,1,0)/1.6 )#, bty="n", las=1 )
   if( xeq )
   ## Plot the terms so that x- and y-axes have the same extent
     {    
