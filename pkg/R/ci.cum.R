@@ -7,7 +7,6 @@ function( obj,
           Exp = TRUE,
        sample = FALSE )
 {
-if( sample ) require( MASS )
 # First extract all the coefficients and the variance-covariance matrix
 #
 if( any( inherits( obj, c("coxph","glm","gls","lm","nls","survreg") ) ) ) {

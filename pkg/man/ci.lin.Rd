@@ -25,11 +25,11 @@ ci.lin( obj,
          df = Inf,
         Exp = FALSE,
      sample = FALSE )
-ci.exp( ..., Exp = TRUE )
+ci.exp( ..., Exp = TRUE, pval=FALSE )
 Wald( obj, H0=0, ... )
 ci.mat( alpha = 0.05, df = Inf )
 ci.pred( obj, newdata,
-         Exp = TRUE,
+         Exp = inherits(obj,"glm"),
        alpha = 0.05,
           df = Inf )
 }
@@ -59,9 +59,9 @@ ci.pred( obj, newdata,
     parameter names (using \code{grep}) to find the subset. Repeat
     parameters may result from using a character vector. This is
     considered a facility.}
-  \item{subint}{SUBset selection like for \code{subset}, except that
+  \item{subint}{\code{sub}set selection like for \code{subset}, except that
     elements of a character vector given as argument will be used to
-    select a number of subsets of parameters and only the INTersection
+    select a number of subsets of parameters and only the \code{int}ersection
     of these is returned.}
   \item{diffs}{If TRUE, all differences between parameters
     in the subset are computed. \code{ctr.mat} is ignored. If \code{obj}
@@ -79,11 +79,16 @@ ci.pred( obj, newdata,
   \item{df}{Integer. Number of degrees of freedom in the t-distribution used
     to compute the quantiles used to construct the confidence intervals.}
   \item{Exp}{If \code{TRUE} columns 5:6 are replaced with exp( columns
-    1,5,6 ).}
+    1,5,6 ). For \code{ci.pred} it indicates whether the predictions
+    should be exponentiated - the default is to make a prediction on the
+    scale of the linear predictor.}
   \item{sample}{Logical or numerical. If \code{TRUE} or numerical a
     sample of size \code{as.numeric(sample)} of the linear parameter
-    function as defined by \code{subset} and \code{ctr.mat} is returned.}
-  \item{H0}{The null values for the selected/transformed parameters to
+    function as defined by \code{subset} and \code{ctr.mat} is
+    returned.}
+  \item{pval}{Logical. Should a column of P-vales be included with the estimates
+    and confidence intervals output by \code{ci.exp}.}
+  \item{H0}{Numeric. The null values for the selected/transformed parameters to
     be tested by a Wald test. Must have the same length as the selected
     parameter vector.}
   \item{\ldots}{Parameters passed on to \code{ci.lin}.}

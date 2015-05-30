@@ -1,3 +1,26 @@
+# The coef() methods in nlme and lme4 do something different
+# so we make a workaround by specifying our own generic methods
+COEF         <- function( x, ... ) UseMethod("COEF")
+COEF.default <- function( x, ... ) coef( x, ... )
+VCOV         <- function( x, ... ) UseMethod("VCOV")
+VCOV.default <- function( x, ... ) vcov( x, ... )
+
+# Then we can get from these methods what we want
+COEF.lme     <- function( x, ... ) nlme::fixed.effects( x )
+COEF.mer     <- function( x, ... ) lme4::fixeff( x )
+COEF.lmerMod <- function( x, ... ) lme4::fixeff( x )
+
+# For the rest of the non-conforming classes we then just need the methods not defined
+COEF.crr      <- function( object, ... ) object$coef
+VCOV.crr      <- function( object, ... ) object$var
+COEF.MIresult <- function( object, ... ) object$coefficients
+VCOV.MIresult <- function( object, ... ) object$variance
+COEF.mipo     <- function( object, ... ) object$qbar
+VCOV.mipo     <- function( object, ... ) object$t
+COEF.polr     <- function( object, ... ) summary(object)$coefficients
+VCOV.gnlm     <- function( object, ... ) object$cov
+VCOV.rq       <- function( object, ... ) summary(object, cov=TRUE)$cov
+
 ci.lin <-
 function( obj,
       ctr.mat = NULL,
@@ -11,45 +34,15 @@ function( obj,
           Exp = FALSE,
        sample = FALSE )
 {
-if( sample ) require( MASS )
 # First extract all the coefficients and the variance-covariance matrix
-#
-if( any( inherits( obj, c("coxph","glm","gls","lm","nls","survreg","clogistic","cch") ) ) ) {
-       cf <- coef( obj )
-      vcv <- vcov( obj )
-} else if( inherits( obj, c("crr") ) ) {
-       cf <- obj$coef
-      vcv <- obj$var
-} else if( inherits( obj, c("lme") ) ) {
-       cf <- fixed.effects( obj )
-      vcv <- vcov( obj )
-} else if( inherits( obj, c("mer","lmerMod") ) ) {
-       cf <- fixef( obj )
-      vcv <- as.matrix( vcov( obj ) )
-} else if (inherits(obj, "MIresult")) {
-       cf <- obj$coefficients
-      vcv <- obj$variance
-} else if (inherits(obj, "mipo")) {
-       cf <- obj$qbar
-      vcv <- obj$t
-} else if( inherits( obj, "polr" ) ) {
-       cf <- summary( obj )$coefficients
-      vcv <- vcov( obj )
-} else if( inherits( obj, "gnlm" ) ) {
-       cf <- coef( obj )
-      vcv <- obj$cov
-} else if( inherits( obj, "rq" ) ) {
-       cf <- coef( obj )
-      vcv <- summary( obj, cov=TRUE )$cov
-} else stop( "\"", deparse( substitute( obj ) ), "\" is of class \"",
-              class( obj ), "\" which is not supported." )
-
+cf  <- COEF( obj )
+vcv <- VCOV( obj )
 # Workaround to expand the vcov matrix with 0s so that it matches
 # the coefficients vector in case of (extrinsic) aliasing.
 if( any( is.na( cf ) ) )
   {
 if( inherits( obj, c("coxph") ) )
-  {
+  { # aliased parameters are only NAs in coef, but omitted from vcov
   wh <- !is.na(cf)
   cf <- cf[wh]
   vcv <- vcv[wh,wh]
@@ -71,7 +64,6 @@ vcv <- vM
 
 # Function for computing a contrast matrix for all possible
 # differences between a set of parameters.
-#
 all.dif <-
 function( cf, pre=FALSE )
 {
@@ -108,6 +100,7 @@ cm[cbind(1:nr,ctr[,1])] <- 1
 cm[cbind(1:nr,ctr[,2])] <- -1
 rownames( cm ) <- rn
 cm
+# end of function for all differences 
 }
 
 # Were all differences requested?
@@ -178,7 +171,10 @@ if( !diffs )
 # Finally, here is the actual computation
     ct <- ctr.mat %*% cf
     vc <- ctr.mat %*% vcv %*% t( ctr.mat )
-    if( sample ) res <- t( mvrnorm( sample, ct, vc ) ) else {
+    if( sample )
+      res <- t( mvrnorm( sample, ct, vc ) )
+    else
+    {
     se <- sqrt( diag( vc ) )
     ci <- cbind( ct, se ) %*% ci.mat( alpha=alpha, df=df )
     t0 <- cbind( se, ct/se, 2 * ( pnorm( -abs( ct / se ) ) ) )
@@ -198,18 +194,18 @@ if( vcov ) invisible( list( est=ct, vcov=vc ) ) else res
 
 # Handy wrapper
 ci.exp <-
-function( ..., Exp=TRUE )
+function( ..., Exp=TRUE, pval=FALSE )
 {
 if( Exp )
-ci.lin( ..., Exp=TRUE )[,5:7,drop=FALSE]
+ci.lin( ..., Exp=TRUE  )[,if(pval) c(5:7,4)   else 5:7     ,drop=FALSE]
 else
-ci.lin( ..., Exp=FALSE )[,-(2:4),drop=FALSE]
+ci.lin( ..., Exp=FALSE )[,if(pval) c(1,5,6,4) else c(1,5,6),drop=FALSE]
 }
 
 # Wrapper for predict.lm / predict.glm
 ci.pred <-
 function( obj, newdata,
-         Exp = TRUE,
+         Exp = inherits( obj, "glm" ),
        alpha = 0.05,
           df = Inf )
 {

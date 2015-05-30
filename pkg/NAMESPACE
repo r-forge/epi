@@ -96,6 +96,7 @@ lines.apc,
   NArray,
   ZArray,
   Ns,
+  Termplot,
   pctab,
   plotEst,
   pointsEst,
@@ -113,7 +114,11 @@ lines.apc,
   clogistic)
 # Import generic methods
 importFrom( utils, stack )
-# importFrom( mstate, mstate )
+importFrom( splines, ns, bs )
+importFrom( cmprsk, crr)
+importFrom( etm, etm )
+importFrom( MASS, mvrnorm )
+## importFrom( mstate, mstate )
 # register S3 methods
 S3method(     plot, apc)
 S3method(    lines, apc)
