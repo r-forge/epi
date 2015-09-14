@@ -27,10 +27,10 @@ if( any(detrend>0) ) ## covers both logical and vector
   {
   if( any(detrend<0) )
     stop( "Some elements of weight are <0, e.g. no",
-          (ww <- which(weight<0))[1:min(5,length(ww))], "." )
+          (ww <- which(detrend<0))[1:min(5,length(ww))], "." )
   if( !(length(detrend) %in% c(1,length(x))) )
     {
-    warning( "Weight in inner product set to 1")
+    warning( "Weights in inner product diagonal matrix set to 1")
     weight <- rep(1,length(x))    
     }
   else weight <- if( is.numeric(detrend) ) detrend else rep(1,length(x))

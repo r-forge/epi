@@ -1,14 +1,14 @@
 # The coef() methods in nlme and lme4 do something different
 # so we make a workaround by specifying our own generic methods
-COEF         <- function( x, ... ) UseMethod("COEF")
-COEF.default <- function( x, ... ) coef( x, ... )
-VCOV         <- function( x, ... ) UseMethod("VCOV")
-VCOV.default <- function( x, ... ) vcov( x, ... )
+COEF          <- function( x, ... ) UseMethod("COEF")
+COEF.default  <- function( x, ... ) coef( x, ... )
+VCOV          <- function( x, ... ) UseMethod("VCOV")
+VCOV.default  <- function( x, ... ) vcov( x, ... )
 
-# Then we can get from these methods what we want
-COEF.lme     <- function( x, ... ) nlme::fixed.effects( x )
-COEF.mer     <- function( x, ... ) lme4::fixeff( x )
-COEF.lmerMod <- function( x, ... ) lme4::fixeff( x )
+# Then we can get from these methods what we want from lme, mer etc.
+COEF.lme      <- function( x, ... ) nlme::fixed.effects( x )
+COEF.mer      <- function( x, ... ) lme4::fixef( x )
+COEF.lmerMod  <- function( x, ... ) lme4::fixef( x )
 
 # For the rest of the non-conforming classes we then just need the methods not defined
 COEF.crr      <- function( object, ... ) object$coef
@@ -169,12 +169,17 @@ if( !diffs )
             deparse(substitute(obj)), ": ", length(cf), sep = ""))
   }
 # Finally, here is the actual computation
+  if( sample )
+    {
+    # mvrnorm() returns a vector if sample=1, otherwise a sample x
+    # length(cf) matrix - hence the rbind so we always get a row 
+    # matrix and res then becomes an nrow(ctr.mat) x sample matrix
+    res <- ctr.mat %*% t( rbind(mvrnorm( sample, cf, vcv )) )   
+    }  
+  else
+    {
     ct <- ctr.mat %*% cf
     vc <- ctr.mat %*% vcv %*% t( ctr.mat )
-    if( sample )
-      res <- t( mvrnorm( sample, ct, vc ) )
-    else
-    {
     se <- sqrt( diag( vc ) )
     ci <- cbind( ct, se ) %*% ci.mat( alpha=alpha, df=df )
     t0 <- cbind( se, ct/se, 2 * ( pnorm( -abs( ct / se ) ) ) )
@@ -202,14 +207,21 @@ else
 ci.lin( ..., Exp=FALSE )[,if(pval) c(1,5,6,4) else c(1,5,6),drop=FALSE]
 }
 
-# Wrapper for predict.lm / predict.glm
+# Wrapper for predict.glm
 ci.pred <-
 function( obj, newdata,
-         Exp = inherits( obj, "glm" ),
+         Exp = NULL,
        alpha = 0.05,
           df = Inf )
 {
+if( !inherits( obj, "glm" ) ) stop("Not usable for non-glm objects")
+# get prediction and se on the link scale
 zz <- predict( obj, newdata=newdata, se.fit=TRUE, type="link" )
+# compute ci on link scale
 zz <- cbind( zz$fit, zz$se.fit ) %*% ci.mat( alpha=alpha, df=df )
-if( Exp ) exp( zz ) else zz
+# transform as requested
+if( missing(Exp) ) {   return( obj$family$linkinv(zz) )
+} else {  if(  Exp ) { return(                exp(zz) ) 
+   } else if( !Exp )   return(                    zz  )
+       }  
 }

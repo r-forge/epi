@@ -1,7 +1,7 @@
 Package: Epi
-Version: 1.1.68
-Date: 2014-06-30
-Title: A package for statistical analysis in epidemiology
+Version: 1.1.70
+Date: 2015-09-14
+Title: A Package for Statistical Analysis in Epidemiology
 Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
                     email = "bxc@steno.dk"),
              person("Martyn", "Plummer", role = "aut",

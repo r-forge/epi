@@ -1,17 +1,17 @@
 \name{Termplot}
 \alias{Termplot}
 \title{
-  A wrapper for \code{termplot} that optionally (default) exponentiates
-  terms, and plot them on a common log-scale. Also scales x-axes to the
-  same physical scale. 
+  A wrapper for \code{termplot} that optionally (but by default)
+  exponentiates terms, and plot them on a common log-scale. Also scales
+  x-axes to the same physical scale.
 }
 \description{
   The function uses \code{\link{termplot}} to extract terms from a model
   with, say, spline, terms, including the standard errors, computes
   confidence intervals and transform these to the rate / rate-ratio
   scale. Thus the default use is for models on the log-scale such as
-  POisson-regression models. The function produces a plot with panels
-  side-by-side, one panel per term.
+  Poisson-regression models. The function produces a plot with panels
+  side-by-side, one panel per term, and returns the 
 }
 \usage{
   Termplot( obj,
@@ -20,7 +20,9 @@
            ylab = NULL,
             xeq = TRUE,
            yshr = 1,
-          alpha = 0.05 )
+          alpha = 0.05,
+          terms = NULL,
+         max.pt = NULL )
 }
 \arguments{
   \item{obj}{An object with a \code{terms}-method --- for details the
@@ -28,14 +30,20 @@
   \item{plot}{Should a plot be produced?}
   \item{xlab}{Labels for the \code{x}-axes. Defaults to the names of the terms.}
   \item{ylab}{Labels for the \code{x}-axes. Defaults to blank.}
-  \item{xeq}{Should the units all all plots have the same physical scal
+  \item{xeq}{Should the units all all plots have the same physical scale
     for the \code{x}-axes).}
   \item{yshr}{Shrinking of \code{y}-axis. By default, the \code{y}-axes
-    have an extent that accommodates the entire rane of confidence
+    have an extent that accommodates the entire range of confidence
     intervals. This is a shrinking parameter for the \code{y}-axes,
     setting it to less than 1 will lose a bit of the confidence limits
     on some of the panels.}
-  \item{alpha}{1 minus the confidence level for computing confidence intervals}
+  \item{alpha}{1 minus the confidence level for computing confidence
+    intervals}
+  \item{terms}{Which terms should be reported. Passed on to
+    \code{\link{termplot}} and eventually \code{\link{predict}}.}
+  \item{max.pt}{The maximal number of points in which to report the
+    terms. If \code{NULL} all unique points from the analysis dataset
+    are reported for each term (this is a feature of \code{\link{termplot}}).}
 }
 \value{
   A list with one component per term in the model object \code{obj},

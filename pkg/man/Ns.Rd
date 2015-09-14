@@ -29,7 +29,7 @@ Ns( x, ref = NULL, df = NULL,
     \code{Boundary.knots} are given, this will be taken as the set of
     internal knots.}
   \item{intercept}{Should the intercept be included in the resulting
-    basis? ignored if \code{ref} is given}
+    basis? Ignored if any of \code{ref} or \code{detrend} is given.}
   \item{Boundary.knots}{The boundary knots beyond which the spline is
     linear.}
   \item{detrend}{If \code{TRUE}, the columns of the spline basis will be
@@ -40,26 +40,25 @@ Ns( x, ref = NULL, df = NULL,
     w.r.t. the inner product defined by the identity matrix.}
 }
 \value{  
-  A matrix of dimension c(length(x),df) where
-  either \code{df} was supplied or if \code{knots} were supplied,
-  \code{df = length(knots) - intercept}. \code{rNs} returns a spline
-  basis which is centered at \code{ref}, without the \code{ref=}
-  argument \code{rNs} behaves as \code{Ns}, and so the two will likely
-  be merged. \code{pNs} returns a spline basis which is orthogonal to
-  \code{cbind(1,x)} with respect to the inner product defined by the
-  positive definite matrix \code{diag(weight)} (an assumption which is
-  checked).
+  A matrix of dimension c(length(x),df) where either \code{df} was
+  supplied or if \code{knots} were supplied, \code{df = length(knots) -
+  intercept}. \code{Ns} returns a spline basis which is centered at
+  \code{ref}, without the \code{ref=} argument \code{Ns} behaves as
+  \code{Ns}, and so the two will likely be merged. \code{Ns} returns a
+  spline basis which is orthogonal to \code{cbind(1,x)} with respect to
+  the inner product defined by the positive definite matrix
+  \code{diag(weight)} (an assumption which is checked).
 }
 \author{
   Bendix Carstensen
 }
 \note{
-  The need for this function is from analysis of rates in
+  The need for this function is priarily from analysis of rates in
   epidemiology and demography, where the dataset are time-split records
   of follow-up, and the range of data therefore rarely is of any
-  interest (let alone is meaningful). In Poisson modelling of rates based
-  on time-split records one should aim at having the same number of
-  \emph{events} between knots, rather than the same number of
+  interest (let alone is meaningful). In Poisson modelling of rates
+  based on time-split records one should aim at having the same number
+  of \emph{events} between knots, rather than the same number of
   observations.
 }
 \examples{

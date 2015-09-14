@@ -5,7 +5,7 @@
 \alias{ci.pred}
 \alias{Wald}
 \title{
-  Compute linear functions of parameters with standard erros and
+  Compute linear functions of parameters with standard errors and
   confidence limits
   }
 \description{
@@ -29,7 +29,7 @@ ci.exp( ..., Exp = TRUE, pval=FALSE )
 Wald( obj, H0=0, ... )
 ci.mat( alpha = 0.05, df = Inf )
 ci.pred( obj, newdata,
-         Exp = inherits(obj,"glm"),
+         Exp = NULL,
        alpha = 0.05,
           df = Inf )
 }
@@ -81,12 +81,15 @@ ci.pred( obj, newdata,
   \item{Exp}{If \code{TRUE} columns 5:6 are replaced with exp( columns
     1,5,6 ). For \code{ci.pred} it indicates whether the predictions
     should be exponentiated - the default is to make a prediction on the
-    scale of the linear predictor.}
+    scale of the linear predictor and transform it by the inverse link
+    function; if FALSE, the prediction on the link scale is returned.}
   \item{sample}{Logical or numerical. If \code{TRUE} or numerical a
-    sample of size \code{as.numeric(sample)} of the linear parameter
-    function as defined by \code{subset} and \code{ctr.mat} is
+    sample of size \code{as.numeric(sample)} is drawn from the
+    multivariate normal with mean equal to the (\code{subet} defined)
+    coefficients and variance equal to the estimated variance-covriance
+    of these. These are then transformed by \code{ctr.mat} and
     returned.}
-  \item{pval}{Logical. Should a column of P-vales be included with the estimates
+  \item{pval}{Logical. Should a column of P-values be included with the estimates
     and confidence intervals output by \code{ci.exp}.}
   \item{H0}{Numeric. The null values for the selected/transformed parameters to
     be tested by a Wald test. Must have the same length as the selected
@@ -106,15 +109,16 @@ ci.pred( obj, newdata,
   \code{ci.exp} returns only the exponentiated parameter estimates with
   confidence intervals. It is merely a wrapper for \code{ci.lin},
   fishing out the last 3 columns from \code{ci.lin(...,Exp=TRUE)}. If
-  you just want the estimates and confidnece limits, but not
+  you just want the estimates and confidence limits, but not
   exponentiated, use \code{ci.exp(...,Exp=FALSE)}.
 
-  \code{Wald} computes a Wald test for a subset of (possibly linearly
-  transformed) parameters being equal to the null value. The selection
-  of the subset of parameters is the same as for \code{ci.lin}. Using
-  the \code{ctr.mat} argument makes it possible to do a Wald test for
-  equality of parameters. \code{Wald} returns a named numerical vector
-  of length 3, with names \code{Chisq}, \code{d.f.} and \code{P}.
+  \code{Wald} computes a Wald test for a subset of (possibly linear
+  combinations of) parameters being equal to the vector of null
+  values. The selection of the subset of parameters is the same as for
+  \code{ci.lin}. Using the \code{ctr.mat} argument makes it possible to
+  do a Wald test for equality of parameters. \code{Wald} returns a named
+  numerical vector of length 3, with names \code{Chisq}, \code{d.f.} and
+  \code{P}.
 
   \code{ci.mat} returns a 2 by 3 matrix with rows \code{c(1,0,0)} and
   \code{c(0,-1,1)*1.96}, devised to post-multiply to a p by 2 matrix with
@@ -125,11 +129,12 @@ ci.pred( obj, newdata,
   t-distribution when arguments \code{alpha} and/or \code{df} are given.
 
   \code{ci.pred} returns a 3-column matrix with estimates and upper and
-  lower confidence intervals as columns. This is just a convenient
-  wrapper for \code{predict(obj,se.fit=TRUE)} which returns a rather
-  unhandy structure. The prediction is made in the \code{link} scale,
-  and by default transformed by the exponential, since the most common
-  use for this is for multiplicative Poisson models.
+  lower confidence intervals as columns. This is just a convenience
+  wrapper for \code{predict.glm(obj,se.fit=TRUE)} which returns a rather
+  unhandy structure. The prediction with c.i. is made in the \code{link}
+  scale, and by default transformed by the inverse link, since the most
+  common use for this is for multiplicative Poisson or binomial models
+  with either log or logit link.
   }
 \author{
   Bendix Carstensen,
@@ -137,7 +142,8 @@ ci.pred( obj, newdata,
   Michael Hills
   \url{http://www.mhills.pwp.blueyonder.co.uk/}
   }
-\seealso{ See also \code{\link{ci.cum}} }
+\seealso{See also \code{\link{ci.cum}} for a function computing
+  cumulative sums of (functions of) parameter estimates.}
 \examples{
 # Bogus data:
 f <- factor( sample( letters[1:5], 200, replace=TRUE ) )
@@ -156,7 +162,7 @@ print( ci.lin( mm, subset="g", diff=TRUE, fnam="gee!:", vcov=TRUE ) )
 # Use character defined subset to get ALL contrasts:
 ci.lin( mm, subset="f", diff=TRUE )
 
-# A Wald test of wheter the g-parameters are 0
+# A Wald test of whether the g-parameters are 0
 Wald( mm, subset="g" )
 # Wald test of whether the three first f-parameters are equal:
 ( CM <- rbind( c(1,-1,0,0), c(1,0,-1,0)) )
