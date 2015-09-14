@@ -9,6 +9,10 @@ VCOV.default  <- function( x, ... ) vcov( x, ... )
 COEF.lme      <- function( x, ... ) nlme::fixed.effects( x )
 COEF.mer      <- function( x, ... ) lme4::fixef( x )
 COEF.lmerMod  <- function( x, ... ) lme4::fixef( x )
+# The vcov returns a matrix with the wrong class so we strip that:
+VCOV.lme      <- function( x, ... ) as.matrix(vcov( x ))
+VCOV.mer      <- function( x, ... ) as.matrix(vcov( x ))
+VCOV.lmerMod  <- function( x, ... ) as.matrix(vcov( x ))
 
 # For the rest of the non-conforming classes we then just need the methods not defined
 COEF.crr      <- function( object, ... ) object$coef

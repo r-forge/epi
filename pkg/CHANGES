@@ -1,3 +1,7 @@
+Changes in 1.1.71
+
+o Bug from calling lme4::vcov from within ci.lin fixed
+
 Changes in 1.1.70
 
 o Bug in calling lme4::fixef from within ci.lin fixed

@@ -120,6 +120,8 @@ importFrom( etm, etm )
 importFrom( MASS, mvrnorm )
 ## importFrom( mstate, mstate )
 # register S3 methods
+S3method(    print, Icens)
+S3method(    print, floated)
 S3method(     plot, apc)
 S3method(    lines, apc)
 S3method(     plot, Lexis)
