@@ -118,6 +118,22 @@ importFrom( splines, ns, bs )
 importFrom( cmprsk, crr)
 importFrom( etm, etm )
 importFrom( MASS, mvrnorm )
+importFrom( survival, clogit)
+importFrom("grDevices", "gray", "rainbow")
+importFrom("graphics", "abline", "arrows", "axis", "box", "layout",
+           "lines", "locator", "matlines", "matplot", "matpoints",
+           "mtext", "par", "plot", "plot.new", "plot.window", "points",
+           "polygon", "rect", "rug", "segments", "strheight",
+           "strwidth", "text")
+importFrom("stats", ".getXlevels", "addmargins", "anova", "approx",
+           "ave", "binomial", "coef", "complete.cases", "contr.sum",
+           "fisher.test", "fitted", "gaussian", "glm",
+           "is.empty.model", "median", "model.extract", "model.matrix",
+           "model.offset", "model.response", "nlm", "pchisq", "pnorm",
+           "poisson", "predict", "qnorm", "qt", "quantile", "runif",
+           "termplot", "update", "vcov", "weighted.mean", "xtabs")
+importFrom("utils", "flush.console", "str")
+
 ## importFrom( mstate, mstate )
 # register S3 methods
 S3method(    print, Icens)
