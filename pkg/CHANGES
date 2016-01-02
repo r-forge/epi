@@ -1,3 +1,11 @@
+Changes in 1.1.73
+
+o cbind, rbind and "[" methods for Lexis objects have been added
+
+Changes in 1.1.72
+
+o Improved man page for N2Y
+
 Changes in 1.1.71
 
 o Bug from calling lme4::vcov from within ci.lin fixed
