@@ -531,14 +531,14 @@ subset.Lexis <- function(x, ...)
   return(y)
 }
 
-## `[.Lexis` <-
-## function( x, ... )
-## {
-## structure( NextMethod(),
-##            breaks = attr(x, "breaks"),
-##       time.scales = attr(x, "time.scales"),
-##        time.since = attr(x, "time.since") )
-## }
+`[.Lexis` <-
+function( x, ... )
+{
+    structure( NextMethod(),
+              breaks = attr(x, "breaks"),
+              time.scales = attr(x, "time.scales"),
+              time.since = attr(x, "time.since") )
+}
 
 merge.data.frame <- function(x, y, ...)
 {

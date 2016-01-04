@@ -1,6 +1,6 @@
 \name{subset.Lexis}
 \alias{subset.Lexis}
-% \alias{[.Lexis}
+\alias{[.Lexis}
 \alias{subset.stacked.Lexis}
 \title{Subsetting Lexis (and stacked.Lexis) objects}
 \description{
@@ -8,7 +8,7 @@
 }
 \usage{
 \method{subset}{Lexis}(x, ...)
-% \method{[}{Lexis}(x, ...)
+\method{[}{Lexis}(x, ...)
 \method{subset}{stacked.Lexis}(x, ...)
 }
 
