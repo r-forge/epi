@@ -9,8 +9,8 @@
   the number of states and time scales.
 }
 \usage{
-cbind.Lexis(...)
-rbind.Lexis(...)
+\method{cbind}{Lexis}(...)
+\method{rbind}{Lexis}(...)
 }
 \arguments{
   \item{\dots}{For \code{cbind} a sequence of data frames or vectors of
