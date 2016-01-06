@@ -1,6 +1,8 @@
-Changes in 1.1.73
+Changes in 2.0
 
 o cbind, rbind and "[" methods for Lexis objects have been added
+
+o Consequential fixes in simLexis
 
 Changes in 1.1.72
 

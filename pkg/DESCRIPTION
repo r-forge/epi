@@ -1,6 +1,6 @@
 Package: Epi
-Version: 1.1.73
-Date: 2015-12-30
+Version: 2.0
+Date: 2016-01-06
 Title: A Package for Statistical Analysis in Epidemiology
 Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
                     email = "bxc@steno.dk"),
@@ -13,9 +13,9 @@ Imports: cmprsk, etm, splines, MASS, survival, plyr
 Suggests: mstate, nlme, lme4
 Description: Functions for demographic and epidemiological analysis in
   the Lexis diagram, i.e. register and cohort follow-up data, in
-  particular representation and manipulation of multistate data - the
-  Lexis suite of functions, which includes interfaces to mstate, etm
-  and cmprsk packages. 
+  particular representation, manipulation and simulation of multistate 
+  data - the Lexis suite of functions, which includes interfaces to
+  mstate, etm and cmprsk packages. 
   Also contains functions for Age-Period-Cohort modeling and a
   function for interval censored data and some useful functions for
   tabulation and plotting, as well some epidemiological datasets.
