@@ -1,3 +1,9 @@
+Changes in 2.1
+
+o The show.BE="nz" feature in boxes.Lexis is now documented
+
+o "[.Lexis" is now exported and works... 
+
 Changes in 2.0
 
 o cbind, rbind and "[" methods for Lexis objects have been added
