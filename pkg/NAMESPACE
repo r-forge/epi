@@ -38,6 +38,11 @@ lines.apc,
   fit.add,
   fit.mult,
   ftrend,
+          LCa.fit,
+    print.LCa,
+  summary.LCa,
+  predict.LCa,
+     plot.LCa,
   Lexis.diagram,
   Lexis.lines,
   Life.lines,
@@ -122,7 +127,9 @@ importFrom( plyr, rbind.fill )
 importFrom( cmprsk, crr)
 importFrom( etm, etm )
 importFrom( MASS, mvrnorm )
-importFrom( survival, clogit)
+importFrom( survival, clogit )
+importFrom( numDeriv, hessian )
+importFrom( Matrix, nearPD )
 importFrom("grDevices", "gray", "rainbow")
 importFrom("graphics", "abline", "arrows", "axis", "box", "layout",
            "lines", "locator", "matlines", "matplot", "matpoints",
@@ -172,6 +179,10 @@ S3method(    boxes, matrix)
 S3method(    boxes, MS)
 S3method(   msdata, Lexis)
 S3method(      etm, Lexis)
+S3method(    print, LCa)
+S3method(  summary, LCa)
+S3method(  predict, LCa)
+S3method(     plot, LCa)
 S3method(    merge, data.frame)
 S3method(    print, stat.table)
 S3method(    print, clogistic)

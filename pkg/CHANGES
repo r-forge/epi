@@ -1,3 +1,9 @@
+Changes in 2.2
+
+o LCa.fit added: Fits Lee-Carter models with smooth age and time
+  effects to rate-data. print, summary, plot and predict methods also
+  supplied. 
+
 Changes in 2.1
 
 o The show.BE="nz" feature in boxes.Lexis is now documented
