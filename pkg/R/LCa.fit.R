@@ -7,7 +7,7 @@ function( data, A, P, D, Y,
           npar = c(A = 6, B = 6, T = 6),
             VC = FALSE,
            eps = 1e-6,
-         maxit = 50,
+         maxit = 100,
          quiet = TRUE )
 {
 # if dataframe supplied    
@@ -117,8 +117,6 @@ cond <- ( ( abs(mat$deviance-mb$deviance) > eps ) &
 if( !quiet ) cat( "Iteration", nit, mat$deviance, mb$deviance,
                                 abs(mat$deviance- mb$deviance), "\n" )
   }
-cat( "LCa.fit convergence in ", nit,
-     " iterations, deviance:", mb$deviance, "\n")
 
 # Deviance and d.f --- note that the dimension of the model is one
 # less than the no. of formal parameters due to the explicit
@@ -126,6 +124,8 @@ cat( "LCa.fit convergence in ", nit,
 dev <- mb$deviance
 df  <- mat$df.null - (mb$df.null- mb$df.res +
                      mat$df.null-mat$df.res) + 1
+cat( "LCa.fit convergence in ", nit,
+     " iterations, deviance:", dev, "on", df, "d.f.\n")
     
 # extract terms from final models after convergence
 prb  <- predict( mb , type="terms", se.fit=TRUE )
@@ -273,7 +273,8 @@ function( object,
          newdata,
            level = 0.95,
            alpha = 1-level,
-             sim = FALSE, ... )
+             sim = ( "vcov" %in% names(object) ),
+             ... )
 {
 # age part of the interaction term
 CB <- Ns( newdata$A, knots = object$b.kn, intercept = TRUE)
@@ -302,9 +303,13 @@ head( pr0 )
 # fishy assumption that the joint posterior is normal...  
 if( sim )
   {
+if( is.logical(sim) & sim ) sim <- 1000
 # Check that there is a vcov component of the model
 if( !( "vcov" %in% names(object) ) )
-warning( "No variance-covariance in LCa object, only conditional c.i.s returned.\n" )  
+    warning(
+    "No variance-covariance in LCa object, only conditional c.i.s available.\n",
+    "Conditional s.e. s are used in calculation of prediction c.i.s\n"
+    )  
 else{   
 # require( MASS )    
 # using the parametric bootstrap based on the parameters and the
@@ -328,7 +333,7 @@ pr.sim <- exp( t( apply( eta, 1, quantile,
                          probs=c(0.5,alpha/2,1-alpha/2), 
                          na.rm=TRUE ) ) )
 colnames( pr.sim )[1] <- "Joint est."
-return( cbind( pr0, pr.sim ) )
+return( pr.sim )
   }
 }
 else return( pr0 )    

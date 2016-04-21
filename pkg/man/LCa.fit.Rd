@@ -24,16 +24,16 @@ LCa.fit( data, A, P, D, Y,
           npar = c(A = 6, B = 6, T = 6),
             VC = FALSE,
            eps = 1e-06,
-         maxit = 50,
+         maxit = 100,
          quiet = TRUE )
 \method{print}{LCa}( x, ... )
 \method{summary}{LCa}( object, ... )
 \method{plot}{LCa}( x, rnam = "Rates", ... )
-\method{predict}{LCa}( object,
-                        newdata,
+\method{predict}{LCa}( object, newdata,
                           level = 0.95,
                           alpha = 1-level,
-                            sim = FALSE, ... )
+                            sim = ( "vcov" \%in\% names(object) ),
+                            ... )
   }
 \arguments{
   \item{data}{
@@ -114,16 +114,17 @@ LCa.fit( data, A, P, D, Y,
   numerically using the \code{hessian} function from the \code{numDeriv}
   package. But only conditional on \code{VC=TRUE}, because it is a bit
   time-consuming (minutes, not hours, though).
-
   The coefficients and the variance-covariance matrix of these are used
   in \code{predict.LCa} for a parametric bootstrap to get confidence
-  intervals for the predictions if \code{sim} is specified.
+  intervals for the predictions if \code{sim} is \code{TRUE} --- which
+  it is by default if they are part of the object.
   }
 \value{
-  \code{LCa} returns an object of class \code{LCa} (\code{sm}ooth
+  \code{LCa.fit} returns an object of class \code{LCa} (smooth
   effects \code{L}ee-\code{Ca}rter model); it is a list with the
   following components:
-  \item{Model}{Character "Period" or "Cohort", indication the timescale used}
+  \item{Model}{Character "Period" or "Cohort", indicating the varible
+  intercting with age.}
   \item{ax}{3-column matrix of age-effects, c.i. from the
   age-time model. Rownames are the actually occurring ages in the dataset.}
   \item{kt}{3-column matrix of time-effects, c.i. from the
@@ -160,11 +161,12 @@ LCa.fit( data, A, P, D, Y,
 
   \code{predict.LCa} returns a matrix with one row per row in
   \code{newdata}. If \code{LCa.fit} were called with \code{VC=TRUE}
-  there will be 9 columns, namely prediction (1st column) and c.i.s from
-  age-time model, from age-interaction model (both using conditional
-  variances) and finally c.i.s based on the s.e. from the joint Hessian
-  using the median and \code{alpha}/2 quantiles from the \code{sim}
-  simulations.
+  there will be 3 columns, namely prediction (1st column) and c.i.s
+  based on the s.e. from the joint Hessian using the median and
+  \code{alpha}/2 quantiles from the \code{sim} simulations.  If
+  \code{LCa.fit} were called with \code{VC=FALSE} (the default) there
+  will be 6 columns, namely estimates and c.i.s from age-time model, and
+  from the age-interaction model (both using conditional variances).
   }
 %% \references{
 %% ~put references to the literature/web site here ~

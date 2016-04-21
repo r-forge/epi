@@ -1,3 +1,21 @@
+Changes in 2.4
+
+o Ns updated with the possibility of clamping effects to have 0 slope
+  beyond the outer knots, see argument "fixsl"
+
+Changes in 2.3
+
+o Cplot (usually called from rateplot) now checks if age- and
+  period-groupings are of the same length, and tells you if they are
+  not, instead of just plotting (almost) nothing.
+
+o Grooming of LCa functions, and in particular the documentation.
+
+o Update of apc.fit so that also Y^2/D (the observed information about
+  the rate) and Y (person-time) is allowed as weight when defining the
+  inner product inducing orthogonality between linear and non-linear
+  effects.
+
 Changes in 2.2
 
 o LCa.fit added: Fits Lee-Carter models with smooth age and time
