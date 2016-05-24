@@ -317,11 +317,11 @@ if (print.AOV) {
 if( !ref.p & parm %in% c("APC","ADPC") )
     cat( "No reference period given:\n",
          "Reference period for age-effects is chosen as\n",
-         "the median date of event: ", p0 )
+         "the median date of event: ", p0, ".\n" )
 if( !ref.c & parm %in% c("ACP","ADCP") )
     cat( "No reference period given:\n",
          "Reference period for age-effects is chosen as\n",
-         "the median date of birth for persons  with event: ", c0 )
+         "the median date of birth for persons  with event: ", c0, ".\n" )
 class(res) <- "apc"
 invisible(res)
 }

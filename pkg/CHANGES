@@ -1,3 +1,13 @@
+Changes in 2.5
+
+o LCa.fit rewritten and expanded to encompass both age-period and
+  age-cohort multiplicative interactions.
+
+o APC.LCa added, fits all possible Lee-Carter type models and
+  APC-models. boxes.APC.LCa plots the relationship between mdoels
+  including the residual deviances, and optionally places boxes to
+  provide overview of best fitting models.	   
+
 Changes in 2.4
 
 o Ns updated with the possibility of clamping effects to have 0 slope
