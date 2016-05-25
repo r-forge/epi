@@ -1,6 +1,6 @@
 ###################################################################################
-### APC-LCa comparison
-APC.LCa <-
+### apc-LCa comparison
+apc.LCa <-
 function( data,               # cohort reference for the interactions
    keep.models = FALSE, ... )
 {
@@ -22,12 +22,12 @@ names(dev)[1:4] <- names(df)[1:4] <-
 gsub( "rift","", gsub("eriod","", gsub("ohort","", gsub("-","",
 gsub( "ge", "", rownames(APC$Anova)[c(2,5,3,4)])))))
 if( keep.models ) return( list( dev = cbind( dev, df ),
-                                APC = APC,
+                                apc = APC,
                                 LCa = LCa.list ) )
              else return( cbind( dev, df ) )
 }
 
-show.APC.LCa <-
+show.apc.LCa <-
 function( x, dev.scale=TRUE, top="Ad", ... )
 {
 if( is.list(x) ) x <- x[[1]]     

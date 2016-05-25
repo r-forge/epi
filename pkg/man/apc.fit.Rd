@@ -6,7 +6,7 @@
 \description{
   Fits the classical five models to tabulated rate data (cases,
   person-years) classified by two of age, period, cohort:
-  Age, Age-drift, Age-Period, Age-Cohort and Age-period. There are no
+  Age, Age-drift, Age-Period, Age-Cohort and Age-Period-Cohort. There are no
   assumptions about the age, period or cohort classes being of the same
   length, or that tabulation should be only by two of the variables.
   Only requires that mean age and period for each tabulation unit is given.
@@ -171,17 +171,34 @@ apc.fit( data,
   \item{Knots}{If \code{model} is one of \code{"ns"} or \code{"bs"}, a list
     with three components: \code{Age}, \code{Per}, \code{Coh}, each one a
     vector of knots. The max and the min are the boundary knots.}
+}
+\details{
+   Each record in the input data frame represents a subset of a Lexis
+   diagram. The subsets need not be of equal length on the age and
+   period axes, in fact there are no restrictions on the shape of
+   these; they could be Lexis triangels for example. The requirement is
+   that \code{A} and \code{P} are coded with the mean age and calendar
+   time of observation in the subset. This is essential since \code{A}
+   and \code{P} are used as quantitative variables in the models.
+
+   This is a different approach relative to the vast majority of the
+   uses of APC-models in the literature where a factor model is used for
+   age, perido and cohort effects. The latter can be obtained by using
+   \code{model="factor"}.
    }
 \references{
    The considerations behind the parametrizations used in this function
    are given in details in:
-   B. Carstensen: Age-period-cohort models for the Lexis diagram.
+   B. Carstensen: Age-Period-Cohort models for the Lexis diagram.
    Statistics in Medicine, 10; 26(15):3018-45, 2007.
+
+   Various links to course material etc. is available through \url{http://BendixCarstensen.com/APC}
    }
 \author{
    Bendix Carstensen, \url{http://BendixCarstensen.com}
    }
 \seealso{
+   \code{\link{LCa.fit}},
    \code{\link{apc.frame}},
    \code{\link{apc.lines}},
    \code{\link{apc.plot}}.
