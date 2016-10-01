@@ -27,6 +27,7 @@ lines.apc,
   contr.diff,
   detrend,
   dur,
+  erl, surv1, surv2, erl1, yll,
   effx,
   effx.match,
   float,
@@ -93,6 +94,7 @@ lines.apc,
   boxarr,
   boxes,
   factorize,
+  rm.tr,
   PY.ann,
   N2Y,
   tmat,
@@ -129,6 +131,7 @@ importFrom( splines, ns, bs )
 importFrom( plyr, rbind.fill )
 importFrom( cmprsk, crr)
 importFrom( etm, etm )
+## importFrom( mstate, msdata )
 importFrom( MASS, mvrnorm )
 importFrom( survival, clogit )
 importFrom( numDeriv, hessian )
@@ -147,7 +150,6 @@ importFrom("stats", ".getXlevels", "addmargins", "anova", "approx",
            "poisson", "predict", "qnorm", "qt", "quantile", "runif",
            "termplot", "update", "vcov", "weighted.mean", "xtabs")
 importFrom("utils", "flush.console", "str")
-## importFrom( mstate, msdata )
 
 # register S3 methods
 S3method(    print, Icens)

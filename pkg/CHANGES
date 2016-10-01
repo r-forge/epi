@@ -1,17 +1,34 @@
+Changes in 2.6
+
+o Added function erl computing Expected Residual Lifetime in an
+  illness-death model added, together with companions surv1, surv2,
+  erl1 and yll (Years of Life Lost). 
+
 Changes in 2.5
+
+o Argument "timeScales" added to summary.Lexis, printing names of
+  timescales and which (if any) are defined as time since enty into a
+  state. 
+
+o rm.tr added; removes transitions from a Lexis object
+
+o boxes.MS no longer isssues a warning when show.BE is set to TRUE.
+
+o clear() function rewritten to remove *all* attached dataframes
+  (well, anything that is not a package or "Autoloads")
 
 o LCa.fit rewritten and expanded to encompass both age-period and
   age-cohort multiplicative interactions.
 
 o APC.LCa added, fits all possible Lee-Carter type models and
-  APC-models. boxes.APC.LCa plots the relationship between mdoels
+  APC-models. boxes.APC.LCa plots the relationship between models
   including the residual deviances, and optionally places boxes to
   provide overview of best fitting models.	   
 
 Changes in 2.4
 
 o Ns updated with the possibility of clamping effects to have 0 slope
-  beyond the outer knots, see argument "fixsl"
+  beyond the outer knots, see argument "fixsl".
 
 Changes in 2.3
 

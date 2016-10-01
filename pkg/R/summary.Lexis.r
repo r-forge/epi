@@ -1,5 +1,6 @@
 summary.Lexis <-
-function( object, simplify=TRUE, scale=1, by=NULL, Rates=FALSE, ... )
+function( object, simplify=TRUE, scale=1, by=NULL,
+          Rates=FALSE, timeScales=FALSE, ... )
 {
 # If we have a by argument find out what to do
     if (!is.null(by)) {
@@ -9,7 +10,7 @@ function( object, simplify=TRUE, scale=1, by=NULL, Rates=FALSE, ... )
                      "' - must be name(s) of variable(s) in the Lexis object")
             else return(lapply(split(object, object[, by]), summary.Lexis,
                 by = NULL, simplify = simplify, scale = scale,
-                Rates = Rates, ...))
+                Rates = Rates, timeScales=timeScales, ...))
         }
         else {
             if (length(by) != nrow(object))
@@ -17,7 +18,7 @@ function( object, simplify=TRUE, scale=1, by=NULL, Rates=FALSE, ... )
                      "must be same length as rows of the Lexis object:", nrow(object) )
             else return(lapply(split(object, by), summary.Lexis,
                 by = NULL, simplify = simplify, scale = scale,
-                Rates = Rates, ...))
+                Rates = Rates, timeScales=timeScales, ...))
         }
     }
 
@@ -64,9 +65,13 @@ if( simplify )
   }
 if( nrow(trans)==2 )
   trans <- trans[1,,drop = FALSE]
-res <- list( Transitions=trans,
-             Rates=rates[-nrow(rates),,drop=FALSE] )
-if( !Rates ) res <- res[1]
+res <- list( Transitions = trans,
+                   Rates = rates[-nrow(rates),,drop=FALSE],
+              timeScales = data.frame( "time scale" = attr( object, "time.scales" ),
+                                       "time since" = attr( object,  "time.since" ) )
+)
+if( !timeScales ) res <- res[-3]
+if( !Rates      ) res <- res[-2]
 class( res ) <- "summary.Lexis"
 res
 }
@@ -75,6 +80,11 @@ print.summary.Lexis <-
 function( x, ..., digits=2 )
 {
 print( round( x$Transitions, digits ) )
-if( length(x) == 2 )
+if( "Rates" %in% names(x) )
 print( round( x$Rates      , digits ) )
+if( "timeScales" %in% names(x) )
+  {  
+cat("\nTime scales:")
+print( x$timeScales )
+  }
 }
