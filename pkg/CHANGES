@@ -14,9 +14,6 @@ o rm.tr added; removes transitions from a Lexis object
 
 o boxes.MS no longer isssues a warning when show.BE is set to TRUE.
 
-o clear() function rewritten to remove *all* attached dataframes
-  (well, anything that is not a package or "Autoloads")
-
 o LCa.fit rewritten and expanded to encompass both age-period and
   age-cohort multiplicative interactions.
 

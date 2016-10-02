@@ -248,7 +248,7 @@ head( tc )
 tc$Y <- tc$Y / 10^5
 
 # Fit the Lee-Carter model with age-period interaction (default)
-LCa.tc <- LCa.fit( tc, model="ACa", a.ref=30, p.ref=1980, quiet=FALSE, eps=10e-6, maxit=100 )
+LCa.tc <- LCa.fit( tc, model="ACa", a.ref=30, p.ref=1980, quiet=FALSE, eps=10e-5, maxit=100 )
 
 LCa.tc
 summary( LCa.tc )
@@ -263,9 +263,9 @@ plot( LCa.tc )
 # Prediction data frame for ages 15 to 60 for three time points: 
 nd <- data.frame( A=15:60 )
 
-p50 <- predict.LCa( LCa.tc, newdata=cbind(nd,P=1950), sim=100000 )
-p70 <- predict.LCa( LCa.tc, newdata=cbind(nd,P=1970), sim=100000 )
-p90 <- predict.LCa( LCa.tc, newdata=cbind(nd,P=1990), sim=100000 )
+p50 <- predict.LCa( LCa.tc, newdata=cbind(nd,P=1950), sim=10000 )
+p70 <- predict.LCa( LCa.tc, newdata=cbind(nd,P=1970), sim=10000 )
+p90 <- predict.LCa( LCa.tc, newdata=cbind(nd,P=1990), sim=10000 )
 
 # Inspect the curves from the parametric bootstrap (simulation):
 par( mfrow=c(1,1) )
