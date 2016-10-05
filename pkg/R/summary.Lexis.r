@@ -8,18 +8,21 @@ function( object, simplify=TRUE, scale=1, by=NULL,
             if (!all(by %in% names(object)))
                 stop("Wrong 'by' argument: '", paste(by,collapse="','"),
                      "' - must be name(s) of variable(s) in the Lexis object")
-            else return(lapply(split(object, object[, by]), summary.Lexis,
-                by = NULL, simplify = simplify, scale = scale,
-                Rates = Rates, timeScales=timeScales, ...))
+            else res <- lapply(split(object, object[, by]), summary.Lexis,
+                               by = NULL, simplify = simplify, scale = scale,
+                               Rates = Rates, timeScales=timeScales, ...)
         }
         else {
             if (length(by) != nrow(object))
                 stop("Wrong length of 'by' argument:", length(by),
                      "must be same length as rows of the Lexis object:", nrow(object) )
-            else return(lapply(split(object, by), summary.Lexis,
-                by = NULL, simplify = simplify, scale = scale,
-                Rates = Rates, timeScales=timeScales, ...))
+            else res <- lapply(split(object, by), summary.Lexis,
+                               by = NULL, simplify = simplify, scale = scale,
+                               Rates = Rates, timeScales=timeScales, ...)
         }
+        # to avoid printing the time scale information repeatedly
+        for( i in 1:(length(res)-1) ) res[[i]]$timeScales <- NULL
+        return( res )
     }
 
 # Table(s) of all transitions (no. records)
@@ -82,9 +85,10 @@ function( x, ..., digits=2 )
 print( round( x$Transitions, digits ) )
 if( "Rates" %in% names(x) )
 print( round( x$Rates      , digits ) )
-if( "timeScales" %in% names(x) )
+# if( "timeScales" %in% names(x) )
+if( !is.null(x$timeScales) )
   {  
-cat("\nTime scales:")
+cat("\nTimescales:\n")
 print( x$timeScales )
   }
 }

@@ -532,13 +532,24 @@ subset.Lexis <- function(x, ... )
 }
 
 `[.Lexis` <-
-function( x, ... )
+function(x, ...)
 {
-    structure( NextMethod(),
-               breaks = attr(x, "breaks"),
-          time.scales = attr(x, "time.scales"),
-          time.since  = attr(x, "time.since") )
+  y <- NextMethod(x)
+  if (is.data.frame(y)) {
+    for (a in c("class", "time.scales", "time.since", "breaks")) {
+        data.table::setattr(y ,a, attr(x, a))}
+  }
+  y
 }
+
+# `[.Lexis` <-
+# function( x, ... )
+# {
+#     structure( NextMethod(),
+#                breaks = attr(x, "breaks"),
+#           time.scales = attr(x, "time.scales"),
+#           time.since  = attr(x, "time.since") )
+# }
 
 merge.data.frame <- function(x, y, ...)
 {
