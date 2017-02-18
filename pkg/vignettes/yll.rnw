@@ -1,13 +1,14 @@
 \SweaveOpts{results=verbatim,keep.source=TRUE,include=FALSE,eps=FALSE}
+%\VignetteIndexEntry{Years of life lost: simLexis}
 \documentclass[a4paper,twoside,12pt]{report}
 
 % ----------------------------------------------------------------------
 % General information for the title page and the page headings
-\newcommand{\Title}{Life lost
-  to disease:\\Diabetes in DK as example}
-\newcommand{\Tit}{YLL 2012}
-\newcommand{\Version}{Version 1.0}
-\newcommand{\Dates}{October 2016}
+\newcommand{\Title}{Years of Life Lost (YLL)
+  to disease\\Diabetes in DK as example}
+\newcommand{\Tit}{YLL}
+\newcommand{\Version}{Version 1.1}
+\newcommand{\Dates}{February 2017}
 \newcommand{\Where}{SDC}
 \newcommand{\Homepage}{\url{http://bendixcarstensen.com/Epi}}
 \newcommand{\Faculty}{\begin{tabular}{rl}
@@ -15,16 +16,10 @@ Bendix Carstensen
   & Steno Diabetes Center, Gentofte, Denmark\\
   & {\small \& Department of Biostatistics,
                University of Copenhagen} \\
-  & \texttt{bxc@steno.dk}\\
+  & \texttt{b@bxc.dk}\\
   & \url{http://BendixCarstensen.com} \\[1em]
                       \end{tabular}}
-
-
-% \input{/home/bendix/util/tex/topreport}
-%----------------------------------------------------------------------
 % Packages
-%\usepackage[inline]{showlabels}
-%\usepackage[latin1]{inputenc}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[english]{babel}
@@ -226,10 +221,9 @@ TM[1,2:3] <- TM[2,4] <- 1
 zz <- boxes( TM, boxpos=list(x=c(20,80,20,80),y=c(80,80,20,20)), wm=1.5, hm=4 )
 @ 
 <<states,fig=TRUE,height=4,width=5,echo=FALSE>>=
-zz$Arrowtext <- c(
-expression(lambda),
-expression(mu[W]),
-expression(mu[D][M]) )
+zz$Arrowtext <- c( expression(lambda),   
+                   expression(mu[W]),    
+                   expression(mu[D][M]) )
 boxes( zz )
 @ %
 \insfig{states}{0.7}{Illness-death model describing diabetes incidence
@@ -384,16 +378,7 @@ assuming $\mu_D(a,d)=\mu_D(a)$.
 \section{Practical implementation}
 
 We have devised functions that wraps these formulae up for practical
-use --- they will become available in the Epi package.
-
-<<echo=FALSE,results=hide>>=
-library( tools )
-Rd2latex( "/home/bendix/stat/R/lib.src/Epi/pkg/man/erl.Rd",
-          out="erl.tex" )
-@ % 
-\footnotesize
-\input{erl}
-\normalsize
+use.
 
 \subsection{Function definitions}
 
@@ -450,15 +435,17 @@ and without DM.
 
 \section{Modeling mortality and incidence data}
 
-We read in the dataset of DM and population mortality and incidence, \texttt{TT}:
+We read in the dataset of DM and population mortality and incidence, \texttt{DMepi}:
 <<>>=
-load( file="/home/bendix/sdc/DMreg/NDR-demo/2012/data/FU-m.Rda" )
+data( DMepi )
 lls()
 @ % 
-The dataset TT contains deaths and person-years for persons with and
-without diabetes:
+The dataset \texttt{DMepi} contains diabetes events, deaths and
+person-years for persons without diabetes and deaths and person-years
+for persons with diabetes:
 <<>>=
-head( TT )
+str( DMepi )
+head( DMepi )
 @ %
 For each combination of sex, age, period and date of birth in 1 year
 age groups, we have the person-years in the ``Well'' (\texttt{Y.nD})
@@ -471,7 +458,7 @@ has changed over time, we fit models for the mortality and incidence
 of both groups (and of course, separately for men and women). The
 models we use will be age-period-cohort models \cite{Carstensen.2007a}
 providing estimated mortality rates for ages 0--99 and dates
-1.1.1995--1.1.2012.
+1.1.1996--1.1.2016.
 
 First we transform the age and period variables to reflect the mean
 age and period in each of the Lexis triangles. We also compute the
@@ -479,13 +466,10 @@ total number of deaths and amount of risk time, as we are going to
 model the total mortality as well. Finally we restrict the dataset to
 ages over 30 only:
 <<>>=
-TT <- transform( TT,
-                  A = A+(1+U)/3,
-                  P = P+(2-U)/3,
-                D.T = D.nD+D.DM,
-                Y.T = Y.nD+Y.DM )
-TT <- subset( TT, A>30 )
-head(TT)
+DMepi <- transform( subset( DMepi, A>30 ),
+                    D.T = D.nD + D.DM, 
+                    Y.T = Y.nD + Y.DM )
+head(DMepi)
 @ %
 With the correct age and period coding in the Lexis triangles, we fit
 models for the mortalities and incidences. Note that we for
@@ -494,14 +478,14 @@ ignoring the
 <<>>=
 # Knots used in all models
 ( a.kn <- seq(40,95,,6) )
-( p.kn <- seq(1996,2011,,4) )
-( c.kn <- seq(1910,1970,,6) )
+( p.kn <- seq(1997,2015,,4) )
+( c.kn <- seq(1910,1976,,6) )
 # Check the number of events between knots
-ae <- xtabs( cbind(D.nD,D.DM,X) ~ cut(A,c(30,a.kn,Inf)) + sex, data=TT )
+ae <- xtabs( cbind(D.nD,D.DM,X) ~ cut(A,c(30,a.kn,Inf)) + sex, data=DMepi )
 ftable( addmargins(ae,1), col.vars=3:2 )
-pe <- xtabs( cbind(D.nD,D.DM,X) ~ cut(P,c(1990,p.kn,Inf)) + sex, data=TT )
+pe <- xtabs( cbind(D.nD,D.DM,X) ~ cut(P,c(1990,p.kn,Inf)) + sex, data=DMepi )
 ftable( addmargins(pe,1), col.vars=3:2 )
-ce <- xtabs( cbind(D.nD,D.DM,X) ~ cut(P-A,c(-Inf,c.kn,Inf)) + sex, data=TT )
+ce <- xtabs( cbind(D.nD,D.DM,X) ~ cut(P-A,c(-Inf,c.kn,Inf)) + sex, data=DMepi )
 ftable( addmargins(ce,1), col.vars=3:2 )
 # Fit an APC-model for all transitions, seperately for men and women
 mW.m <- glm( D.nD ~ -1 + Ns(A  ,knots=a.kn,int=TRUE) +
@@ -509,37 +493,26 @@ mW.m <- glm( D.nD ~ -1 + Ns(A  ,knots=a.kn,int=TRUE) +
                          Ns(P-A,knots=c.kn,ref=1950), 
            offset = log(Y.nD),
            family = poisson,
-             data = subset( TT, sex=="M" ) )
+             data = subset( DMepi, sex=="M" ) )
 mD.m <- update( mW.m,  D.DM ~ . , offset=log(Y.DM) )
 mT.m <- update( mW.m,  D.T  ~ . , offset=log(Y.T ) )
 lW.m <- update( mW.m,  X ~ . )
 # Model for women
-mW.f <- update( mW.m, data = subset( TT, sex=="F" ) )
-mD.f <- update( mD.m, data = subset( TT, sex=="F" ) )
-mT.f <- update( mT.m, data = subset( TT, sex=="F" ) )
-lW.f <- update( lW.m, data = subset( TT, sex=="F" ) )
+mW.f <- update( mW.m, data = subset( DMepi, sex=="F" ) )
+mD.f <- update( mD.m, data = subset( DMepi, sex=="F" ) )
+mT.f <- update( mT.m, data = subset( DMepi, sex=="F" ) )
+lW.f <- update( lW.m, data = subset( DMepi, sex=="F" ) )
 @ % 
-% A brief overview of fitted models:
-% <<>>=
-% summary( mW.m )
-% summary( mD.m )
-% summary( lW.m )
-% summary( mW.f )
-% summary( mD.f )
-% summary( lW.f )
-% @ % 
-% We can make an overview plot of the estimated mortality and incidence effects:
 
 \section{Residual life time and years lost to DM}
 
 We now collect the estimated years of life lost classified by method
 (immune assumption or not), sex, age and calendar time:
 <<>>=
-source( "/home/bendix/stat/R/lib.src/Epi/pkg/R/erl.R" )
 a.ref <- 30:90
-p.ref <- 1995:2012
-aYLL <- NArray( list( type = c("Imm","Tot","Sus","I-S","I-S Ex%","T-S","T-S Ex%"),
-                       sex = levels( TT$sex ),
+p.ref <- 1996:2016
+aYLL <- NArray( list( type = c("Imm","Tot","Sus"),
+                       sex = levels( DMepi$sex ),
                        age = a.ref,
                       date = p.ref ) )
 str( aYLL )
@@ -572,16 +545,12 @@ for( ip in p.ref )
    aYLL["Sus","F",,paste(ip)] <- yll( int=0.2, muW.f, muD.f, lam=lam.f, 
                                       A=a.ref, age.in=30, note=FALSE )[-1]
    } )
-aYLL["I-S"    ,,,] <-  aYLL["Imm",,,] - aYLL["Sus",,,]
-aYLL["I-S Ex%",,,] <- (aYLL["Imm",,,] - aYLL["Sus",,,]) / aYLL["Sus",,,] * 100
-aYLL["T-S"    ,,,] <-  aYLL["Tot",,,] - aYLL["Sus",,,]
-aYLL["T-S Ex%",,,] <- (aYLL["Tot",,,] - aYLL["Sus",,,]) / aYLL["Sus",,,] * 100
 round( ftable( aYLL[,,seq(1,61,10),], col.vars=c(3,2) ), 1 )
 @ %
 We now have the relevant points for the graph showing YLL to diabetes
 for men and women by age, and calendar year, both under the immunity
 and susceptibility models for the calculation of YLL.
-<<ImmYll-m,fig=TRUE,width=8,height=5>>=
+<<imm,fig=TRUE,width=8,height=5>>=
 plyll <- function(wh){
 par( mfrow=c(1,2), mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, bty="n", las=1 )
 
@@ -591,8 +560,8 @@ matplot( a.ref, aYLL[wh,"M",,],
          ylab="Years lost to DM", yaxs="i" )
 abline(v=50,h=1:10,col=gray(0.7))
 text( 90, 11, "Men", col="blue", adj=1 )
-text( 40, aYLL[wh,"M","40","1995"], "1995", adj=c(0,0), col="blue" )
-text( 43, aYLL[wh,"M","44","2012"], "2012", adj=c(1,1), col="blue" )
+text( 40, aYLL[wh,"M","40","1996"], "1996", adj=c(0,0), col="blue" )
+text( 43, aYLL[wh,"M","44","2016"], "2016", adj=c(1,1), col="blue" )
 
 matplot( a.ref, aYLL[wh,"F",,],
          type="l", lty=1, col="red", lwd=1:2,
@@ -600,141 +569,76 @@ matplot( a.ref, aYLL[wh,"F",,],
          ylab="Years lost to DM", yaxs="i" )
 abline(v=50,h=1:10,col=gray(0.7))
 text( 90, 11, "Women", col="red", adj=1 )
-text( 40, aYLL[wh,"F","40","1995"], "1995", adj=c(0,0), col="red" )
-text( 43, aYLL[wh,"F","44","2012"], "2012", adj=c(1,1), col="red" )
+text( 40, aYLL[wh,"F","40","1996"], "1996", adj=c(0,0), col="red" )
+text( 43, aYLL[wh,"F","44","2016"], "2016", adj=c(1,1), col="red" )
 }
 plyll("Imm")
 @ %
-<<TotYll-m,fig=TRUE,width=8,height=5>>=
+<<tot,fig=TRUE,width=8,height=5>>=
 plyll("Tot")
 @ %
-<<SusYll-m,fig=TRUE,width=8,height=5>>=
+<<sus,fig=TRUE,width=8,height=5>>=
 plyll("Sus")
 @ %
-\insfig{ImmYll-m}{1.0}{Years of life lost to DM: the difference in
-  expected residual life time at different ages between persons with
-  and without diabetes, assuming the persons without diabetes at a
-  given age remain free from diabetes (immunity assumption). The lines
-  refer to date of evaluation; the top lines refer to 1.1.1995 the
-  bottom ones to 1.1.2012. Blue curves are men, red women.}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{yll-imm}
+  \caption{Years of life lost to DM: the difference in expected
+    residual life time at different ages between persons with and
+    without diabetes, assuming the persons without diabetes at a given
+    age remain free from diabetes (immunity assumption --- not
+    reasonable). The lines refer to date of evaluation; the top lines
+    refer to 1.1.1996 the bottom ones to 1.1.2016. Blue curves are
+    men, red women.}
+  \label{fig:imm}
+\end{figure}
 
-\insfig{SusYll-m}{1.0}{Years of life lost to DM: the difference in
-  expected residual life time at different ages between persons with
-  and without diabetes, allowing the persons without diabetes at a
-  given to contract diabetes and thus be subject to higher
-  mortality. The lines refer to date of evaluation; the top lines
-  refer to 1.1.1995 the bottom ones to 1.1.2012. Blue curves are men,
-  red women.}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{yll-sus}
+  \caption{Years of life lost to DM: the difference in expected
+    residual life time at different ages between persons with and
+    without diabetes, allowing the persons without diabetes at a given
+    to contract diabetes and thus be subject to higher mortality. The
+    lines refer to date of evaluation; the top lines refer to 1.1.1996
+    the bottom ones to 1.1.2016. Blue curves are men, red women.}
+  \label{fig:sus}
+\end{figure}
 
-\insfig{TotYll-m}{1.0}{Years of life lost to DM: the difference in
-  expected residual life time at different ages between persons with
-  and without diabetes. Allowance for susceptibility is approximated
-  by using the total population mortality instead of non-DM
-  mortality. The lines refer to date of evaluation; the top lines
-  refer to 1.1.1995 the bottom ones to 1.1.2012. Blue curves are men,
-  red women.}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\textwidth]{yll-tot}
+  \caption{Years of life lost to DM: the difference in expected
+    residual life time at different ages between persons with and
+    without diabetes. Allowance for susceptibility is approximated by
+    using the total population mortality instead of non-DM
+    mortality. The lines refer to date of evaluation; the top lines
+    refer to 1.1.1996 the bottom ones to 1.1.2016. Blue curves are
+    men, red women.}
+  \label{fig:tot}
+\end{figure}
 
-From figure \ref{fig:SusYll} we see that for men aged 50 the years lost to
+From figure \ref{fig:sus} we see that for men aged 50 the years lost to
 diabetes has decreased from a bit over 8 to a bit less than 6 years,
 and for women from 8.5 to 5 years; so a greater improvement for women.
 
-\subsubsection{Comparing men and women}
-
-It is illustrative to see the lines for men and women overlaid in the
-same plot --- here side by side for the two different approaches to
-computation of YLL:
-<<Yllc-m,fig=TRUE,width=8,height=5>>=
-par( mfrow=c(1,2), mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, bty="n", las=1 )
-matplot( a.ref, cbind(aYLL["Imm","M",,],aYLL["Imm","F",,]),
-         type="l", lty=1, col=rep(c("blue","red"),each=18), lwd=1:2,
-         ylim=c(0,12), xlab="Age",
-         ylab="Years lost to DM", yaxs="i" )
-abline(v=50,h=1:10,col=gray(0.7))
-text( 40, aYLL["Imm","F","40","1995"], "1995", adj=c(0,0) )
-text( 43, aYLL["Imm","F","44","2012"], "2012", adj=c(1,1) )
-mtext( "Immunity to DM", side=3 )
-
-matplot( a.ref, cbind(aYLL["Sus","M",,],aYLL["Sus","F",,]),
-         type="l", lty=1, col=rep(c("blue","red"),each=18), lwd=1:2,
-         ylim=c(0,12), xlab="Age",
-         ylab="Years lost to DM", yaxs="i" )
-abline(v=50,h=1:10,col=gray(0.7))
-text( 40, aYLL["Sus","F","40","1995"], "1995", adj=c(0,0) )
-text( 43, aYLL["Sus","F","44","2012"], "2012", adj=c(1,1) )
-mtext( "Susceptible to DM", side=3 )
-@ %
-\insfig{Yllc-m}{1.0}{Years of life lost to DM: the difference in
-  expected residual life time at different ages between persons with
-  and without diabetes. The left panel is based on an assumption that
-  persons without DM at a given age will not contract DM; the right
-  panel is based on a model where persons at a given age can contract
-  diabetes and thus transfer to a state with higher mortality. The
-  lines refer to date of evaluation; the top lines refer to 1.1.1995
-  the bottom ones to 1.1.2012. Blue curves are men, red women.}
-
-From figure \ref{fig:Yllc-m} we see that the improvement has been larger
-for women than for men, but it should be remembered that women have a
-longer life expectancy then men. Under the (unrealistic) assumption of
-immunity the improvement in years of life lost to DM for 50-year old
-women were from
-\Sexpr{round(aYLL["Imm","F","50","1995"],1)} to 
-\Sexpr{round(aYLL["Imm","F","50","2012"],1)}
-years and for men from
-\Sexpr{round(aYLL["Imm","M","50","1995"],1)} to 
-\Sexpr{round(aYLL["Imm","M","50","2012"],1)}
-years. Under the more realistic assumption that the non-diseased
-comparison group is allowed to acquire diabetes after the conditioning
-age, the drop in YLL for
-women were from
-\Sexpr{round(aYLL["Sus","F","50","1995"],1)} to 
-\Sexpr{round(aYLL["Sus","F","50","2012"],1)}
-and for men from
-\Sexpr{round(aYLL["Sus","M","50","1995"],1)} to 
-\Sexpr{round(aYLL["Sus","M","50","2012"],1)} years.
-
-Also from the tables above we see that the general pattern in the
-difference between the naive (Immune) and the more realistic
-(Susceptible) is an overestimation of the years of life lost by about
-1 year, or some 5--10\%. That is not dramatic, but certainly neither
-negligible.
-
-\subsubsection{Comparing approaches}
-
-In order to compare the different approaches to years of life lost, we
-plot the results from the three different approaches in select years:
-<<CmpYll-m,fig=TRUE,width=8,height=5>>=
-cpyll <- 
-function(wh)
-{
-par( mfrow=c(1,2), mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, bty="n", las=1 )
-
-for( sx in c("M","F") )
-   { 
-matplot( a.ref, t(aYLL[1:3,sx,,paste(wh[1])]),
-         type="l", lty=3:1, col=if( sx=="M") "blue" else "red", lwd=2,
-         ylim=c(0,12), xlab="Age", ylab="Years lost to DM", yaxs="i" )
-for( yy in wh[-1] ) 
-   matlines( a.ref, t(aYLL[1:3,sx,,paste(yy)]),
-             type="l", lty=3:1, col=if(sx=="M") "blue" else "red", lwd=2 )
-abline(h=1:12,col=gray(0.7))
-text( 90, 11, sx, col=if( sx=="M") "blue" else "red", adj=1 )
-   }
-}
-cpyll( seq(1995,2012,8) )
-@ %
-\insfig{CmpYll-m}{1.0}{Years of life lost to DM: the difference in
-  expected residual life time at different ages between persons with
-  and without diabetes in the years 1995, 2003 and 2011 (top to
-  bottom). Full lines are from using the correct calculation in the
-  illness-death model, dotted lines using the naive approach (immunity
-  assumption) and the broken lines the comparison with the total
-  mortality. Blue curves are men, red women.}
-
 \bibliographystyle{plain}
-\bibliography{%
-/home/bendix/art/bibtex/BxC,%
-/home/bendix/art/bibtex/Diabetes%
-}
+
+\begin{thebibliography}{1}
+
+\bibitem{Carstensen.2007a}
+B~Carstensen.
+\newblock Age-{P}eriod-{C}ohort models for the {L}exis diagram.
+\newblock {\em Statistics in Medicine}, 26(15):3018--3045, July 2007.
+
+\bibitem{Carstensen.2008c}
+B.~Carstensen, J.K. Kristensen, P.~Ottosen, and K.~Borch-Johnsen.
+\newblock The {D}anish {N}ational {D}iabetes {R}egister: {T}rends in incidence,
+  prevalence and mortality.
+\newblock {\em Diabetologia}, 51:2187--2196, 2008.
+
+\end{thebibliography}
+
 \addcontentsline{toc}{chapter}{References}
 
 \end{document}

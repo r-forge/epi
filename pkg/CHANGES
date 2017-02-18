@@ -1,3 +1,21 @@
+Changes in 2.8
+
+o Errors in the erl.Rd corrected: Description of the arument "immune"
+  were wrong, as were the descriptions of the timepoints where rates
+  were supposed given.  
+
+o Inaccuracies in the vignette for simLexis patched.
+
+o lls() now also lists the size of objects
+
+o for illustrative purposes the DMepi dataset has been included
+
+o a function mcutLexis to cut at several different events has been added.
+
+Changes in 2.7
+
+o '[.Lexis' redefined to comply with data.table as used from popEpi
+
 Changes in 2.6
 
 o Added function erl computing Expected Residual Lifetime in an
