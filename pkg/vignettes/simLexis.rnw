@@ -1024,10 +1024,10 @@ follows:
 
 This section explains the actually existing code for
 \texttt{simLexis}, as it is in the current version of \texttt{Epi}.
-<<echo=FALSE,results=hide>>=
-options( keep.source=TRUE )
-source( "../R/simLexis.R" )
-@ %
+%%<<echo=FALSE,results=hide>>=
+%%options( keep.source=TRUE )
+%%source( "../R/simLexis.R" )
+%%@ %
 The function \texttt{simLexis} takes a \texttt{Lexis} object as
 input. This defines the initial state(s) and times of the start for a
 number of persons. Since the purpose is to simulate a history through
@@ -1089,7 +1089,7 @@ and objects of class \texttt{function} is made.
 The dataset on which this prediction is done has
 \texttt{length(time.pts)} rows per person.
 <<>>=
-simX
+Epi:::simX
 @ %
 As we see, \texttt{simX} calls \texttt{sim1} which simulates the
 transition for one person.
@@ -1102,7 +1102,7 @@ The predicted cumulative intensities are fed, person by person, to
 appended to the \texttt{nd} data frame. This way we have simulated
 \emph{one} transition (time and state) for each person:
 <<>>=
-sim1
+Epi:::sim1
 @ %
 The \texttt{sim1} function uses \texttt{lint} to do linear interpolation.
 
@@ -1115,7 +1115,7 @@ a custom made linear interpolator that does the interpolation
 exploiting the fact the the \texttt{ci} is non-decreasing and
 \texttt{tt} is strictly monotonously increasing:
 <<>>=
-lint
+Epi:::lint
 @
 
 \subsection{\texttt{get.next}}
@@ -1126,7 +1126,7 @@ defined as time since entry to one of these states be initialized to 0
 before a call to \texttt{simX} is made for these persons. This
 accomplished by the function \texttt{get.next}:
 <<>>=
-get.next
+Epi:::get.next
 @
 
 \subsection{\texttt{chop.lex}}
@@ -1136,7 +1136,7 @@ after \emph{each} new entry to a transient state. In order to groom
 the output data we use \texttt{chop.lex} to censor all persons at the
 same designated time after \emph{initial} entry.
 <<>>=
-chop.lex
+Epi:::chop.lex
 @
 
 \section{Probabilities from simulated \texttt{Lexis} objects}
