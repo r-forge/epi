@@ -1,3 +1,4 @@
+useDynLib(Epi, .registration=TRUE)
 export(
   as.Date.cal.yr,
   apc.frame,
