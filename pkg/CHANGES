@@ -1,6 +1,21 @@
+Changes in 2.17
+
+0 addCov.Lexis was fundamentally flawed, re-written
+ 
+o Documentation links between addCov.Lexis and gen.exp are introduced.
+
+o gen.exp has now got a wrapper, genExp.Lexis, explicitly using the
+  Lexis structure.
+
+Changes in 2.16
+ 
+o Function addCov.Lexis added. Allows addition of covariates (clinical
+  mesurements) taken at a particular time to be added to a Lexis
+  object. 
+
 Changes in 2.15
  
-o typo in stakedCIF code corrected (caused a crash with ony one group) 
+o typo in stackedCIF code corrected (caused a crash with ony one group) 
 
 Changes in 2.14
 
