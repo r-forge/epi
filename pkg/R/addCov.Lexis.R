@@ -3,11 +3,12 @@ addCov <- function (x, ...) UseMethod("addCov")
 
 addCov.default <-
 addCov.Lexis <-
-function( Lx, clin,
-          timeScale = 1,
-          addScales = FALSE,
-          exnam,
-          tfc = "tfc" )
+function( Lx,
+        clin,
+   timescale = 1,
+       exnam,
+         tfc = "tfc",
+   addScales = FALSE )
 {
 # Function to add clinically measured covariates to a Lexis object
     
@@ -18,15 +19,15 @@ function( Lx, clin,
 if( !inherits(Lx  ,"Lexis") ) stop( "Lx must be a Lexis object.\n" )
 if(  inherits(clin,"Lexis") ) stop( "clin cannot be a Lexis object.\n" )
     
-# Is the timeScale argument a timescale in Lx and is it a variable in clin?    
-ts <- if( is.numeric(timeScale) ) timeScales( Lx )[timeScale] else timeScale
+# Is the timescale argument a timescale in Lx and is it a variable in clin?    
+ts <- if( is.numeric(timescale) ) timeScales( Lx )[timescale] else timescale
 if( !( ts %in% timeScales(Lx) ) )
-    stop( "timeScale (", ts, ") must be a timescale in in the Lexis object ",
-          deparse(substitute(Lx)), "\n" )
+    stop( "timescale argument (", ts, ") must be one of timescales in in the Lexis object ",
+          deparse(substitute(Lx)),":", timeScales(Lx), ".\n" )
 
 clin.nam <- deparse(substitute(clin))
 if( !( ts %in% names(clin) & "lex.id" %in% names(clin) ) )
-    stop( "'lex.id' and timeScale '", ts, "' must be a variables in the clin object ",
+    stop( "'lex.id' and timescale '", ts, "' must be a variables in the clin object ",
           clin.nam, "\n" )
 
 # variables to merge by
