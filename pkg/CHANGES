@@ -1,6 +1,16 @@
+Changes in 2.21
+
+o the addScales argument to addCov.Lexis now implemented, along with small
+  changes in the naming of the examination types in the absence of
+  given ones.
+
 Changes in 2.20
 
 o Vignettes now pre-build on order to keep source
+
+o Enhanced options for seq.states= argument to mcutLexis allowing the
+  last seen event determine the state. Inspired by a vigette in teh
+  survival package describing the 
 
 Changes in 2.19
 

@@ -1,4 +1,4 @@
-\SweaveOpts{results=verbatim,keep.source=TRUE,include=FALSE,eps=FALSE,prefix.string=sL}
+\SweaveOpts{results=verbatim,keep.source=TRUE,include=FALSE,eps=FALSE}
 %\VignetteIndexEntry{Simulation of multistate models with multiple timescales: simLexis}
 \documentclass[a4paper,twoside,12pt]{report}
 
@@ -16,7 +16,7 @@ Bendix Carstensen
   & Steno Diabetes Center, Gentofte, Denmark\\
   & {\small \& Department of Biostatistics,
                University of Copenhagen} \\
-  & \texttt{bxc@steno.dk}\\
+  & \texttt{b@bxc.dk}\\
   & \url{http://BendixCarstensen.com} \\[1em]
                       \end{tabular}}
 
@@ -90,7 +90,7 @@ afterpage}
 
 %----------------------------------------------------------------------
 % How to insert a figure in a .rnw file
-\newcommand{\rwpre}{sL}
+\newcommand{\rwpre}{simLexis}
 \newcommand{\insfig}[3]{
 \begin{figure}[h]
   \centering

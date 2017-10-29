@@ -1,6 +1,6 @@
 Package: Epi
-Version: 2.20
-Date: 2017-08-10
+Version: 2.21
+Date: 2017-10-29
 Title: A Package for Statistical Analysis in Epidemiology
 Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
                     email = "b@bxc.dk"),
@@ -23,4 +23,3 @@ Description: Functions for demographic and epidemiological analysis in
   epidemiological data sets. 
 License: GPL-2
 URL: http://BendixCarstensen.com/Epi/
-BuildVignettes: no

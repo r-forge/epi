@@ -43,8 +43,8 @@ Martyn Plummer & International Agency for Research on Cancer, Lyon\\
 Bendix Carstensen & Steno Diabetes Center, Gentofte, Denmark\\
                   & \small \& Department of Biostatistics,
                     University of Copenhagen\\
-                  & \normalsize \texttt{bxc@steno.dk} \\
-                  & \url{www.pubhealth.ku.dk/~bxc}
+                  & \normalsize \texttt{b@bxc.dk} \\
+                  & \url{http://BendixCarstensen.com}
 \end{tabular}
 \normalsize
 \newpage
