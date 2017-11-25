@@ -1,9 +1,10 @@
-# The coef() methods in nlme and lme4 do something different
-# so we make a workaround by specifying our own generic methods
+# The coef() methods in nlme and lme4 do something different,
+# other objects do not even hav coef of vcov methods defined,
+# so we make a workaround by specifying our own generic methods:
 COEF          <- function( x, ... ) UseMethod("COEF")
 COEF.default  <- function( x, ... ) coef( x, ... )
 VCOV          <- function( x, ... ) UseMethod("VCOV")
-VCOV.default  <- function( x, ... ) vcov( x, ... )
+VCOV.default  <- function( x, ... ) vcov( x, complete=FALSE, ... )
 
 # Then we can get from these methods what we want from lme, mer etc.
 COEF.lme      <- function( x, ... ) nlme::fixed.effects( x )
@@ -104,7 +105,7 @@ cm[cbind(1:nr,ctr[,1])] <- 1
 cm[cbind(1:nr,ctr[,2])] <- -1
 rownames( cm ) <- rn
 cm
-# end of function for all differences 
+# end of the function all.dif for all differences 
 }
 
 # Were all differences requested?
@@ -127,7 +128,7 @@ if( diffs )
          # Get the relevant subset, and stick in 0s for NAs
          cf <- coef( obj )[wh]
          cf[is.na( cf )] <- 0
-         vcv <- vcov( obj )[wh,wh]
+         vcv <- vcov( obj, complete=FALSE )[wh,wh]
          vcv[is.na( vcv )] <- 0
          names( cf ) <- rownames( vcv ) <- colnames( vcv ) <-
              paste( subset, ": ", fn, sep="" )
@@ -175,9 +176,9 @@ if( !diffs )
 # Finally, here is the actual computation
   if( sample )
     {
-    # mvrnorm() returns a vector if sample=1, otherwise a sample x
+    # mvrnorm() returns a vector if sample=1, otherwise a sample by
     # length(cf) matrix - hence the rbind so we always get a row 
-    # matrix and res then becomes an nrow(ctr.mat) x sample matrix
+    # matrix and res then becomes an nrow(ctr.mat) by sample matrix
     res <- ctr.mat %*% t( rbind(mvrnorm( sample, cf, vcv )) )   
     }  
   else
@@ -229,6 +230,9 @@ if( missing(Exp) ) {   return( obj$family$linkinv(zz) )
        }  
 }
 
+# Function to calculate RR with CIs from independent rates with CIs;
+# r1 and r2 are assumed to be vectors or 2 or 3-column matrices with
+# rate, lower and upper confidence limits repectively.
 ci.ratio <-
 function( r1, r2,
          se1 = NULL, # standard error of rt1
@@ -237,14 +241,10 @@ function( r1, r2,
        alpha = 0.05,
         pval = FALSE )
 {
-# Function to calculate RR with CIs from independent rates with CIs;
-# r1 and r2 are assumed to be vectors or 2 or 3-column matrices with
-# rate, lower and upper confidence limits repectively.
-
 if( is.matrix(r1) & !is.null(se1) ) warning("r1 is matrix, se1 is ignored")
 if( is.matrix(r2) & !is.null(se2) ) warning("r2 is matrix, se2 is ignored")
 
-# if supplied as 1-column matrix chnage to vector
+# if supplied as 1-column matrix change to vector
 if( is.matrix(r1) ) if( ncol(r1)==1 ) r1 <- as.vector( r1 )
 if( is.matrix(r2) ) if( ncol(r2)==1 ) r2 <- as.vector( r2 )
 

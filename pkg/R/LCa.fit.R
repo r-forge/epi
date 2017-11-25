@@ -516,10 +516,10 @@ parms <- MASS::mvrnorm( n = sim,
                        mu = object$coef,
                     Sigma = object$vcov )
 na  <- ncol( Ma  )
+np  <- ncol( Mp  )
+nc  <- ncol( Mc  )
 npi <- ncol( Mpi )
- np <- ncol( Mp  )
 nci <- ncol( Mci )
- nc <- ncol( Mc  )
 # Compute the linear predictor in each of the simulated samples
 # period and cohort effects if not in the model
 kp <- kc <- rep( 0, nrow(newdata) )
@@ -542,5 +542,3 @@ return( pr.sim )
 }
 else return( pr0 )    
 }
-
-

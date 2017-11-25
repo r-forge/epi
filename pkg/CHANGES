@@ -1,4 +1,13 @@
+Changes in 2.22
+
+o vcov() use in ci.lin() updated to work with the new definition of vcov.
+
+o Relevel now also accepts a two-column structure --- basically a list
+  of what each factor level should be mapped to.
+
 Changes in 2.21
+
+o minor changes in documentation of LCa.fit
 
 o the addScales argument to addCov.Lexis now implemented, along with small
   changes in the naming of the examination types in the absence of
@@ -8,13 +17,13 @@ Changes in 2.20
 
 o Vignettes now pre-build on order to keep source
 
-o Enhanced options for seq.states= argument to mcutLexis allowing the
-  last seen event determine the state. Inspired by a vigette in teh
-  survival package describing the 
+o Enhanced options for seq.states= argument to mcutLexis() allowing the
+  last seen event determine the state. Inspired by a vigette in the
+  survival package describing the feature.
 
 Changes in 2.19
 
-o Typos in documentation fixed, LCa.fit
+o Typos in documentation of LCa.fit fixed
 
 o Bug in knot calculation in LCa.fit fixed. Meaningless models emerged
   if explicit knots were supplied for cohort effects. Prior to 2.19
