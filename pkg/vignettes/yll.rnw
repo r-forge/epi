@@ -7,8 +7,8 @@
 \newcommand{\Title}{Years of Life Lost (YLL)
   to disease\\Diabetes in DK as example}
 \newcommand{\Tit}{YLL}
-\newcommand{\Version}{Version 1.2}
-\newcommand{\Dates}{February 2017}
+\newcommand{\Version}{February 1.2}
+\newcommand{\Dates}{November 2017}
 \newcommand{\Where}{SDC}
 \newcommand{\Homepage}{\url{http://bendixcarstensen.com/Epi}}
 \newcommand{\Faculty}{\begin{tabular}{rl}

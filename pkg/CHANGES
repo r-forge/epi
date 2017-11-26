@@ -5,6 +5,8 @@ o vcov() use in ci.lin() updated to work with the new definition of vcov.
 o Relevel now also accepts a two-column structure --- basically a list
   of what each factor level should be mapped to.
 
+o A few changes and groomings of the vignettes
+
 Changes in 2.21
 
 o minor changes in documentation of LCa.fit

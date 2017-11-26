@@ -1,4 +1,4 @@
-### R code from vignette source 'simLexis.rnw'
+### R code from vignette source 'simLexis'
 ### Encoding: UTF-8
 
 ###################################################
@@ -389,13 +389,13 @@ box( lwd=3 )
 
 
 ###################################################
-### code chunk number 27: simLexis.rnw:1033-1034
+### code chunk number 27: simLexis.rnw:1029-1030
 ###################################################
 source( "../R/simLexis.R", keep.source=TRUE )
 
 
 ###################################################
-### code chunk number 28: simLexis.rnw:1050-1053
+### code chunk number 28: simLexis.rnw:1046-1049
 ###################################################
 cbind(
 attr( ini, "time.scale" ),
@@ -403,55 +403,55 @@ attr( ini, "time.since" ) )
 
 
 ###################################################
-### code chunk number 29: simLexis.rnw:1078-1079
+### code chunk number 29: simLexis.rnw:1074-1075
 ###################################################
 simLexis
 
 
 ###################################################
-### code chunk number 30: simLexis.rnw:1096-1097
+### code chunk number 30: simLexis.rnw:1092-1093
 ###################################################
 simX
 
 
 ###################################################
-### code chunk number 31: simLexis.rnw:1109-1110
+### code chunk number 31: simLexis.rnw:1105-1106
 ###################################################
 sim1
 
 
 ###################################################
-### code chunk number 32: simLexis.rnw:1122-1123
+### code chunk number 32: simLexis.rnw:1118-1119
 ###################################################
 lint
 
 
 ###################################################
-### code chunk number 33: simLexis.rnw:1133-1134
+### code chunk number 33: simLexis.rnw:1129-1130
 ###################################################
 get.next
 
 
 ###################################################
-### code chunk number 34: simLexis.rnw:1143-1144
+### code chunk number 34: simLexis.rnw:1139-1140
 ###################################################
 chop.lex
 
 
 ###################################################
-### code chunk number 35: simLexis.rnw:1161-1162
+### code chunk number 35: simLexis.rnw:1157-1158
 ###################################################
 nState
 
 
 ###################################################
-### code chunk number 36: simLexis.rnw:1171-1172
+### code chunk number 36: simLexis.rnw:1167-1168
 ###################################################
 pState
 
 
 ###################################################
-### code chunk number 37: simLexis.rnw:1176-1178
+### code chunk number 37: simLexis.rnw:1172-1174
 ###################################################
 plot.pState
 lines.pState

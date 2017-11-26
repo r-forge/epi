@@ -1,4 +1,4 @@
-### R code from vignette source 'Follow-up.rnw'
+### R code from vignette source 'Follow-up'
 ### Encoding: UTF-8
 
 ###################################################
@@ -76,9 +76,27 @@ round( subset( nicS2, id %in% 8:10 ), 2 )
 
 
 ###################################################
-### code chunk number 10: Follow-up.rnw:253-258
+### code chunk number 10: Follow-up.rnw:251-256
 ###################################################
-timeBand( nicS2, "age", "middle" )[1:20]
+library( popEpi )
+nicM <- splitMulti( nicL, age = seq(0,100,10), 
+                          tfh = c(0,1,5,10,20,30,100) )
+summary( nicS2 )
+summary( nicM )
+
+
+###################################################
+### code chunk number 11: Follow-up.rnw:260-263
+###################################################
+identical( nicS2, nicM )
+class( nicS2 )
+class( nicM )
+
+
+###################################################
+### code chunk number 12: Follow-up.rnw:277-282
+###################################################
+timeBand( nicM, "age", "middle" )[1:20]
 # For nice printing and column labelling use the data.frame() function:
 data.frame( nicS2[,c("id","lex.id","per","age","tfh","lex.dur")],
             mid.age=timeBand( nicS2, "age", "middle" ),
@@ -86,17 +104,33 @@ data.frame( nicS2[,c("id","lex.id","per","age","tfh","lex.dur")],
 
 
 ###################################################
-### code chunk number 11: Follow-up.rnw:276-281
+### code chunk number 13: Follow-up.rnw:295-296
+###################################################
+summary( (nicS2$age-nicS2$tfh) - nicS2$age1st ) 
+
+
+###################################################
+### code chunk number 14: Follow-up.rnw:300-302
+###################################################
+summary( timeBand( nicS2, "age", "middle" ) -
+         timeBand( nicS2, "tfh", "middle" ) - nicS2$age1st )
+
+
+###################################################
+### code chunk number 15: Follow-up.rnw:322-330
 ###################################################
 subset( nicL, id %in% 8:10 )
 agehi <- nicL$age1st + 50 / nicL$exposure
-nicC <- cutLexis( data=nicL, cut=agehi, timescale="age",
-                  new.state=2, precursor.states=0 )
+nicC <- cutLexis( data = nicL, 
+                   cut = agehi, 
+             timescale = "age",
+             new.state = 2, 
+      precursor.states = 0 )
 subset( nicC, id %in% 8:10 )
 
 
 ###################################################
-### code chunk number 12: Follow-up.rnw:287-292
+### code chunk number 16: Follow-up.rnw:337-342
 ###################################################
 subset( nicS2, id %in% 8:10 )
 agehi <- nicS2$age1st + 50 / nicS2$exposure
@@ -106,13 +140,13 @@ subset( nicS2C, id %in% 8:10 )
 
 
 ###################################################
-### code chunk number 13: Follow-up.rnw:312-321
+### code chunk number 17: Follow-up.rnw:362-371
 ###################################################
 data( nickel )
-nicL <- Lexis( entry = list( per=agein+dob,
-                             age=agein,
-                             tfh=agein-age1st ),
-                exit = list( age=ageout ),
+nicL <- Lexis( entry = list( per = agein+dob,
+                             age = agein,
+                             tfh = agein-age1st ),
+                exit = list( age = ageout ),
          exit.status = ( icd > 0 ) + ( icd %in% c(162,163) ),
                 data = nickel )
 summary( nicL )
@@ -120,12 +154,12 @@ subset( nicL, id %in% 8:10 )
 
 
 ###################################################
-### code chunk number 14: Follow-up.rnw:325-333
+### code chunk number 18: Follow-up.rnw:376-384
 ###################################################
-nicL <- Lexis( entry = list( per=agein+dob,
-                             age=agein,
-                             tfh=agein-age1st ),
-                exit = list( age=ageout ),
+nicL <- Lexis( entry = list( per = agein+dob,
+                             age = agein,
+                             tfh = agein-age1st ),
+                exit = list( age = ageout ),
          exit.status = ( icd > 0 ) + ( icd %in% c(162,163) ),
                 data = nickel,
               states = c("Alive","D.oth","D.lung") )
@@ -133,7 +167,7 @@ summary( nicL )
 
 
 ###################################################
-### code chunk number 15: Follow-up.rnw:345-353
+### code chunk number 19: Follow-up.rnw:395-403
 ###################################################
 nicL$agehi <- nicL$age1st + 50 / nicL$exposure
 nicC <- cutLexis( data = nicL,
@@ -146,15 +180,25 @@ summary( nicC, scale=1000 )
 
 
 ###################################################
-### code chunk number 16: Follow-up.rnw:371-379
+### code chunk number 20: Follow-up.rnw:422-431
 ###################################################
 nicC <- cutLexis( data = nicL,
                    cut = nicL$agehi,
              timescale = "age",
-             new.state = "Hi",
-           split.states=TRUE, new.scale=TRUE,
+             new.state = "HiExp",
+             new.scale = TRUE,
+          split.states = TRUE,
       precursor.states = "Alive" )
 subset( nicC, id %in% 8:10 )
-summary( nicC, scale=1000 )
+summary( nicC, scale=1000, timeScales=TRUE )
+
+
+###################################################
+### code chunk number 21: nic-box
+###################################################
+boxes( nicC, boxpos = list(x=c(10,10,80,80,80,80),
+                           y=c(75,25,87,63,13,37)),
+            scale.Y = 1000,
+            show.BE = TRUE )
 
 
