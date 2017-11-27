@@ -10,7 +10,8 @@
   specifying this are supported.
 }
 \usage{
-\method{Relevel}{factor}( x, ref, first = TRUE, collapse="+", xlevels=TRUE, \dots )
+\method{Relevel}{factor}( x, ref, first = TRUE, collapse="+",
+                 xlevels=TRUE, nogroup=TRUE, \dots )
 }
 \arguments{
   \item{x}{An unordered factor}
@@ -29,6 +30,9 @@
   \item{xlevels}{Logical. Should all levels in the 2nd column of
     \code{ref} be maintained, or (if \code{FALSE}) only the acutally
     ocurring. See details.}
+  \item{nogroup}{Logical. Should levels present in the input but not in
+    the 1st column of \code{ref} be maintained as levels after the
+    grouping? If \code{FALSE}), NAs will be returned for such elements.}
   \item{\dots}{Arguments passed on to other methods.}
 }
 \value{
@@ -38,7 +42,8 @@
 \details{
   The facility where \code{ref} is a two-column matrix mimicks the
   SAS-facility where a dataset can be used to construct a format --- SAS
-  format is the grouping tool for variable values.
+  format is the grouping tool for variable values. Using this facility
+  will preserve the order of levels if \code{ref[,2]} is a factor. 
 }
 \author{Bendix Carstensen, \url{BendixCarstensen.com}.}
 \seealso{\code{\link{Relevel.Lexis}}}
@@ -49,16 +54,22 @@ ff <- factor( sample( letters[1:5], 100, replace=TRUE ) )
 table( ff, Relevel( ff, list( AB=1:2, "Dee"=4, c(3,5) ) ) )
 table( ff, Relevel( ff, list( 5:4, Z=c("c","a") ), coll="-und-",first=FALSE ) )
 
-# Grouping using a two-column matrix as input
-#
-ff <- factor( sample( letters[1:10][-c(4,7)], 100, replace=TRUE ),
-              levels = letters[1:10] )
-table(ff)
-gg <- cbind( letters[sample(1:10)],
-             LETTERS[sample(1:4,10,repl=TRUE)] )
-gg
-# check the two tabels are alive at the same places as they shoudl be:
-print( as.table( cbind( table( gg[,1], gg[,2] ), NA, NA,
-                        table( ff, Relevel(ff, gg) ) ) ), zero="." )
+## Grouping using a two-column matrix as input:
+## A factor with levels to be grouped together
+ff <- factor( c("Bear","Bear","Crocodile","Snake","Crocodile","Bear") )
+ff
+## A grouping table
+( gg <- data.frame( Animal=c("Bear","Whale","Crocodile","Snake","Eagle"),
+                     Class=c("Mammal","Mammal","Reptile","Reptile","Bird") ) )
+Relevel( ff, gg, xlevels=FALSE )
+Relevel( ff, gg )
+Relevel( ff, gg[c(1:5,5:1),] )
+## This crashes with an error
+## Relevel( ff, rbind( gg, c("Bear","Reptile") ) ) 
+ff <- factor(c(as.character(ff),"Jellyfish","Spider"))
+Relevel( ff, gg )
+Relevel( ff, gg, xlevels=FALSE )
+# Note: returns NAs
+Relevel( ff, gg, nogroup=FALSE )
 }
 \keyword{manip}

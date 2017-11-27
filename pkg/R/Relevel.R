@@ -11,26 +11,39 @@ Relevel <- function (x, ...) UseMethod("Relevel")
 
 # Utility to group a factor from a 2-column table;
 # called from Relevel if second argument is a matrix or table
-tabRelevel <-
+tRelevel <-
 function( ff, # factor to be grouped
           gg, # 2-column matrix or table with levels resp. grouping
-     xlevels = TRUE ) # include also grouped levels not present in ff
+     xlevels = TRUE,  # include also grouped levels not present in ff
+     nogroup = TRUE ) # levels of ff not grouped are tranferred or set to NA
 {
+if( any( wh <- apply( table( gg[,1], gg[,2] )>0, 1, sum )>1 ) )
+    stop( "Factor level", if(length(wh>1)) "s", ": ",
+          paste(names(wh)[wh],collapse=" / "),
+          "\nis grouped to more than one group.\n" )
 if( any( is.na( match( unique(as.character(ff)),
                        unique(as.character(gg[,1])) ) ) ) )
-    stop( "All values of x must be in ref[,1].\n" )
-if( any( wh <- apply( table( gg[,1], gg[,2] )>0, 1, sum )>1 ) )
-    stop( "Factor level", names(wh)[wh], "is grouped to more than one group.\n" )
+    cat( "Note: Some values of x are not in ref[,1].\n" )
 if( any( wh <- apply( table( gg[,1], gg[,2] ), 1, sum )>1 ) )
-    warning( "Factor level", names(wh)[wh], "appear more than once.\n" )
-# indices of the original factor levels
+    warning( "Factor level", if(length(wh>1)) "s", ": ",
+             paste(names(wh)[wh],collapse=" / "),
+             "\nappear more than once in the table of groupings." )
+# indices and names of the original factor levels
 ixff <- as.integer( ff )
+chff <- as.character( ff )
 # where they are in the translation table
 ixg1 <- as.integer( factor( gg[,1], levels=levels(ff) ) )
 # indices of the new levels in the translation table
 ixg2 <- as.integer( g2 <- factor(gg[,2]) )
-# where in ixg2 are the integers ixff - match() 
-grff <- factor( ixg2[match(ixff,ixg1)], labels=levels(g2) )
+# remove unwanted NAs (levels in g[,1] not present in ff)
+ixg2 <- ixg2[!is.na(ixg1)]
+ixg1 <- ixg1[!is.na(ixg1)]
+# where in ixg2 are the integers ixff - match(), choose those values
+grff <- levels(g2)[ixg2[match(ixff,ixg1)]]
+# transfer non-grouped levels of ff
+if( nogroup ) grff[is.na(grff)] <- chff[is.na(grff)]
+# a factor with the correct levels in the correct order
+grff <- factor( grff, levels=union(levels(g2),levels(factor(grff))) )
 # keep all levels from second column or not?
 if( xlevels ) grff else factor(grff)
 }
@@ -38,18 +51,20 @@ if( xlevels ) grff else factor(grff)
 # The factor method is the default method
 Relevel.default <-
 Relevel.factor <-
-  function( x, ref, first=TRUE, collapse="+", xlevels=TRUE, ... )
+  function( x, ref, first=TRUE, collapse="+",
+            xlevels=TRUE, nogroup=TRUE, ... )
   {
   # Function that collapses multiple sets of levels of a factor
   #
   # If ref is a 2-dim structure
-  if( is.matrix(ref) |
-      is.table(ref) |
-      is.array(ref) |
+  if( is.matrix(    ref) |
+      is.table(     ref) |
+      is.array(     ref) |
       is.data.frame(ref) )
       {
-   if( length(dim(ref)) !=2 ) stop("ref must be 2-dimensional\n")    
-   return( tabRelevel( x, ref, xlevels ) )    
+   if( length(dim(ref)) !=2 ) stop("ref must be 2-dimensional\n")
+   if( dim(ref)[2] < 2 ) stop("ref must have at least 2 colums\n")
+   return( tRelevel( x, ref, xlevels, nogroup ) )    
   } else {
       
   # Otherwise use the old version

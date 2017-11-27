@@ -1,3 +1,8 @@
+Changes in 2.23
+
+o Bug in Relevel functionality when using a 2-column structure for
+  grouping levels fixed. Also transfer ungrouped levels to the result.
+
 Changes in 2.22
 
 o vcov() use in ci.lin() updated to work with the new definition of vcov.
