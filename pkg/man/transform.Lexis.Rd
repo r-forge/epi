@@ -12,7 +12,6 @@
   Modify a Lexis object.
 }
 \usage{
-%transform(`_data`, \dots)
 \method{transform}{Lexis}( `_data`, \dots)
 \method{Relevel}{Lexis}( x, states, print = TRUE, \dots )
 \method{levels}{Lexis}( x )

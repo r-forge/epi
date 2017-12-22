@@ -1026,8 +1026,27 @@ follows:
 
 This section explains the actually existing code for
 \texttt{simLexis}, as it is in the current version of \texttt{Epi}.
-<<echo=FALSE,results=hide>>=
+
+% The following code sources the originally formatted code in
+% simLexis.R in order to make it printable with all the formatting and
+% comments in it. However the sourcing does not work when compiling
+% the vignettes in R CMD build. So when checking the code we comment
+% this out by putting eval=FALSE, and moreover, because it is only
+% simLexis that is exported, we also need to bring the functions simX,
+% sim1, lint, get.next and chop.lex into the workspace. So depending
+% on whether we actually construct the pdf for the inst/doc folder or
+% test (upload) the package, one of the following to chunks are run
+% with eval=FALSE and the other with eval=TRUE
+
+<<CHANGE1,echo=FALSE,results=hide,eval=FALSE>>=
 source( "../R/simLexis.R", keep.source=TRUE )
+@ %
+<<CHANGE2,echo=FALSE,results=hide,eval=TRUE>>=
+simX <- Epi:::simX
+sim1 <- Epi:::sim1
+lint <- Epi:::lint
+get.next <- Epi:::get.next
+chop.lex <- Epi:::chop.lex
 @ %
 The function \texttt{simLexis} takes a \texttt{Lexis} object as
 input. This defines the initial state(s) and times of the start for a

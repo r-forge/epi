@@ -1,7 +1,12 @@
-Changes in 2.23
+Changes in 2.24
 
 o Bug in Relevel functionality when using a 2-column structure for
-  grouping levels fixed. Also transfer ungrouped levels to the result.
+  grouping levels fixed. Now also transfers ungrouped levels to the
+  result as new levels.
+
+o Substantial update of the vignette on follow-up data with Epi.
+
+o Documentation groomed.
 
 Changes in 2.22
 

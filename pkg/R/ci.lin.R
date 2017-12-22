@@ -46,25 +46,28 @@ vcv <- VCOV( obj )
 # the coefficients vector in case of (extrinsic) aliasing.
 if( any( is.na( cf ) ) )
   {
-if( inherits( obj, c("coxph") ) )
-  { # aliased parameters are only NAs in coef, but omitted from vcov
-  wh <- !is.na(cf)
-  cf <- cf[wh]
-  vcv <- vcv[wh,wh]
-  }
-else
-if( inherits( obj, c("clogistic") ) )
-  {
-  cf[is.na(cf)] <- 0
-  }
-else
-  {
-vM <- matrix( 0, length( cf ), length( cf ) )
-dimnames( vM ) <- list( names( cf ), names( cf ) )
-vM[!is.na(cf),!is.na(cf)] <- vcv
-cf[is.na(cf)] <- 0
-vcv <- vM
-  }
+  if( inherits( obj, c("coxph") ) )
+    { # aliased parameters are only NAs in coef, but omitted from vcov
+    wh <- !is.na(cf)
+    cf <- cf[wh]
+    vcv <- vcv[wh,wh]
+    }
+  else
+    {  
+  if( inherits( obj, c("clogistic") ) )
+    {
+    cf[is.na(cf)] <- 0
+    }
+  else
+    {
+    vM <- matrix( 0, length( cf ), length( cf ) )
+    dimnames( vM ) <- list( names( cf ), names( cf ) )
+    vM[!is.na(cf),!is.na(cf)] <- vcv
+    # vM <- vcv
+    cf[is.na(cf)] <- 0
+    vcv <- vM
+    }
+    }
   }
 
 # Function for computing a contrast matrix for all possible
