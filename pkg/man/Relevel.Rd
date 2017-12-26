@@ -7,29 +7,29 @@
   \code{ref} appear first and remaining levels are moved down. This is
   useful for \code{contr.treatment} contrasts which take the first level
   as the reference. Factor levels may also be combined; two possibilities for
-  specifying this are supported.
+  specifying this are supported: hard coding or table look-up.
 }
 \usage{
 \method{Relevel}{factor}( x, ref, first = TRUE, collapse="+",
                  xlevels=TRUE, nogroup=TRUE, \dots )
 }
 \arguments{
-  \item{x}{An unordered factor}
+  \item{x}{A(n unordered) factor}
   \item{ref}{Vector, list, matrix or table. If \code{ref} is a vector
     (integer or character), it is assumed it contains the names or
-    numbers of levels to be the first ones; nom mentoned levels are
+    numbers of levels to be the first ones; non mentioned levels are
     kept. If \code{ref} is a list,
     factor levels mentioned in each list element are combined. If the
     list is named the names are used as new factor levels, otherwise
-    new level names are constructed. If \code{ref} is a
+    new level names are constructed from the old. If \code{ref} is a
     matrix or table, the two first columns are assumed to have unique
     levels of \code{x} and groupings of this, respectively.}
   \item{first}{Should the levels mentioned in \code{ref} (if it is a
     list) come before those not?} 
   \item{collapse}{String used when constructing names for combined factor levels.}
   \item{xlevels}{Logical. Should all levels in the 2nd column of
-    \code{ref} be maintained, or (if \code{FALSE}) only the acutally
-    ocurring. See details.}
+    \code{ref} be maintained as levels of the result, or (if
+    \code{FALSE}) only the actually occurring.}
   \item{nogroup}{Logical. Should levels present in the input but not in
     the 1st column of \code{ref} be maintained as levels after the
     grouping? If \code{FALSE}), NAs will be returned for such elements.}
@@ -40,7 +40,7 @@
   and/or collapsed.
 }
 \details{
-  The facility where \code{ref} is a two-column matrix mimicks the
+  The facility where \code{ref} is a two-column matrix mimics the
   SAS-facility where a dataset can be used to construct a format --- SAS
   format is the grouping tool for variable values. Using this facility
   will preserve the order of levels if \code{ref[,2]} is a factor. 
@@ -48,7 +48,7 @@
 \author{Bendix Carstensen, \url{BendixCarstensen.com}.}
 \seealso{\code{\link{Relevel.Lexis}}}
 \examples{
-# Grouping using a list (hardcoding)
+# Grouping using a list (hard coding)
 #
 ff <- factor( sample( letters[1:5], 100, replace=TRUE ) )
 table( ff, Relevel( ff, list( AB=1:2, "Dee"=4, c(3,5) ) ) )
@@ -69,7 +69,7 @@ Relevel( ff, gg[c(1:5,5:1),] )
 ff <- factor(c(as.character(ff),"Jellyfish","Spider"))
 Relevel( ff, gg )
 Relevel( ff, gg, xlevels=FALSE )
-# Note: returns NAs
+# If you do not want unknown animals classified this returns NAs:
 Relevel( ff, gg, nogroup=FALSE )
 }
 \keyword{manip}
