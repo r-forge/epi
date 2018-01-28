@@ -7,7 +7,7 @@
 \newcommand{\Title}{Simulation of\\ multistate models with\\ multiple
   timescales:\\ \texttt{simLexis} in the \texttt{Epi} package}
 \newcommand{\Tit}{Multistate models with multiple timescales}
-\newcommand{\Version}{Version 2.3}
+\newcommand{\Version}{Version 2.4}
 \newcommand{\Dates}{\today}
 \newcommand{\Where}{SDC}
 \newcommand{\Homepage}{\url{http://BendixCarstensen.com/Epi/simLexis.pdf}}
