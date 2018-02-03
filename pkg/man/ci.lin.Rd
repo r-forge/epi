@@ -40,9 +40,9 @@ ci.ratio( r1, r2,
         pval = FALSE )
 }
 \arguments{
-  \item{obj}{A model object (of class
+  \item{obj}{A model object (in general of class \code{glm}, but for
+    \code{ci.lin} and \code{ci.exp} it may also be of class
     \code{lm},
-    \code{glm},
     \code{coxph},
     \code{survreg},
     \code{clogistic},
@@ -193,7 +193,7 @@ Wald( mm, subset="f", ctr.mat=CM )
 ( CM <- rbind( c(1,-1,0,0), c(0,1,-1,0)) )
 Wald( mm, subset="f", ctr.mat=CM )
 
-# Confidnece intervas for ratio of rates
+# Confidence intervals for ratio of rates
 ci.ratio( cbind(10,8,12.5), cbind(5,4,6.25) )
 ci.ratio( cbind(8,12.5), cbind(4,6.25) )
 }

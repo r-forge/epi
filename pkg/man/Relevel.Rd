@@ -15,15 +15,22 @@
 }
 \arguments{
   \item{x}{A(n unordered) factor}
-  \item{ref}{Vector, list, matrix or table. If \code{ref} is a vector
-    (integer or character), it is assumed it contains the names or
-    numbers of levels to be the first ones; non mentioned levels are
-    kept. If \code{ref} is a list,
-    factor levels mentioned in each list element are combined. If the
-    list is named the names are used as new factor levels, otherwise
-    new level names are constructed from the old. If \code{ref} is a
-    matrix or table, the two first columns are assumed to have unique
-    levels of \code{x} and groupings of this, respectively.}
+  \item{ref}{Vector, list, matrix or table.
+
+    If \code{ref} is a vector (integer or character), it is assumed it
+    contains the names or numbers of levels to be the first ones; non
+    mentioned levels are kept.
+
+    If \code{ref} is a list, factor levels mentioned in each list
+    element are combined. If the list is named the names are used as new
+    factor levels, otherwise new level names are constructed from the
+    old.
+
+    If \code{ref} is a matrix or table, the two first column is assumed
+    to have unique levels of \code{x} and the second to have groupings
+    of this, respectively.
+
+    }
   \item{first}{Should the levels mentioned in \code{ref} (if it is a
     list) come before those not?} 
   \item{collapse}{String used when constructing names for combined factor levels.}
@@ -41,9 +48,10 @@
 }
 \details{
   The facility where \code{ref} is a two-column matrix mimics the
-  SAS-facility where a dataset can be used to construct a format --- SAS
-  format is the grouping tool for variable values. Using this facility
-  will preserve the order of levels if \code{ref[,2]} is a factor. 
+  SAS-facility of formats where a dataset can be used to construct a
+  format --- SAS format is the grouping tool for variable values. Using
+  this facility will preserve the order of levels if \code{ref[,2]} is a
+  factor.
 }
 \author{Bendix Carstensen, \url{BendixCarstensen.com}.}
 \seealso{\code{\link{Relevel.Lexis}}}
@@ -64,12 +72,14 @@ ff
 Relevel( ff, gg, xlevels=FALSE )
 Relevel( ff, gg )
 Relevel( ff, gg[c(1:5,5:1),] )
+
 ## This crashes with an error
 ## Relevel( ff, rbind( gg, c("Bear","Reptile") ) ) 
+
 ff <- factor(c(as.character(ff),"Jellyfish","Spider"))
 Relevel( ff, gg )
 Relevel( ff, gg, xlevels=FALSE )
-# If you do not want unknown animals classified this returns NAs:
+# If you do not want unknown animals classified, this returns NAs:
 Relevel( ff, gg, nogroup=FALSE )
 }
 \keyword{manip}
