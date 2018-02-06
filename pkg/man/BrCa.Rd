@@ -46,7 +46,7 @@ Michael Crowther \& Paul Lambert:
 "Parametric multistate survival models: Flexible modelling
 allowing transition-specific distributions with application
 to estimating clinically useful measures of effect differences" form
-Statistics in Medicine, 2017;36: 4719–4742.
+Statistics in Medicine, 2017;36: 4719-4742.
 }
 \examples{
 data(BrCa)

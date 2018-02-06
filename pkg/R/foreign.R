@@ -26,13 +26,7 @@ data.frame( id = tmp$lex.id,
 
 # The etm method
 etm <- function (obj, ...) UseMethod("etm")
-
-etm.data.frame <-
-function (obj, ...)
-{
-etm::etm( data=obj, ... )
-}
-
+ 
 etm.Lexis <-
 function( obj,
    time.scale = timeScales(obj)[1],

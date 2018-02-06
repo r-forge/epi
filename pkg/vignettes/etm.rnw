@@ -1,0 +1,972 @@
+\SweaveOpts{results=verbatim,keep.source=TRUE,include=FALSE,eps=FALSE}
+\documentclass[a4paper,twoside,12pt]{article}
+
+%----------------------------------------------------------------------
+% General information on the course for the title page and the page headings
+\newcommand{\Title}{Multistate models in \texttt{Epi}:\\The DLI
+  example from JSS:\\the \texttt{etm} package by Allignol \textit{et al.}}
+\newcommand{\Tit}{MS \texttt{Epi}: DLI example}
+\newcommand{\Version}{Version 3}
+\newcommand{\Dates}{February 2018}
+\newcommand{\Where}{SDCC}
+\newcommand{\Homepage}{\url{http://BendixCarstensen.com/AdvCoh/MultiState/Papers/}}
+\newcommand{\Faculty}{\begin{tabular}{rl}
+Bendix Carstensen
+  & Steno Diabetes Center, Gentofte, Denmark\\
+  & {\small \& Department of Biostatistics,
+               University of Copenhagen} \\
+  & \texttt{bxc@steno.dk}\\
+  & \url{http://BendixCarstensen.com} \\[1em]
+                      \end{tabular}}
+
+\input{toparticle}
+\renewcommand{\rwpre}{./etm}
+
+%----------------------------------------------------------------------
+\section{Introduction}
+
+This is an illustration of how to set up the multistate data from
+\texttt{dli.data} used as illustration in \cite{Allignol.2010}. In
+this note I use the \texttt{Lexis} machinery from the
+the \texttt{Epi} package\cite{Plummer.2011,Carstensen.2011a}, which
+makes things more transparent, because it requires an initial
+specification of the multistate \emph{data} in terms of transitions
+and timescales. The latter is largely bypassed as an issue in
+\cite{Allignol.2010} as only one time scale is used. The
+\texttt{Lexis} machinery also includes a couple of summary and
+graphical functions that facilitate the overview of the data.
+
+We have downloaded the data, and we start by loading the \texttt{Epi}
+package and the data:
+<<>>=
+options( width=90 )
+library( Epi )
+library( etm )
+library( survival )
+library( splines )
+print( sessionInfo(), l=F )
+load( url("https://www.jstatsoft.org/index.php/jss/article/downloadSuppFile/v038i04/dli.data.rda") )
+# save( dli.data, file="./dli.Rda" )
+# load(           file="./dli.Rda" )
+str( dli.data )
+@
+In order to understand how data is coded we list data for a few select persons:
+<<>>=
+subset( dli.data, id %in% c(2,5,388,511,531,600) )
+@
+The time records from persons 531 is clearly flawed because exit from
+state 2 occurs before entry to it. There is only this one instance in
+the dataset:
+<<>>=
+subset( dli.data, c(TRUE,diff(time)<0 & diff(id)==0 ) )
+@ %
+So we doctor it (more or less arbitrarily):
+<<>>=
+dli.data[dli.data$id==531 & dli.data$from==2,"time"] <- 0.45
+@
+We can now inspect how the transitions occur between states:
+<<>>=
+with( dli.data, table( from, to ) )
+@ %
+
+\section{Setting up a \texttt{Lexis} object}
+
+In order to be able to put the data into a \texttt{Lexis} object, we must know
+the entry times for each state, not only the exit times. This is done
+by using the \texttt{ave} function, that allows operation within each
+level of a grouping (in this case \texttt{id)}. Moreover, we also
+change the censoring value \texttt{"cens"} to the value of the state
+in which the censoring occurs (\texttt{as.numeric("cens")} returns \texttt{NA}).
+<<>>=
+dli <- transform( dli.data,
+                  to = as.numeric(to),
+                  ti = ave( time, id, FUN=function( x ) c(0,x[-length(x)]) ) )
+dli$to <- ifelse( is.na(dli$to), dli$from, dli$to )
+subset( dli, id %in% c(5,388,511,600) )
+with( dli, table( from, to ) )
+@ %
+
+\subsection{Other timescales}
+
+Apart from the underlying timescale, time from inclusion in the study
+(\textit{i.e.} treatment to remission), it may be of interest to be
+able to assess the effect of other timescales, such as current age and
+calendar time. These are not available in the data set and might even
+not be relevant depending on the range of these in data.
+
+However it would be most interesting to be able to use the time since
+entry into each of the three intermediate states. So for the state 2
+(1st relapse) we can construct the time of entry into the state and
+subsequently the time \emph{since} entry for all other pieces of follow-up:
+<<>>=
+tmp <- subset(dli,to==2 & from!=to)[,c("id","time")]
+names(tmp)[2] <- "tr"
+dli <- merge( dli, tmp, all.x=TRUE )
+dli$tr <- with( dli, ifelse( ti-tr>=0, ti-tr, NA ) )
+subset(dli,id %in% c(600,603,608) )
+str( dli )
+@
+The same is now repeated for the other two intermediate states:
+<<>>=
+# DLI
+tmp <- subset(dli,to==4 & from!=to)[,c("id","time")]
+names(tmp)[2] <- "tD"
+dli <- merge( dli, tmp, all.x=TRUE )
+dli$tD <- with( dli, ifelse( ti-tD>=0, ti-tD, NA ) )
+# Rm2
+tmp <- subset(dli,to==6 & from!=to)[,c("id","time")]
+names(tmp)[2] <- "tR"
+dli <- merge( dli, tmp, all.x=TRUE )
+dli$tR <- with( dli, ifelse( ti-tR>=0, ti-tR, NA ) )
+subset(dli,id %in% c(600,603,608) )
+@ % $
+
+\subsection{Defining the \texttt{Lexis} object}
+
+Now we can define a Lexis object, using the factor facility in R to
+label the states:
+<<>>=
+state.names <- c("Rem" , "D/Rem",
+                 "Rel" , "D/Rel",
+                 "DLI" , "D/DLI",
+                 "Rem2", "D/Rem2",
+                 "Rel2")
+dli <- Lexis( entry        = list( tfi=ti, tfr=tr, tfD=tD, tfR=tR ),
+              entry.status = factor( from, levels=0:8, labels=state.names ),
+               exit        = list( tfi=time ),
+               exit.status = factor(   to, levels=0:8, labels=state.names ),
+                        id = id,
+                      data = dli )
+print.data.frame(
+subset( dli, id %in% c(600,603,608) )[,1:13], digits=3)
+@ % $
+Setting up a \texttt{Lexis} object for this dataset basically means
+replacing the time of event for each transition by the time of entry
+into a state (\texttt{tfi}) and the sojourn time (\texttt{lex.dur}) in
+the state, and making clear that with this convention \texttt{from}
+(or \texttt{lex.Cst}) is the state in which the person spends
+\texttt{lex.dur}, and \texttt{to} (or \texttt{lex.Xst}) is the state
+to which the persons moves (using the convention that if
+\texttt{from}=\texttt{to} we have a censored observation.
+
+\subsection{Summarizing the \texttt{Lexis} object}
+
+Using the summary facility for \texttt{Lexis} objects shows the
+transitions and the risk time in each state:
+<<>>=
+summary( dli )
+@
+\label{summary:dli}
+There is also a facility to show the states in a graph with
+person-years (risk time in the units given) shown in the boxes and
+no. of transitions shown between them:
+<<eval=FALSE>>=
+boxes( dli )
+@ %
+This is an interactive facility where you are asked to click on the
+plot where the boxes should go; but you can also explicitly supply the
+positions of the centers of the boxes. For later use we first define
+the number of states, and a set of colors to be used for the states in
+this and subsequent plots. We also scale the printed transition rates
+between states by 100, so they will appear as percent per year
+(formally cases per 100 PY). Finally we put a black frame around the
+dead states.
+<<boxes,fig=TRUE,height=11,width=11>>=
+n.st <- nlevels( dli$lex.Cst )
+st.col <- rainbow( n.st )
+# A slightly more transparent color
+# substr(st.col,8,9) <- "BB"
+boxes( dli, wmult=1.1, hmult=1.2,
+            boxpos=list(x=c(10,30,30,50,50,70,70,90,90),
+                        y=c(25, 8,42,25,59,42,76,59,93)),
+            scale.R=100, show.BE=TRUE,
+            col.bg=st.col, col.txt="white",
+            col.border=c("white","black")[c(1,2,1,2,1,2,1,2,1)] )
+@ % $
+\insfig{boxes}{1.0}{Display of the actually occurring transitions and
+  -rates (in \%/year) and the corresponding risk time in each
+  state. In each state is also shown the number of persons at start
+  and end of the study in each state. Note that the two rightmost
+  boxes are interchanged relative to the figure 4 in
+  \cite{Allignol.2010} in order to have all mortality rates point
+  South-East.}
+\clearpage
+
+\section{The mortality rates}
+
+Once the data is set up in a \texttt{Lexis} object is quite easy to
+model the mortality rates. If we want to fit a joint model for all
+transition rates, we need a stacked dataset; that is a dataset with
+person years and events for each of the transitions. This means (for
+this model) that in the stacked dataset all person-years are
+represented twice, one time for each transition (since all transient
+states have two transitions out of them). This is accomplished by the
+\texttt{stack.Lexis} function, and since \texttt{dli} has class
+\texttt{Lexis}, we can just do:
+<<stack>>=
+st.dli <- stack( dli )
+str( st.dli )
+round(
+cbind( "Original"=with(    dli, tapply( lex.dur, lex.Cst, sum ) ),
+       "Stacked" =with( st.dli, tapply( lex.dur, lex.Cst, sum ) ) ), 1 )
+round( xtabs( cbind( lex.Fail, lex.dur ) ~ lex.Tr, data = st.dli ), 1 )
+@ %
+For the analysis of the deaths we need only the transitions 1,3,5 and 7:
+<<Subset-mort>>=
+dd.dli <- subset( st.dli, lex.Tr %in% levels(lex.Tr)[c(1,3,5,7)] )
+table( dd.dli$lex.Tr )
+@ % $
+In order not to mess up the reporting etc. we remove the non-existent
+levels of the factor \texttt{lex.Tr}:
+<<>>=
+dd.dli$lex.Tr <- factor( dd.dli$lex.Tr )
+round( xtabs( cbind( lex.Fail, lex.dur ) ~ lex.Tr, data=dd.dli ), 1 )
+@ %
+Now we can do a Cox-analysis using time as the underlying timescale,
+and assuming that the mortality rates are proportional on this scale:
+<<Cox-0>>=
+str( dd.dli )
+c0 <- coxph( Surv(tfi,tfi+lex.dur,lex.Fail) ~ lex.Tr, data=dd.dli )
+summary( c0 )
+@ %
+We see that this is pretty consistent with patients being in remission
+having a lower mortality than those in relapse, and with no real
+difference between types of relapse (``Rel'' or ``DLI''). A formal
+pooling of levels can be achieved by \texttt{Relevel}, and we can the
+fit the reduced model and compare to the more elaborate:
+<<Cox-1>>=
+dd.dli$Rst <- Relevel( dd.dli$lex.Tr, list(Remis=c(1,4),Relapse=2:3) )
+with( dd.dli, table( lex.Tr, Rst ) )
+c1 <- coxph( Surv(tfi,tfi+lex.dur,lex.Fail) ~ Rst, data=dd.dli )
+summary( c1 )
+anova( c0, c1, test="Chisq" )
+@ %
+We now leave the Cox-model and turn to a more natural model for the
+underlying rates; a model that assumes a hazard smoothly varying by
+time since initiation.
+
+\subsection{Parametric description of rates}
+
+If we want to get an overview of how mortality rates actually look as
+a function of time since entry into the study, we can invoke a Poisson
+model for time-split data. From the summary on page
+\pageref{summary:dli} we see that the total amount of follow-up is
+about 1500 PY among some 300 patients, so roughly 5 years per person.
+Hence we split data in pieces of 1/10 year, and should get some 15,000 records:
+<<split>>=
+sp.dli <- splitLexis( dli, breaks=seq(0,50,1/10) )
+print.data.frame( subset( sp.dli, id==603 )[,1:13], digits=3 )
+summary( sp.dli )
+@ %
+We observe that the split dataset contains the same amount of
+person-years and event in the appropriate states and transitions, only
+the number of records is larger. The point is that each interval now
+has a different value of the timescales (\texttt{tfi}, \texttt{tfr},
+\texttt{tfD}, and \texttt{tfR}), so that these can be used as a
+covariates. In the first instance we shall only use \texttt{tfi}
+
+This dataset can now be stacked, and subsetted as before to allow for
+analysis of the mortality rates; later we also extract the other part of
+the stacked dataset, referring to the transitions between disease states:
+<<stack-1>>=
+ss.dli <- stack( sp.dli )
+m.dli <- subset( ss.dli, lex.Tr %in% levels(lex.Tr)[c(1,3,5,7)] )
+m.dli$lex.Tr <- factor( m.dli$lex.Tr )
+m.dli$Rst <- Relevel( m.dli$lex.Tr, list(Remis=c(1,4),Relapse=2:3) )
+with( m.dli, ftable( Rst, lex.Tr, lex.Fail, col.vars=3 ) )
+@ %
+We also inspect how the deaths are distributed over the intervals of
+time (since entry, \textit{i.e.} first remission), albeit only for the
+first two years:
+<<tab-split-stack>>=
+YDtab <- xtabs( cbind(lex.dur,lex.Fail) ~ I(floor(tfi*10)/10) + Rst,
+                data=subset(m.dli,tfi<2.1) )
+dnam <- dimnames(YDtab)
+dnam[[3]] <- c("Y","D","rate")
+YDrate <- array( NA, dimnames=dnam, dim=sapply(dnam,length) )
+YDrate[,,1:2] <- YDtab
+YDrate[,,3] <- YDrate[,,2]/YDrate[,,1]*1000
+round( ftable( YDrate, row.vars=1 ), 1 )
+@ %
+We see that there is a very large mortality in the ``Relapse'' group in
+beginning, essentially an immediate death after very early relapse
+(albeit based only on very few cases).
+
+We use natural splines with knots that are located at 0 and at the
+suitable quantiles of the death times:
+<<m-knots>>=
+( m.kn <- with( subset( m.dli, lex.Fail ),
+                c(0,quantile( tfi+lex.dur, probs=1:4/5 )) ) )
+@ %
+We will use natural splines that are generated by the command
+\texttt{ns} from the \texttt{splines} package, but the interface is a
+bit clumsy, so we use the wrapper \texttt{Ns} from the \texttt{Epi}
+package when we model the mortality rates as in the Cox-model, but now
+with an explicit parametric form of the underlying mortality (natural
+splines, using \texttt{Ns}):
+<<Poisson-0>>=
+m0 <- glm( lex.Fail ~ Ns( tfi, knots=m.kn ) + lex.Tr,
+           family = poisson, offset=log(lex.dur), data=m.dli )
+summary( m0 )
+round(ci.lin( m0, E=T ),3)
+@ %
+We see that the value of the regression parameters and their s.e. are
+virtually the same as from the Cox-model:
+<<Poisson-Cox-comp>>=
+round(cbind( ci.lin( m0, subset="->" )[,1:2],
+             ci.lin( c0              )[,1:2] ), 4 )
+round(cbind( ci.lin( m0, subset="->" )[,1:2]/
+             ci.lin( c0              )[,1:2] ), 4 )
+@
+We make the same model reduction as before and make a similar test:
+<<Poisson-1>>=
+m1 <- update( m0, . ~ . - lex.Tr + Rst )
+anova( m0, m1, test="Chisq" )
+@
+with pretty much the same result. But with the Poisson model we can
+easily make a likelihood-ratio tests for non-proportionality, both in
+the case with 4 different transitions, and in the case where we have
+assumed them to be pairwise equivalent:
+<<time-interaction>>=
+m0i <- update( m0, . ~ . + Ns( tfi, knots=m.kn ):lex.Tr )
+m1i <- update( m1, . ~ . + Ns( tfi, knots=m.kn ):Rst )
+anova( m0, m0i, test="Chisq" )
+anova( m1, m1i, test="Chisq" )
+@ %
+It is clear that the test for proportional hazards between the 4
+transitions to death is swamped by too many d.f. and that there
+actually is pretty clear evidence that the mortality rates from the
+remission states and from the relapsed states are not proportional (on
+the \texttt{tfi} scale). This type of analysis would not be
+straight-forward had we used Cox-models, despite the simplicity of the
+question.
+
+Also we can test whether the reduction to two sets of mortality rates
+is OK in the stratified model. This is a formal test of whether the
+four different mortality rates can be reduced to two:
+<<Pairwise>>=
+anova( m0i, m1i, test="Chisq" )
+@ %
+Thus, there is some evidence that there is non-proportionality between
+rates from the remission states and the relapse states, but not much
+evidence that the two sets of rates from remission states and the two
+sets of rates from relapse states are different. Therefore it is of
+interest to see how the underlying rates look in the two groups.
+
+To this end we take a look at the parameters of the model:
+<<i-parms>>=
+ci.lin( m1i )[,1:2]
+@ %
+In order to show the rates we need to multiply the parameters by a
+matrix where each row are numbers to be multiplied to the parameter
+estimates to produce the estimated log-rates at a given point in
+time. This matrix is set up using the same machinery of natural
+splines that was used in the model, but now not with the observed
+values of \texttt{tfi} as in the data, but with the values where we
+want the predictions made, \textit{in casu} \texttt{pr.pt}:
+<<pred-mort>>=
+pr.pt <- seq(0,10,0.02)
+ n.pt <- length( pr.pt )
+CM <- cbind( 1, Ns( pr.pt, knots=m.kn ) )
+@ %
+This is the matrix that we must multiply to the parameter vector (or
+subset of it) in order to get the log-mortality rates evaluated at the
+points in \texttt{pr.pt}. The function \texttt{ci.exp} exponentiates
+the results so that they are given as rates with 95\% c.i.s:
+<<mortality-rates>>=
+Rem.Dead <- ci.exp( m1i, ctr.mat=cbind(CM,CM*0) )
+Rel.Dead <- ci.exp( m1i, ctr.mat=cbind(CM,CM  ) )
+@ %
+Once we have the rates, we can plot them:
+<<rates,fig=TRUE>>=
+par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6 )
+matplot( pr.pt, cbind( Rem.Dead, Rel.Dead )*100, log="y", ylim=c(1,400),
+         type="l", lty=1, lwd=c(3,1,1), las=1,
+         col=rep(clr<-c("limegreen","red"),each=3),
+         ylab="Mortality rates per 100 PY", xlab="Time since entry" )
+text( c(10,10), 400*c(0.8,1), c("Remission","Relapse"), col=clr,
+      adj=c(1,1) )
+@ %
+We do not show this plot, because we also want to include RR between
+the two rates as a function of time. Note that the RR is easily
+obtained by using a different contrast matrix:
+<<withRR,fig=TRUE,width=8>>=
+RR.RmRl <- ci.exp( m1i, ctr.mat=cbind(CM*0,CM) )
+par( mar=c(3,4,1,4), mgp=c(3,1,0)/1.6 )
+matplot( pr.pt, cbind( Rem.Dead, Rel.Dead )*100, log="y", ylim=c(1,400),
+         type="l", lty=1, lwd=c(3,1,1),
+         col=rep(c("limegreen","red"),each=3),
+         ylab="Rate per 100 PY", xlab="Time since entry", yaxt="n" )
+abline( h=10 )
+text( c(10,10), 400*c(0.8,1),
+      c("Remission","Relapse"), col=c("limegreen","red"),
+      adj=c(1,1), font=2 )
+matlines( pr.pt, RR.RmRl*10, type="l", lty=1, lwd=c(3,1,1), col="blue" )
+yt <- outer(c(1,2,5),c(1,10,100,1000),"*")
+axis( side=2, at=yt, labels=yt   , las=1 )
+axis( side=4, at=yt, labels=yt/10, las=1 )
+mtext( "Rate ratio", side=4, line=2, col="blue" )
+@ %
+\insfig{withRR}{1.0}{Estimated baseline mortality rates from remission
+  (green) and relapse (red), and the ratio of them (blue).}
+
+From the figure \ref{fig:withRR} we clearly see the assumption about
+linear log-rates beyond the rightmost knot (at 2.3) where only 25\%
+of deaths occur. Also it is clear that it is during the first 2 years
+the mortality rates from relapse and remission are non-proportional.
+
+\clearpage
+
+\section{Transitions between disease states}
+\label{sec:other-trans-rates}
+
+If we want a description of how patients fare through the states we
+must provide statistical model for \texttt{all} transitions.
+
+For the non-mortality transition rates there is not much sense in
+having common rates, so we fit a separate rate for each.
+
+However, we first explore how events are distributed along the
+timescale for the different transitions:
+<<events,fig=TRUE,width=9>>=
+str( ss.dli )
+with( subset( ss.dli, lex.Fail & lex.Tr %in% levels(lex.Tr)[-c(1,3,5,7)] ),
+      dotchart( tfi+lex.dur, groups=factor(lex.Tr), pch=16, cex=0.8) )
+@ %
+\insfig{events}{0.9}{Distribution of transition times for the
+  non-death events.}
+From figure \ref{fig:events} it seems that there is a reasonable
+distribution of event times for all 4 types of transitions, so we use
+the same set of knots for all transitions:
+<<progress-subset>>=
+p.dli <- subset( ss.dli, lex.Tr %in% levels(lex.Tr)[-c(1,3,5,7)] )
+p.dli$lex.Tr <- factor( p.dli$lex.Tr )
+( p.kn <-with( subset( p.dli, lex.Fail ),
+               c(0,quantile( tfi+lex.dur, probs=1:3/4 )) ) )
+@ %
+A quick glance at figure \ref{fig:boxes}, however shows that there is
+virtually no information to estimate the transition from
+Rem2$\rightarrow$Rel2, so we pool this transition with the transition
+Rem$\rightarrow$Rel:
+<<>>=
+p.dli$lex.Tr <- Relevel( p.dli$lex.Tr, list("Rem->Rel"=c(1,4), 2, 3 ) )
+@ %
+With the new set of knots defined we now for separate transition rates
+for the four remaining transitions (modeled as 3). Note that we use
+\texttt{intercept=TRUE} to include the intercept with the natural spline:
+<<pr-modl>>=
+p2 <- glm( lex.Fail ~ Ns( tfi, knots=p.kn, intercept=TRUE ):lex.Tr -1 ,
+           family = poisson, offset=log(lex.dur), data=p.dli )
+summary( p2 )
+round(ci.exp( p2, Exp=FALSE ), 2 )
+@
+We now apply the same machinery as before, and construct a contrast
+matrix to extract the transition rates:
+<<pr-ctr-mat>>=
+CP <- Ns( pr.pt, knots=p.kn, intercept=TRUE )
+Rem.Rel <- ci.exp( p2, subset="TrRem", ctr.mat=CP )
+Rel.DLI <- ci.exp( p2, subset="TrRel", ctr.mat=CP )
+DLI.Rem <- ci.exp( p2, subset="TrDLI", ctr.mat=CP )
+@ %
+and we can plot these three \emph{progression} rates together:
+<<pr-rates,fig=TRUE,width=8>>=
+par( mar=c(3,4,1,4), mgp=c(3,1,0)/1.6 )
+matplot( pr.pt, cbind(Rem.Rel,Rel.DLI,DLI.Rem)*100, log="y", ylim=c(1,500),
+         type="l", lty=1, lwd=c(3,1,1),
+         col=rep(c("limegreen","red","blue"),each=3),
+         ylab="Progression rate per 100 PY", xlab="Time since entry" )
+par(font=2)
+legend( "topright", legend=c("Remission > Relapse",
+                             "Relapse > DLI",
+                             "DLI > Remission"), bty="n",
+        text.col=c("limegreen","red","blue"), xjust=1 )
+@ %
+\insfig{pr-rates}{0.9}{Estimated disease progression rates.}
+\clearpage
+
+\section{State occupancy probability}
+
+In the paper by Allignol \textit{et al.}\cite{Allignol.2010}, the
+probabilities are referred to as transition probabilities. But since
+the authors only ever consider transition probabilities from time 0,
+they are just probabilities of being in a particular state at some
+time (given of course that the person starts in the study at time 0).
+
+The progression rates as shown are difficult to interpret, so we will
+instead have a look at how state occupancy looks. Also to be able to
+show how the overall remission probability evolves, that is how the
+probability of being in one of the states ``Rem'' and ``Rem2'' changes
+with time since entry into the study.
+
+We can compute the probability of being in a particular state at
+various times by multiplying the initial state distribution vector (in
+this case $(1,0,0,0,0,0,0,0,0)$), by multiplying it by the transition
+matrix, that is the matrix of transition probabilities between states.
+Now this varies by time, because the transition rates vary. But we
+have computed the transition rates at narrowly spaced intervals, so we
+can make a very good approximation of the transition probabilities by
+computing them under the assumption of constant rates in these small
+intervals. Using \texttt{unique} demonstrates that differences are
+never reliable in in computing:
+<<pr-pt-interval>>=
+pr.pt[1:5]
+unique( diff(pr.pt) )
+( il <- mean( diff(pr.pt) ) )
+@
+What needs to be done now is to set up a structure (array) with the
+transition probability matrices as slices and the third dimension
+being the times in \texttt{pr.pt}, so that each slice represents the
+transition probability at that point.
+
+First we fetch the state names from the \texttt{Lexis} object, and
+then set up the array with transition probabilities at different times:
+<<tr-mat>>=
+states <- levels( dli$lex.Cst )
+dnam <- list(From=states, To=states, time=pr.pt )
+AR <- array( 0, dimnames=dnam, dim=sapply(dnam,length) )
+str( AR )
+@ % $
+Then we fill the array \texttt{AR} with the rates for the actually
+existing transitions, and from these later compute the one-step
+transition probabilities in \texttt{AP}:
+<<fill-tr>>=
+AR["Rem" ,"D/Rem" ,] <- Rem.Dead[,1]
+AR["Rem2","D/Rem2",] <- Rem.Dead[,1]
+AR["Rel" ,"D/Rel" ,] <- Rel.Dead[,1]
+AR["DLI" ,"D/DLI" ,] <- Rel.Dead[,1]
+AR["Rem" ,"Rel"   ,] <-  Rem.Rel[,1]
+AR["Rem2","Rel2"  ,] <-  Rem.Rel[,1]
+AR["Rel" ,"DLI"   ,] <-  Rel.DLI[,1]
+AR["DLI" ,"Rem2"  ,] <-  DLI.Rem[,1]
+@
+Now we need to fill in the transition probabilities corresponding to a
+single step of length \texttt{il}. Here we must use the formulae for
+transition probabilities under competing risks:
+\begin{align*}
+  \text{P}\{\text{event of type 1 before $b$ }|\text{ alive at $a$}\}
+  &= \int_a^b \lambda_1(s)
+     \exp\left(\int_a^s \lambda_1(u)+\lambda_2(u) \dif u\right) \dif s\\
+  &= \frac{\lambda_1}{\lambda_1+\lambda_2}
+     \Bigl(1-\exp\bigr(-(b-a)(\lambda_1+\lambda_2)\bigr)\Bigr)
+\end{align*}
+So first we compute the sum of the intensities \emph{out} of each state
+(dimension 1 of \texttt{AR}) in each interval (dimension 3 of \texttt{AR}):
+<<diag-tr>>=
+SI <- apply(AR,c(1,3),sum)
+@
+This must now be swept through the array to form the transition
+probabilities as well as the probabilities of remaining in the state:
+<<tp-mat>>=
+AP <- AR
+for( i in 1:(dim(AP)[3]) )
+   {
+   AP[,,i] <- AR[,,i]/SI[,i] * (1-exp(-SI[,i]*il))
+   diag(AP[,,i]) <- exp(-SI[,i]*il)
+   }
+AP[is.na(AP)] <- 0
+round( SI[,1], 4 )
+round( ftable( AR[,,50+1:2], row.vars=c(3,1)), 4 )
+round( ftable( AP[,,50+1:2], row.vars=c(3,1)), 4 )
+@
+Each of the slices of the array \texttt{AP} is a matrix of transition
+probabilities.
+
+Suppose the initial state distribution is $\pi_0$, in this case a
+vector of length 9: $\pi_o = (1,0,0,0,0,0,0,0,0)$. The probability
+distribution after one step is then $\pi_1=\pi_0 A_1$, where $A_1$ is the
+transition matrix for the first interval. After two steps it is $\pi_1
+A_2$ and so forth.
+
+So now we set up an array to store the state-distribution at different
+times; it has the same structure as the \texttt{SI} array:
+<<state-occ>>=
+pi0 <- c(1,rep(0,8))
+ST <- SI*0
+ST[,1] <- pi0 %*% AP[,,1]
+for( i in 2:dim(ST)[2] ) ST[,i] <- ST[,i-1] %*% AP[,,i]
+str( ST )
+round(t(ST[,1:10]),3)
+@ %
+The estimated occupancy probabilities for each of the states can now easily be plotted:
+<<state-plot,fig=TRUE>>=
+matplot( pr.pt, t(ST)[,-1], type="l", ylim=c(0,0.5), las=1,
+         lty=1, lwd=2, col=rainbow(8),
+         xlab="Time since 1st remission", ylab="Fraction of patients" )
+legend( "topleft", legend=rownames(ST)[-1],
+        bty="n", lty=1, lwd=2, col=rainbow(8),
+        ncol=1 )
+@ %
+\insfig{state-plot}{0.9}{Estimated state occupancy probabilities for
+  each state.} 
+Once we have that, we can plot the more easily understandable
+\emph{cumulative} state-occupancies, by cumulating over the 1st
+dimension of \texttt{ST} (that is a loop over dimension 2), which in
+the case of using \texttt{cumsum} returns a vector, and so adds a
+dimension equal to the length of this as the \emph{first} dimension of
+the result:
+<<cum-states>>=
+cST <- apply(ST,2,cumsum)
+@ %
+This could easily be plotted using \textit{e.g.}:
+<<eval=FALSE>>=
+matplot( pr.pt, t(cST), type="l", lty=1, lwd=2 )
+@ %
+It would however be nicer to be able to show the states in an arbitrary
+order; but this is easily packed into one command, by defining a
+vector \texttt{perm} which is a permutation of the levels:
+<<state-occ-1,fig=TRUE,width=7>>=
+perm <- c(1,3,5,7,9,2,4,6,8)
+dimnames(ST)[[1]][perm]
+matplot( pr.pt, t(apply(ST[perm,],2,cumsum)), type="l", lty=1, lwd=2 )
+@ %
+This is not extremely informative, because it is the space between the
+lines that is of interest.  Moreover it would be relevant to be able
+to write the state-names at the ends, for example:
+<<state-occ-2,fig=TRUE,width=7>>=
+endpos <- cumsum(ST[perm,n.pt]) - ST[perm,n.pt]/2
+matplot( pr.pt, t(apply(ST[perm,],2,cumsum)),
+         type="l", lty=1, lwd=2, col=gray(c(0.6,0)[c(1,1,1,1,2,1,1,1,1)]),
+         xlim=c(0,11.5), ylim=c(0,1), yaxs="i" )
+text( 10.05, endpos, dimnames(ST)[[1]][perm], font=2, adj=0 )
+@ %
+Furthermore, if we want to color the areas between the curves, we just
+start from the top and color the area underneath each curve. We also
+make sure that there is place for the labels at the edges (although
+the algorithm for this is not complete yet). We put it all in a function
+with \texttt{perm} as an argument, to allow us to change the ordering
+of the states:
+<<state-occ-fun>>=
+state.occ <-
+function( perm=1:n.st, line=NULL )
+{
+clr <- st.col[perm]
+
+mindist <- 1/40
+endpos <- cumsum(ST[perm,n.pt]) - ST[perm,n.pt]/2
+minpos <- (1:n.st-0.5)*mindist
+maxpos <- 1-rev(minpos)
+endpos <- pmin( pmax( endpos, minpos ), maxpos )
+
+stkcrv <- t(apply(ST[perm,],2,cumsum))
+matplot( pr.pt, stkcrv,
+         type="l", lty=1, lwd=1, col="transparent",
+         xlim=c(0,11.5), ylim=c(0,1), yaxs="i", xaxs="i", bty="n",
+         xlab="Time since 1st remission", ylab="Fraction of patients" )
+text( 10.05, endpos, dimnames(ST)[[1]][perm], font=2, adj=0, col=clr )
+for( i in 9:1 )
+polygon( c( pr.pt, rev(pr.pt) ),
+         c( stkcrv[,i], if(i>1) rev(stkcrv[,i-1]) else rep(0,n.pt) ),
+         col=clr[i], border=clr[i] )
+if( !is.null(line) )
+matlines( pr.pt, stkcrv[,line], type="l", lty=1, lwd=3, col="black" )
+}
+@ %
+With this function in place we can make plots for different orderings
+of the states, but maintaining the colors for each state. Also note
+that we have grouped the ``alive'' states together, so we can sensibly
+show the survival curve, separating the alive from the dead:
+<<state-occ-col1,fig=TRUE,height=8>>=
+state.occ( perm=1:n.st )
+@ %
+<<state-occ-col2,fig=TRUE,height=8>>=
+state.occ( perm=c(1,3,5,7,9,2,4,6,8), line=5 )
+@ %
+\begin{figure}[h]
+  \centering
+\includegraphics[width=0.48\textwidth]{etm-state-occ-col1}
+\includegraphics[width=0.48\textwidth]{etm-state-occ-col2}
+  \caption{Estimated state occupancy probabilities. The only
+    difference is the ordering of the states. The black line in the
+    rightmost display is the estimated survival curve.}
+\label{fig:state-occ}
+\end{figure}
+\clearpage
+
+\subsection{Confidence interval for state occupancies}
+
+The uncertainty of these cumulative probabilities are not easily
+assessed, because they are non-linear functions of the parameters of
+the \texttt{glm}s used to fit the data.
+
+The natural thing to do would therefore be to simulate in some way.
+Either by bootstrapping the original data and redo the entire analysis
+for each bootstrap sample, thereby giving a sample from the
+``posterior'' distribution of the relevant quantities.
+
+Or (slightly simpler) by simulation from an assumed normal
+distribution of the parameter estimates in the model. The latter is
+achieved by using the \texttt{sample=} argument to \texttt{ci.lin},
+which when set to a number takes a random sample of that size from a
+multivariate normal distribution with mean equal to the estimated
+parameters and variance-covariance matrix equal to the estimated
+variance-covariance matrix of the parameters.
+
+In order for this to work we should wrap all the previous stuff up in
+a couple of functions that does the work in suitable bits:
+\begin{itemize}
+\item Extract the transition rates and stuff them in a structure --- \texttt{get.rates}
+\item Transform the transition matrices to probabilities
+\item Draw the curves (areas) in color and superpose them with
+  confidence intervals.
+\end{itemize}
+
+When drawing a sample from the posterior we use the argument
+\texttt{sample} to \texttt{ci.lin}, that draws a sample from a
+multivariate normal with mean equal to the parameter estimates and
+variance equal to the estimated variance-covariance matrix, and
+transforms each sample by the supplied contrast matrix:
+<<>>=
+get.rates <- function( N=10 )
+{
+Rem.Dead <- ci.lin( m1i,                 ctr.mat=cbind(CM,CM*0), sample=N )
+Rel.Dead <- ci.lin( m1i,                 ctr.mat=cbind(CM,CM  ), sample=N )
+Rem.Rel  <- ci.lin( p2 , subset="TrRem", ctr.mat=CP            , sample=N )
+Rel.DLI  <- ci.lin( p2 , subset="TrRel", ctr.mat=CP            , sample=N )
+DLI.Rem  <- ci.lin( p2 , subset="TrDLI", ctr.mat=CP            , sample=N )
+states <- levels( dli$lex.Cst )
+dnam <- list( From = states,
+                To = states,
+              time = pr.pt,
+            sample = 1:N )
+AR <- AP <- array( 0, dimnames=dnam, dim=sapply(dnam,length) )
+AR["Rem" ,"D/Rem" ,,] <- exp(Rem.Dead)
+AR["Rem2","D/Rem2",,] <- exp(Rem.Dead)
+AR["Rel" ,"D/Rel" ,,] <- exp(Rel.Dead)
+AR["DLI" ,"D/DLI" ,,] <- exp(Rel.Dead)
+AR["Rem" ,"Rel"   ,,] <- exp(Rem.Rel )
+AR["Rem2","Rel2"  ,,] <- exp(Rem.Rel )
+AR["Rel" ,"DLI"   ,,] <- exp(Rel.DLI )
+AR["DLI" ,"Rem2"  ,,] <- exp(DLI.Rem )
+AR
+}
+system.time( AR <- get.rates(1000) )
+str( AR )
+@ % $
+Thus in this general setup, we now have a function that produces an
+array classified by states$\times$states$\times$times$\times$samples,
+which contains (samples of) the transition rates in the appropriate
+places in the resulting array.
+
+Then we need a function that transforms this to a similar array of
+transition probabilities:
+<<AR-AP>>=
+trans.prob <-
+function( AR )
+{
+# A matrix for transition probabilities:
+AP <- AR * 0
+# Compute the interval length for the give rates
+il <- mean( diff( as.numeric( dimnames(AR)[[3]] ) ) )
+# Sum of the Intensities out of each state
+SI <- apply(AR,c(1,3,4),sum)
+for( i in 1:dim(AR)[3] ) # Loop over times
+for( j in 1:dim(AR)[4] ) # Loop over samples
+   {
+   AP[,,i,j] <- AR[,,i,j]/SI[,i,j] * (1-exp(-SI[,i,j]*il))
+   diag(AP[,,i,j]) <- exp(-SI[,i,j]*il)
+   }
+AP[is.na(AP)] <- 0
+invisible( AP )
+}
+system.time( AP <- trans.prob( AR ) )
+@ %
+We have now computed the transition probabilities for each time for
+each of the samples from the parameter estimates. So with this we can
+now compute the state occupancy probabilities:
+<<AP-ST>>=
+pi0 <- rep(1:0,c(1,n.st-1))
+ST  <- AP[1,,,]*0
+names( dimnames(ST) )[1] <- "State"
+str( ST )
+system.time(
+for( j in 1:dim(ST)[3] )
+   {
+   ST[,1,j] <- pi0 %*% AP[,,1,j]
+   for( i in 2:dim(ST)[2] ) ST[,i,j] <- ST[,i-1,j] %*% AP[,,i,j]
+   }
+            )
+str( ST )
+@ %
+By this time we have $N=1000$ samples of occupancy probabilities as
+functions of time. If we want to plot these in a given order, we
+should \emph{first} make the cumulative sums for each of these over
+states as indicated by \texttt{perm}. Then we take for example the 5, 50
+and 95\% quantiles, and use the median to demarcate the colored
+chunks, and the 5th and 95th percentiles to make shaded areas showing
+the (point-wise) 90\% confidence for the probabilities.
+
+This amounts to a slight modification and expansion of the
+\texttt{state.occ} function. We show the confidence bands by
+overlaying a transparent gray shade over the demarcations between the
+colors showing the occupancy probabilities. This is done using the color
+\texttt{rgb(1/9,1/9,1/9,1/9)}, which is a transparent light gray.
+<<def-st-oc-sim>>=
+state.occ.sim <-
+function( perm = 1:n.st,
+           pct = c(5,95),
+         cicol = rgb(1/9,1/9,1/9,1/9),
+          line = NULL )
+{
+clr <- st.col[perm]
+cST <- apply(ST[perm,,],2:3,cumsum)
+cST <- apply(cST,1:2,quantile,probs=c(pct/100,0.5) )
+mindist <- 1/40
+endpos <- cST["50%",,n.pt] - diff(c(0,cST["50%",,n.pt]))/2
+minpos <- (1:n.st-0.5)*mindist
+maxpos <- 1-rev(minpos)
+endpos <- pmin( pmax( endpos, minpos ), maxpos )
+
+matplot( pr.pt, t(cST["50%",,]),
+         type="n", # lty=1, lwd=2, col=gray(c(0.6,0)[c(1,2,1,2,1,2,1,2,1)]),
+         xlim=c(0,11.5), ylim=c(0,1), yaxs="i", xaxs="i", bty="n",
+         xlab="Time since 1st remission", ylab="Fraction of patients" )
+text( 10.05, endpos, dimnames(ST)[[1]][perm], font=2, adj=0, col=clr )
+for( i in n.st:1 )
+polygon( c( pr.pt, rev(pr.pt) ),
+         c( cST["50%",i,], if(i>1) rev(cST["50%",i-1,]) else rep(0,dim(cST)[3]) ),
+         col=clr[i], border=clr[i] )
+for( i in n.st:1 )
+polygon( c( pr.pt, rev(pr.pt) ),
+         c( cST[1,i,], rev(cST[2,i,]) ),
+         col=cicol, border=cicol )
+if( !is.null(line) ) matlines( pr.pt, t(cST["50%",c(line,NA),]),
+                               type="l", lty=1, lwd=3, col="black" )
+}
+@ %
+With this function we can now plot various versions of the display, to
+show how the shaded confidence bands work:
+<<states-ci1,fig=TRUE,height=8>>=
+par(mar=c(3,3,1,1),mgp=c(3,1,0)/1.6,las=1)
+state.occ.sim( pct=c(5,95) )
+@ %
+<<states-ci2,fig=TRUE,height=8>>=
+par(mar=c(3,3,1,1),mgp=c(3,1,0)/1.6,las=1)
+state.occ.sim( perm=c(1,3,5,7,9,2,4,6,8), pct=c(5,95), line=5 )
+@ %
+\begin{figure}[h]
+  \centering
+\includegraphics[width=0.48\textwidth]{etm-states-ci1}
+\includegraphics[width=0.48\textwidth]{etm-states-ci2}
+\caption{Estimated state occupancy probabilities with 90\% confidence
+  bands based on a simulated sample of 1000 from the ``posterior''
+  distribution of the parameters from the Poisson model(s) for the
+  transitions. The only difference is the ordering of the states; in
+  the right hand panel the alive states are grouped together and the
+  black line represents the survival curve.}
+\label{fig:states-ci2}
+\end{figure}
+
+\section{Probability of being in remission}
+
+Allignol \textit{et al.}\cite{Allignol.2010} produce a plot of the
+probability of being in remission, currently leukaemia free survivor
+(CLFS) that is in either state ``Rem'' or ``Rem2''. Incidentally this
+can easily be shown by changing the ordering in the above plot, as
+shown in figure \ref{fig:xstates}:
+<<states-cirem,fig=TRUE,height=8>>=
+par(mar=c(3,3,1,1),mgp=c(3,1,0)/1.6,las=1)
+state.occ.sim( perm=c(1,7,3,5,9,4,6,8,2), pct=c(5,95), line=c(2,5) )
+@ %
+\insfig{states-cirem}{0.48}{Estimated state occupancy probabilities
+  with 90\% confidence bands based on a simulated sample of 1000 from
+  the ``posterior'' distribution of the parameters from the Poisson
+  model(s) for the transitions. The black lines represent the
+  probability of being alive in remission and the probability of being
+  alive at all. The only difference to figure \ref{fig:states-ci2} is
+  the ordering of the states.}
+
+With our posterior sample we can also quite easily give a
+parametrically estimated counterpart of the 95\% confidence interval
+to compare with the estimate from the \texttt{etm} package:
+<<parm-CLFS>>=
+CLFS <- apply( ST["Rem",,]+ST["Rem2",,], 1, quantile, probs=c(500,25,975)/1000 )
+str( CLFS )
+@ %
+This can now be plotted and compared with the results using the
+\texttt{etm} package:
+<<CLFS, fig=TRUE>>=
+par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6 )
+matplot( pr.pt, t(CLFS),
+         type="l", lty=1,lwd=c(3,1,1), col="black",
+         ylim=c(0,1),
+         ylab="P(CLFS)", xlab="Time since first remission" )
+@ %
+We do not show this figure, because we will overlay the estimated curve
+on the non-parametrically estimated curve that that can be computed
+from the \textrm{etm} package. This is essentially code from the paper
+\cite{Allignol.2010}, tidied a bit for readability:
+<<etm-ex, fig=TRUE, width=8, height=6>>=
+tra <- matrix(FALSE, 9, 9,
+              dimnames = list(as.character(0:8), as.character(0:8)))
+tra[1, 2:3] <- TRUE
+tra[3, 4:5] <- TRUE
+tra[5, 6:7] <- TRUE
+tra[7, 8:9] <- TRUE
+### computation of the transition probabilities
+dli.etm <- etm(dli.data, as.character(0:8), tra, "cens", s = 0)
+str(dli.etm)
+### Computation of the clfs + var clfs
+clfs <- dli.etm$est["0", "0", ] +
+        dli.etm$est["0", "6", ]
+var.clfs <- dli.etm$cov["0 0", "0 0", ] +
+            dli.etm$cov["0 6", "0 6", ] +
+        2 * dli.etm$cov["0 0", "0 6", ]
+## computation of the 95% CIs + plot
+ciplus  <- clfs + qnorm(0.975) * sqrt(var.clfs)
+cimoins <- clfs - qnorm(0.975) * sqrt(var.clfs)
+
+plot(dli.etm$time, clfs, type = "s", lwd=3,
+     bty = "n", ylim = c(0, 1), yaxs="i", las=1,
+     xlab = "Time since 1st remission (years)",
+     ylab = "P(CLFS)" )
+lines(dli.etm$time, cimoins, lty = 3, type = "s")
+lines(dli.etm$time, ciplus , lty = 3, type = "s")
+matlines( pr.pt, t(CLFS), lty=c(1,3,3), lwd=c(3,1,1), col="red" )
+@ % $
+\insfig{etm-ex}{0.95}{Estimated probability of CLFS, with confidence
+  bands based on simulation from an assumed normal distribution of the
+  estimates (red curve), compared with the non-parametric curve for
+  the \textrm{\tt etm} package.}
+
+From figure \ref{fig:etm-ex} it is pretty clear that the
+non-parametric approach gives qualitatively the same result as the
+parametric approach, but also that the non-parametric modeling
+represents an over-modeling of the shape of the probability of CLFS
+which is not biologically credible and hence in general should be
+avoided.
+
+\clearpage
+
+\section{Linking the \texttt{Epi} and \texttt{etm} packages.}
+
+For the sake of completeness we have included a function in
+\texttt{Epi} that automatically converts a \texttt{Lexis} object to a
+data frame of the relevant structure for input into the \texttt{etm}
+package. Note that even though there is an \texttt{etm} method for
+\texttt{Lexis} objects, we must call \texttt{etm.Lexis} explicitly,
+because we loaded the \texttt{etm} package \emph{after} the
+\texttt{Epi} package, and thus \texttt{Epi:::etm} will be masked by
+\texttt{etm:::etm}. Instead we could call \texttt{Epi:::etm}
+explicitly, but that would be really goofy looking code.
+<<etm-ex2, fig=TRUE, width=8, height=8>>=
+xdli.etm <- etm.Lexis( dli )
+str( xdli.etm )
+plot( xdli.etm, col=rainbow(15), lty=1, lwd=3,
+      legend.pos="topright", bty="n", yaxs="i" )
+@ %
+\insfig{etm-ex2}{0.9}{Estimated transition probabilities between
+  states using the \texttt{etm.Lexis} function.}
+The resulting graph is shown in figure \ref{fig:etm-ex2}
+
+% \chapter{Including duration and time of entry}
+% \label{cha:incl-durat-time}
+
+\bibliographystyle{plain}
+\input{etm-bbl}
+% \bibliography{%
+%   /home/bendix/art/bibtex/Stat,%
+%   /home/bendix/art/bibtex/BxC%
+%   }
+\addcontentsline{toc}{section}{References}
+
+\end{document}

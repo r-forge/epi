@@ -4,7 +4,7 @@
 \title{Create a bootstrap sample of persons (\code{lex.id}) from a Lexis object 
 }
 \description{
-\code{lex.id} is the identifier of persons in a \link{\code{Lexis}}
+\code{lex.id} is the identifier of persons in a \code{\link{Lexis}}
 object. This
 }
 \usage{
@@ -51,7 +51,6 @@ xcoh <- structure( list( id = c("A", "B", "C"),
                   row.names = c("1", "2", "3"),
                       class = "data.frame" )
 xcoh <- cal.yr( xcoh, format="\%d/\%m/\%Y", wh=2:4 )
-xcoh <- cal.yr( xcoh, format="%d/%m/%Y", wh=2:4 )
 Lcoh <- Lexis( entry = list( per=entry ),
                 exit = list( per=exit, age=exit-birth ),
          exit.status = fail,
@@ -62,7 +61,7 @@ Lx$lex.id <- 1:10
 Lx <- splitLexis( Lx, breaks=0:10*10, "age" )
 Lx
 boot.Lexis( Lx )
-boot.Lexis( Lx, size=5 )
+boot.Lexis( Lx, size=7 )
 boot.Lexis( Lx, by="id" )
 boot.Lexis( Lx, by="id", size=c(2,2,2) )
 }

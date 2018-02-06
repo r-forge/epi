@@ -1,4 +1,4 @@
-### R code from vignette source 'simLexis'
+### R code from vignette source 'simLexis.rnw'
 ### Encoding: UTF-8
 
 ###################################################
@@ -389,19 +389,19 @@ box( lwd=3 )
 
 
 ###################################################
-### code chunk number 27: CHANGE1
+### code chunk number 27: CHANGE1 (eval = FALSE)
 ###################################################
-source( "../R/simLexis.R", keep.source=TRUE )
+## source( "../R/simLexis.R", keep.source=TRUE )
 
 
 ###################################################
-### code chunk number 28: CHANGE2 (eval = FALSE)
+### code chunk number 28: CHANGE2
 ###################################################
-## simX <- Epi:::simX
-## sim1 <- Epi:::sim1
-## lint <- Epi:::lint
-## get.next <- Epi:::get.next
-## chop.lex <- Epi:::chop.lex
+simX <- Epi:::simX
+sim1 <- Epi:::sim1
+lint <- Epi:::lint
+get.next <- Epi:::get.next
+chop.lex <- Epi:::chop.lex
 
 
 ###################################################

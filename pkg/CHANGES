@@ -1,3 +1,13 @@
+Changes in 2.25
+
+o boot.Lexis for bootstrapping persons from a Lexis object
+  added. nid.Lexis counting the no of persons in a Lexis object as
+  utility added.
+
+o dataset BrCa used for illustration of the Crowther and Lambert paper
+  added together with a vignette using the data to illustrate a subset
+  of the analyses as in the paper, plus some extra.
+
 Changes in 2.24
 
 o Bug in Relevel functionality when using a 2-column structure for

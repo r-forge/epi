@@ -221,7 +221,7 @@ function(entry, exit, duration, entry.status=0, exit.status=0, id, data,
     lex <- cbind(lex, data)
   }
 
-  ## Drop rows with short or negantive duration for consistency with splitLexis
+  ## Drop rows with short or negative duration for consistency with splitLexis
   short.dur <- lex$lex.dur <= tol
   if ( any(short.dur) ) {
       warning("Dropping ", sum(short.dur),

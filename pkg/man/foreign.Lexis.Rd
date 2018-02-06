@@ -4,7 +4,7 @@
 \alias{msdata.Lexis}
 \alias{etm}
 \alias{etm.Lexis}
-\title{Create a data structures suitable for use with packages mstate, etm.
+\title{Create a data structures suitable for use with packages \code{mstate} or \code{etm}.
   }
 \description{
 The \code{mstate} package requires input in the form of a stacked
@@ -81,6 +81,7 @@ if( require(etm) )
 {
 dmi <- subset(dmi,lex.id<1000)
 etm.D <- etm.Lexis( dmi, time.scale=3 )
+str( etm.D )
 plot( etm.D, col=rainbow(5), lwd=2, lty=1, xlab="DM duration" )
 }
 }

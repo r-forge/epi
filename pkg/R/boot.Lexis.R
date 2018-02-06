@@ -1,5 +1,5 @@
 # The method
-nid.default <- function ( Lx, ... ) UseMethod("nid")
+nid <- function ( Lx, ... ) UseMethod("nid")
 
 nid.Lexis <-
 function( Lx, by=NULL )
@@ -20,9 +20,10 @@ else
 boot.Lexis <-
 function( Lx,
         size = NULL,
-          by = NULL,
-     lex.xid = 0 )
+          by = NULL )
 {
+if( !inherits( Lx, "Lexis" ) ) stop("Only meaningful for Lexis objects.")
+    
 isDT <- inherits( Lx, "data.table" )
 if( isDT ) class( Lx ) <- c("Lexis","data.frame")
     
@@ -62,9 +63,12 @@ bLx <- NULL
 max.id <- 0
 for( j in 1:max(tt) )
    {
-   # who appears at least j times in the sample
-   wh.id <<- names(tt[tt>=j])
-   sb <- subset( Lx, lex.id %in% wh.id )
+   # avoid note about no visible binding
+       wh <- NULL
+   lex.id <- NULL
+   # who appears at least j times in the sample ?
+   wh <<- names(tt[tt>=j])
+   sb <- subset( Lx, lex.id %in% wh )
    # remember their original id
    sb$old.id <- sb$lex.id
    # to assure that different samples of the same person has different lex.id
