@@ -1,6 +1,13 @@
+%\VignetteIndexEntry{Multistate example from Crowther and Lambert - with multiple timescales}
 \SweaveOpts{results=verbatim,keep.source=TRUE,include=FALSE,eps=FALSE}
 \documentclass[a4paper,dvipsnames,twoside,12pt]{article}
-
+<<echo=FALSE>>=
+options( width=90,
+#        prompt=" ", continue=" ", # Absence of prompts makes it easier for
+                                   # students to copy from the final pdf document
+         SweaveHooks=list( fig=function()
+         par(mar=c(3,3,1,1),mgp=c(3,1,0)/1.6,las=1,bty="n") ) )
+@ %
 % ----------------------------------------------------------------------
 % General information for the title page and the page headings
 \newcommand{\Title}{Multistate example from\\ Crowther \& Lambert\\---
@@ -36,7 +43,7 @@ First we load the relevant packages and then the example data from the
 <<read>>=
 library( Epi )
 library( popEpi )
-load( file="../data/BrCa.rda" )
+load( file="./BrCa.rda" )
 # data( BrCa )
 head( BrCa )
 @ %
@@ -617,7 +624,7 @@ So now we have two arrays to hold the state occupancy probabilities
 for all combinations of nodes, size and time from diagnosis; thus we
 need a loop over the 15 subsets to devise the relevant probabilities
 and put them in the arrays:
-<<fillNArr,eval=TRUE>>=
+<<fillNArr,eval=FALSE>>=
 for( nn in dimnames(prA)[[1]] )
 for( ss in dimnames(prA)[[2]] )
    {
@@ -778,14 +785,17 @@ So far this is left as an exercise to the reader\ldots
 
 \renewcommand{\bibname}{References}
 \bibliographystyle{plain}
-\input{BrCaMS-bbl}
-%% \bibliography{%
-%% /home/bendix/art/bibtex/BxC,%
-%% /home/bendix/art/bibtex/Stat,%
-%% /home/bendix/art/bibtex/DMCa,%
-%% /home/bendix/art/bibtex/Diabetes%
-%% }
+\begin{thebibliography}{1}
+\bibitem{Crowther.2017}
+M.~J. Crowther and P.~C. Lambert.
+\newblock {{P}arametric multistate survival models: {F}lexible modelling
+  allowing transition-specific distributions with application to estimating
+  clinically useful measures of effect differences}.
+\newblock {\em Stat Med}, 36(29):4719--4742, Dec 2017.
+\end{thebibliography}
 \addcontentsline{toc}{section}{\bibname}
+
+\end{document}
 
 \clearpage
 

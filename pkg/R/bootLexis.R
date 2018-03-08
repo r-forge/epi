@@ -1,8 +1,9 @@
 # The method
 nid <- function ( Lx, ... ) UseMethod("nid")
 
+nid.default <-
 nid.Lexis <-
-function( Lx, by=NULL )
+function( Lx, by=NULL, ... )
 {
 if( !is.null(by) )
   {
@@ -17,7 +18,7 @@ else
 
 # Make a boostrap sample of a Lexis object:
 # Sample the *persons* with replacement, possibly sampling within levels of by=
-boot.Lexis <-
+bootLexis <-
 function( Lx,
         size = NULL,
           by = NULL )
@@ -38,11 +39,10 @@ if( is.null(by) ) { # Simple bootstrap
 } else { # Bootstrap by groups
   bLx <- NULL
   spL <- split( Lx, Lx[,by] )
-  print( length(spL) )
   for( i in 1:length(spL) )
      {
      bLx <- rbind( bLx,
-                   cbind( boot.Lexis( spL[[i]], size = size[i] ),
+                   cbind( bootLexis( spL[[i]], size = size[i] ),
                           bgr = paste(i) ) )
      }
   bLx$lex.id <- as.integer( interaction(bLx$lex.id,bLx$bgr) )

@@ -2,7 +2,7 @@
 ### Encoding: UTF-8
 
 ###################################################
-### code chunk number 1: etm.rnw:41-51
+### code chunk number 1: etm.rnw:42-52
 ###################################################
 options( width=90 )
 library( Epi )
@@ -10,38 +10,38 @@ library( etm )
 library( survival )
 library( splines )
 print( sessionInfo(), l=F )
-load( url("https://www.jstatsoft.org/index.php/jss/article/downloadSuppFile/v038i04/dli.data.rda") )
+# load( url("https://www.jstatsoft.org/index.php/jss/article/downloadSuppFile/v038i04/dli.data.rda") )
 # save( dli.data, file="./dli.Rda" )
-# load(           file="./dli.Rda" )
+load(           file="./dli.Rda" )
 str( dli.data )
 
 
 ###################################################
-### code chunk number 2: etm.rnw:54-55
+### code chunk number 2: etm.rnw:55-56
 ###################################################
 subset( dli.data, id %in% c(2,5,388,511,531,600) )
 
 
 ###################################################
-### code chunk number 3: etm.rnw:60-61
+### code chunk number 3: etm.rnw:61-62
 ###################################################
 subset( dli.data, c(TRUE,diff(time)<0 & diff(id)==0 ) )
 
 
 ###################################################
-### code chunk number 4: etm.rnw:64-65
+### code chunk number 4: etm.rnw:65-66
 ###################################################
 dli.data[dli.data$id==531 & dli.data$from==2,"time"] <- 0.45
 
 
 ###################################################
-### code chunk number 5: etm.rnw:68-69
+### code chunk number 5: etm.rnw:69-70
 ###################################################
 with( dli.data, table( from, to ) )
 
 
 ###################################################
-### code chunk number 6: etm.rnw:80-86
+### code chunk number 6: etm.rnw:81-87
 ###################################################
 dli <- transform( dli.data,
                   to = as.numeric(to),
@@ -52,7 +52,7 @@ with( dli, table( from, to ) )
 
 
 ###################################################
-### code chunk number 7: etm.rnw:101-107
+### code chunk number 7: etm.rnw:102-108
 ###################################################
 tmp <- subset(dli,to==2 & from!=to)[,c("id","time")]
 names(tmp)[2] <- "tr"
@@ -63,7 +63,7 @@ str( dli )
 
 
 ###################################################
-### code chunk number 8: etm.rnw:110-121
+### code chunk number 8: etm.rnw:111-122
 ###################################################
 # DLI
 tmp <- subset(dli,to==4 & from!=to)[,c("id","time")]
@@ -79,7 +79,7 @@ subset(dli,id %in% c(600,603,608) )
 
 
 ###################################################
-### code chunk number 9: etm.rnw:128-141
+### code chunk number 9: etm.rnw:129-142
 ###################################################
 state.names <- c("Rem" , "D/Rem",
                  "Rel" , "D/Rel",
@@ -97,13 +97,13 @@ subset( dli, id %in% c(600,603,608) )[,1:13], digits=3)
 
 
 ###################################################
-### code chunk number 10: etm.rnw:156-157
+### code chunk number 10: etm.rnw:157-158
 ###################################################
 summary( dli )
 
 
 ###################################################
-### code chunk number 11: etm.rnw:163-164 (eval = FALSE)
+### code chunk number 11: etm.rnw:164-165 (eval = FALSE)
 ###################################################
 ## boxes( dli )
 
@@ -112,14 +112,14 @@ summary( dli )
 ### code chunk number 12: boxes
 ###################################################
 n.st <- nlevels( dli$lex.Cst )
-st.col <- rainbow( n.st )
-# A slightly more transparent color
-# substr(st.col,8,9) <- "BB"
-boxes( dli, wmult=1.1, hmult=1.2,
+# Colors for stages reflecting severity
+st.col <- rep(c("limegreen","darkorange","yellow3","forestgreen","red"),each=2)[-10]
+st.col[1:4*2] <- rgb( t(col2rgb(st.col[1:4*2])*0.5 + 255*0.5), max=255 )
+boxes( dli, wmult=1.1, hmult=1.2, lwd=4,
             boxpos=list(x=c(10,30,30,50,50,70,70,90,90),
                         y=c(25, 8,42,25,59,42,76,59,93)),
-            scale.R=100, show.BE=TRUE,
-            col.bg=st.col, col.txt="white",
+            scale.R=100, show.BE=TRUE, DR.sep=c(" (",")"),
+            col.bg=st.col, col.txt=rep(c("white","black"),5)[-10],
             col.border=c("white","black")[c(1,2,1,2,1,2,1,2,1)] )
 
 
@@ -142,7 +142,7 @@ table( dd.dli$lex.Tr )
 
 
 ###################################################
-### code chunk number 15: etm.rnw:221-223
+### code chunk number 15: etm.rnw:222-224
 ###################################################
 dd.dli$lex.Tr <- factor( dd.dli$lex.Tr )
 round( xtabs( cbind( lex.Fail, lex.dur ) ~ lex.Tr, data=dd.dli ), 1 )
@@ -315,7 +315,7 @@ p.dli$lex.Tr <- factor( p.dli$lex.Tr )
 
 
 ###################################################
-### code chunk number 34: etm.rnw:451-452
+### code chunk number 34: etm.rnw:452-453
 ###################################################
 p.dli$lex.Tr <- Relevel( p.dli$lex.Tr, list("Rem->Rel"=c(1,4), 2, 3 ) )
 
@@ -347,9 +347,9 @@ matplot( pr.pt, cbind(Rem.Rel,Rel.DLI,DLI.Rem)*100, log="y", ylim=c(1,500),
          col=rep(c("limegreen","red","blue"),each=3),
          ylab="Progression rate per 100 PY", xlab="Time since entry" )
 par(font=2)
-legend( "topright", legend=c("Remission > Relapse",
-                             "Relapse > DLI",
-                             "DLI > Remission"), bty="n",
+legend( "topright", legend=c("Remission -> Relapse",
+                             "Relapse -> DLI",
+                             "DLI -> Remission"), bty="n",
         text.col=c("limegreen","red","blue"), xjust=1 )
 
 
@@ -433,7 +433,7 @@ cST <- apply(ST,2,cumsum)
 
 
 ###################################################
-### code chunk number 46: etm.rnw:611-612 (eval = FALSE)
+### code chunk number 46: etm.rnw:612-613 (eval = FALSE)
 ###################################################
 ## matplot( pr.pt, t(cST), type="l", lty=1, lwd=2 )
 
@@ -498,7 +498,7 @@ state.occ( perm=c(1,3,5,7,9,2,4,6,8), line=5 )
 
 
 ###################################################
-### code chunk number 52: etm.rnw:718-743
+### code chunk number 52: etm.rnw:719-744
 ###################################################
 get.rates <- function( N=10 )
 {
@@ -652,7 +652,7 @@ tra[3, 4:5] <- TRUE
 tra[5, 6:7] <- TRUE
 tra[7, 8:9] <- TRUE
 ### computation of the transition probabilities
-dli.etm <- etm(dli.data, as.character(0:8), tra, "cens", s = 0)
+dli.etm <- etm::etm(dli.data, as.character(0:8), tra, "cens", s = 0)
 str(dli.etm)
 ### Computation of the clfs + var clfs
 clfs <- dli.etm$est["0", "0", ] +
@@ -676,7 +676,7 @@ matlines( pr.pt, t(CLFS), lty=c(1,3,3), lwd=c(3,1,1), col="red" )
 ###################################################
 ### code chunk number 62: etm-ex2
 ###################################################
-xdli.etm <- etm.Lexis( dli )
+xdli.etm <- etm( dli )
 str( xdli.etm )
 plot( xdli.etm, col=rainbow(15), lty=1, lwd=3,
       legend.pos="topright", bty="n", yaxs="i" )

@@ -1,8 +1,8 @@
-### R code from vignette source 'yll.rnw'
+### R code from vignette source 'yll'
 ### Encoding: UTF-8
 
 ###################################################
-### code chunk number 1: yll.rnw:146-149
+### code chunk number 1: yll.rnw:21-24
 ###################################################
 options( width=90,
          SweaveHooks=list( fig=function()
@@ -30,20 +30,20 @@ boxes( zz )
 
 
 ###################################################
-### code chunk number 4: yll.rnw:392-393
+### code chunk number 4: yll.rnw:265-266
 ###################################################
 data( DMepi )
 
 
 ###################################################
-### code chunk number 5: yll.rnw:398-400
+### code chunk number 5: yll.rnw:271-273
 ###################################################
 str( DMepi )
 head( DMepi )
 
 
 ###################################################
-### code chunk number 6: yll.rnw:420-424
+### code chunk number 6: yll.rnw:293-297
 ###################################################
 DMepi <- transform( subset( DMepi, A>30 ),
                     D.T = D.nD + D.DM, 
@@ -52,7 +52,7 @@ head(DMepi)
 
 
 ###################################################
-### code chunk number 7: yll.rnw:430-456
+### code chunk number 7: yll.rnw:303-329
 ###################################################
 # Knots used in all models
 ( a.kn <- seq(40,95,,6) )
@@ -83,7 +83,7 @@ lW.f <- update( lW.m, data = subset( DMepi, sex=="F" ) )
 
 
 ###################################################
-### code chunk number 8: yll.rnw:463-500
+### code chunk number 8: yll.rnw:336-373
 ###################################################
 a.ref <- 30:90
 p.ref <- 1996:2016
@@ -180,31 +180,31 @@ yll <- Epi::yll
 
 
 ###################################################
-### code chunk number 14: yll.rnw:607-608
+### code chunk number 14: yll.rnw:484-485
 ###################################################
 surv1
 
 
 ###################################################
-### code chunk number 15: yll.rnw:612-613
+### code chunk number 15: yll.rnw:489-490
 ###################################################
 erl1
 
 
 ###################################################
-### code chunk number 16: yll.rnw:620-621
+### code chunk number 16: yll.rnw:497-498
 ###################################################
 surv2
 
 
 ###################################################
-### code chunk number 17: yll.rnw:625-626
+### code chunk number 17: yll.rnw:502-503
 ###################################################
 erl
 
 
 ###################################################
-### code chunk number 18: yll.rnw:630-631
+### code chunk number 18: yll.rnw:507-508
 ###################################################
 yll
 

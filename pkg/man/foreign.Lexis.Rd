@@ -21,17 +21,18 @@ msdata(obj, ...)
 \method{msdata}{Lexis}(obj,
                 time.scale = timeScales(obj)[1],
                        ... )
-\method{etm}{Lexis}( obj,
-              time.scale = timeScales(obj)[1],
-               cens.name = "cens",
-                       s = 0,
-                       t = "last",
-              covariance = TRUE,
-                delta.na = TRUE,
-                     ... )
+\method{etm}{Lexis}( data,
+               time.scale = timeScales(data)[1],
+                cens.name = "cens",
+                        s = 0,
+                        t = "last",
+               covariance = TRUE,
+                 delta.na = TRUE,
+                      ... )
 }
 \arguments{
   \item{obj}{A \code{\link{Lexis}} object.}
+  \item{data}{A \code{\link{Lexis}} object.}
   \item{time.scale}{Name or number of timescale in the \code{Lexis}
     object.}
   \item{cens.name}{Name of the code for censoring used by \code{etm}. It

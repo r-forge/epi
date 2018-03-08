@@ -1,4 +1,5 @@
 \SweaveOpts{results=verbatim,keep.source=TRUE,include=FALSE,eps=FALSE}
+%\VignetteIndexEntry{Multistate models in Epi: The DLI example from JSS: the etm package by Allignol et al.}
 \documentclass[a4paper,twoside,12pt]{article}
 
 %----------------------------------------------------------------------
@@ -45,11 +46,11 @@ library( etm )
 library( survival )
 library( splines )
 print( sessionInfo(), l=F )
-load( url("https://www.jstatsoft.org/index.php/jss/article/downloadSuppFile/v038i04/dli.data.rda") )
+# load( url("https://www.jstatsoft.org/index.php/jss/article/downloadSuppFile/v038i04/dli.data.rda") )
 # save( dli.data, file="./dli.Rda" )
-# load(           file="./dli.Rda" )
+load(           file="./dli.Rda" )
 str( dli.data )
-@
+@ %
 In order to understand how data is coded we list data for a few select persons:
 <<>>=
 subset( dli.data, id %in% c(2,5,388,511,531,600) )
@@ -173,14 +174,14 @@ between states by 100, so they will appear as percent per year
 dead states.
 <<boxes,fig=TRUE,height=11,width=11>>=
 n.st <- nlevels( dli$lex.Cst )
-st.col <- rainbow( n.st )
-# A slightly more transparent color
-# substr(st.col,8,9) <- "BB"
-boxes( dli, wmult=1.1, hmult=1.2,
+# Colors for stages reflecting severity
+st.col <- rep(c("limegreen","darkorange","yellow3","forestgreen","red"),each=2)[-10]
+st.col[1:4*2] <- rgb( t(col2rgb(st.col[1:4*2])*0.5 + 255*0.5), max=255 )
+boxes( dli, wmult=1.1, hmult=1.2, lwd=4,
             boxpos=list(x=c(10,30,30,50,50,70,70,90,90),
                         y=c(25, 8,42,25,59,42,76,59,93)),
-            scale.R=100, show.BE=TRUE,
-            col.bg=st.col, col.txt="white",
+            scale.R=100, show.BE=TRUE, DR.sep=c(" (",")"),
+            col.bg=st.col, col.txt=rep(c("white","black"),5)[-10],
             col.border=c("white","black")[c(1,2,1,2,1,2,1,2,1)] )
 @ % $
 \insfig{boxes}{1.0}{Display of the actually occurring transitions and
@@ -476,9 +477,9 @@ matplot( pr.pt, cbind(Rem.Rel,Rel.DLI,DLI.Rem)*100, log="y", ylim=c(1,500),
          col=rep(c("limegreen","red","blue"),each=3),
          ylab="Progression rate per 100 PY", xlab="Time since entry" )
 par(font=2)
-legend( "topright", legend=c("Remission > Relapse",
-                             "Relapse > DLI",
-                             "DLI > Remission"), bty="n",
+legend( "topright", legend=c("Remission -> Relapse",
+                             "Relapse -> DLI",
+                             "DLI -> Remission"), bty="n",
         text.col=c("limegreen","red","blue"), xjust=1 )
 @ %
 \insfig{pr-rates}{0.9}{Estimated disease progression rates.}
@@ -512,7 +513,7 @@ never reliable in in computing:
 pr.pt[1:5]
 unique( diff(pr.pt) )
 ( il <- mean( diff(pr.pt) ) )
-@
+@ %
 What needs to be done now is to set up a structure (array) with the
 transition probability matrices as slices and the third dimension
 being the times in \texttt{pr.pt}, so that each slice represents the
@@ -568,7 +569,7 @@ round( SI[,1], 4 )
 round( ftable( AR[,,50+1:2], row.vars=c(3,1)), 4 )
 round( ftable( AP[,,50+1:2], row.vars=c(3,1)), 4 )
 @
-Each of the slices of the array \texttt{AP} is a matrix of transition
+Each of the slices of the array \texttt{AP} is now a matrix of transition
 probabilities.
 
 Suppose the initial state distribution is $\pi_0$, in this case a
@@ -903,7 +904,7 @@ tra[3, 4:5] <- TRUE
 tra[5, 6:7] <- TRUE
 tra[7, 8:9] <- TRUE
 ### computation of the transition probabilities
-dli.etm <- etm(dli.data, as.character(0:8), tra, "cens", s = 0)
+dli.etm <- etm::etm(dli.data, as.character(0:8), tra, "cens", s = 0)
 str(dli.etm)
 ### Computation of the clfs + var clfs
 clfs <- dli.etm$est["0", "0", ] +
@@ -942,14 +943,9 @@ avoided.
 For the sake of completeness we have included a function in
 \texttt{Epi} that automatically converts a \texttt{Lexis} object to a
 data frame of the relevant structure for input into the \texttt{etm}
-package. Note that even though there is an \texttt{etm} method for
-\texttt{Lexis} objects, we must call \texttt{etm.Lexis} explicitly,
-because we loaded the \texttt{etm} package \emph{after} the
-\texttt{Epi} package, and thus \texttt{Epi:::etm} will be masked by
-\texttt{etm:::etm}. Instead we could call \texttt{Epi:::etm}
-explicitly, but that would be really goofy looking code.
+package, so for the 
 <<etm-ex2, fig=TRUE, width=8, height=8>>=
-xdli.etm <- etm.Lexis( dli )
+xdli.etm <- etm( dli )
 str( xdli.etm )
 plot( xdli.etm, col=rainbow(15), lty=1, lwd=3,
       legend.pos="topright", bty="n", yaxs="i" )
