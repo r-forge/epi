@@ -61,7 +61,7 @@ ci.ratio( r1, r2,
   \item{ctr.mat}{Contrast matrix to be multiplied to the parameter
     vector, i.e. the desired linear function of the parameters. Can also
     be a list of two data frames (see below), in which case all other
-    arguments than \code{Exp} and \code{varval} are ignored - see details.}
+    arguments than \code{Exp} are ignored - see details.}
   \item{subset}{The subset of the parameters to be used. If given as a
     character vector, the elements are in turn matched against the
     parameter names (using \code{grep}) to find the subset. Repeat
@@ -133,10 +133,14 @@ ci.ratio( r1, r2,
   exponentiated, use \code{ci.exp(...,Exp=FALSE)}.
   
   If \code{ctr.mat} is a list of two data frames, the difference of the
-  predictions (on the linear predictor scale) from using these as
-  newdata arguments to predict is computed. Variables and factors that
-  would be the same in the two matrices can be omitted from the
-  data frames.
+  predictions (on the linear predictor scale) from using the first
+  versus the last as newdata arguments to predict is computed. Columns
+  that are identical in the two data frames can be omitted (see
+  example). If the second data frame has only one row, this is
+  replicated to match the number of rows in the first. This facility is
+  primarily aimed at teasing out RRs that are non-linear functions of a
+  quantitative variable without setting up contrast matrices using the
+  same code as in the model.
 
   \code{Wald} computes a Wald test for a subset of (possibly linear
   combinations of) parameters being equal to the vector of null
@@ -193,14 +197,15 @@ print( ci.lin( mm, subset="g", diff=TRUE, fnam="gee!:", vcov=TRUE ) )
 # Use character defined subset to get ALL contrasts:
 ci.lin( mm, subset="f", diff=TRUE )
 
-# x-effect differs across levels of g:
+# Suppose the x-effect differs across levels of g:
 mi <- update( mm, . ~ . + g:x )
 ci.lin( mi )
-# RR by x:
+# RR a vs. b by x:
 nda <- data.frame( x=-3:3, g="a", f="b" )
 ndb <- data.frame( x=-3:3, g="b", f="b" )
-# Same result because "f" columns are identical
+# 
 ci.lin( mi, list(nda,ndb) )
+# Same result if f column is omitted because "f" columns are identical
 ci.lin( mi, list(nda[,-3],ndb[,-3]) )
 
 # A Wald test of whether the g-parameters are 0

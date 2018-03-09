@@ -182,7 +182,7 @@ boxes( dli, wmult=1.1, hmult=1.2, lwd=4,
                         y=c(25, 8,42,25,59,42,76,59,93)),
             scale.R=100, show.BE=TRUE, DR.sep=c(" (",")"),
             col.bg=st.col, col.txt=rep(c("white","black"),5)[-10],
-            col.border=c("white","black")[c(1,2,1,2,1,2,1,2,1)] )
+            col.border=c("transparent","black")[c(1,2,1,2,1,2,1,2,1)] )
 @ % $
 \insfig{boxes}{1.0}{Display of the actually occurring transitions and
   -rates (in \%/year) and the corresponding risk time in each
@@ -945,7 +945,7 @@ For the sake of completeness we have included a function in
 data frame of the relevant structure for input into the \texttt{etm}
 package, so for the 
 <<etm-ex2, fig=TRUE, width=8, height=8>>=
-xdli.etm <- etm( dli )
+xdli.etm <- etm.Lexis( dli )
 str( xdli.etm )
 plot( xdli.etm, col=rainbow(15), lty=1, lwd=3,
       legend.pos="topright", bty="n", yaxs="i" )

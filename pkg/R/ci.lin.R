@@ -33,6 +33,7 @@ function( obj, ndx, ndr, Exp )
     {
 if( !is.data.frame(ndx) ) stop("2nd argument to ci.dfr must be a data frame")
 if( !is.data.frame(ndr) ) stop("3rd argument to ci.dfr must be a data frame")
+if( nrow(ndr)==1 ) ndr <- ndr[rep(1,nrow(ndx)),]
 if( (    ( nrow(ndx) !=  nrow(ndr)) ) |
     ( any(names(ndx) != names(ndr)) ) )
     stop("The two prediction frames must have same dimensions and column names:",
@@ -72,7 +73,7 @@ if( any(whf) )
      ndx[,fn] <- factor( ndx[,fn], levels=obj$xlevels[[fn]] )
      ndr[,fn] <- factor( ndr[,fn], levels=obj$xlevels[[fn]] )
      }
-# Then we can set up the contrast matrix
+# Then we can set up the contrast matrix and call ci.lin
 CM <- model.matrix( formula(obj)[-2], data=ndx ) -
       model.matrix( formula(obj)[-2], data=ndr )
 ci.lin( obj, ctr.mat=CM, Exp=Exp )
