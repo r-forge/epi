@@ -31,16 +31,16 @@ VCOV.rq       <- function( object, ... ) summary(object, cov=TRUE)$cov
 ci.dfr <-
 function( obj, ndx, ndr, Exp )
     {
-if( !is.data.frame(ndx) ) stop("2nd argument to ci.dfr must be a data frame")
-if( !is.data.frame(ndr) ) stop("3rd argument to ci.dfr must be a data frame")
-if( nrow(ndr)==1 ) ndr <- ndr[rep(1,nrow(ndx)),]
+if( !is.data.frame(ndx) ) stop("2nd argument in list must be a data frame")
+if( !is.data.frame(ndr) ) stop("3rd argument in list must be a data frame")
+if( nrow(ndr)==1 ) ndr <- ndr[rep(1,nrow(ndx)),,drop=FALSE]
 if( (    ( nrow(ndx) !=  nrow(ndr)) ) |
     ( any(names(ndx) != names(ndr)) ) )
-    stop("The two prediction frames must have same dimensions and column names:",
+    stop("\nThe two prediction frames must have same dimensions and column names:",
          "but dimensions are: ", dim(ndx), " and ", dim(ndr), "\n", 
          "and column names are:\n",
-         "xpos: ", names(ndx), "\n",
-         " ref: ", names(ndr), "\n")
+         "exp: ", names(ndx), "\n",
+         "ref: ", names(ndr), "\n")
 # Now fix those variable that are needed in order to get model.matrix working
 # Supplied variable names
  cols <- names( ndx )

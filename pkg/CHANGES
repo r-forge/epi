@@ -1,3 +1,7 @@
+Changes in 2.26
+
+o ci.lin did not honor a reference data frame of 1 row as promised. Fixed.
+
 Changes in 2.25
 
 o N2Y now also completes the Lexis triangles in the last age-category
