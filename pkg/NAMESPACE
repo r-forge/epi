@@ -142,7 +142,8 @@ lines.apc,
   twoby2,
   Wald,
   stat.table,
-  clogistic)
+  clogistic,
+  poisreg)
 # Import generic methods
 importFrom( utils, stack )
 # importFrom( base, cbind, rbind )
@@ -168,7 +169,8 @@ importFrom("stats", ".getXlevels", "addmargins", "anova", "approx",
            "is.empty.model", "median", "model.extract", "model.matrix",
            "model.offset", "model.response", "nlm", "pchisq", "pnorm",
            "poisson", "predict", "qnorm", "qt", "quantile", "runif",
-           "termplot", "update", "vcov", "weighted.mean", "xtabs" )
+           "termplot", "update", "vcov", "weighted.mean", "xtabs",
+           "dpois", "rpois", "make.link")
 importFrom("utils", "flush.console", "str")
 
 # register S3 methods
