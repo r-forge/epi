@@ -155,7 +155,7 @@ ci.ratio( r1, r2,
   If \code{ctr.mat} is a list of two data frames, the difference of the
   predictions from using the first versus the last as newdata arguments
   to predict is computed. Columns that are identical in the two data
-  frames can be omitted (see example), but names of numerical variables
+  frames can be omitted (see below), but names of numerical variables
   omitted must be supplied in a character vector \code{xvars}. Factors
   omitted need not be named. If the second data frame has only one row,
   this is replicated to match the number of rows in the first. The

@@ -128,9 +128,10 @@ xcoh <- cal.yr( xcoh, format="\%d/\%m/\%Y", wh=2:4 )
 xcoh
 str( xcoh )
 
-# Define as Lexis object with timescales calendar time and age
+# Define a Lexis object with timescales calendar time and age
 Lcoh <- Lexis( entry = list( per=entry ),
-                exit = list( per=exit, age=exit-birth ),
+                exit = list( per=exit,
+                             age=exit-birth ),
          exit.status = fail,
                 data = xcoh )
 Lcoh
@@ -154,8 +155,11 @@ Lexis( entry = list( per=entry ),
    \code{\link{splitLexis}},
    \code{\link{cutLexis}},
    \code{\link{mcutLexis}},
-   \code{\link{merge.Lexis}},
    \code{\link{addCov.Lexis}},
+%   \code{\link{glm.Lexis}},
+%   \code{\link{gam.Lexis}},
+%   \code{\link{coxph.Lexis}},
+   \code{\link{merge.Lexis}},
    \code{\link{subset.Lexis}},
    \code{\link{cbind.Lexis}},
    \code{\link{rbind.Lexis}},
@@ -168,3 +172,4 @@ Lexis( entry = list( per=entry ),
    \code{\link{dur}}
    }
 \keyword{survival}
+\keyword{manip}
