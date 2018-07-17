@@ -17,7 +17,8 @@ gen.exp( purchase, id = "id", dop = "dop", amt = "amt", dpt = "dpt",
              lags = NULL,
          push.max = Inf,
          pred.win = Inf,
-          lag.dec = 1 )
+          lag.dec = 1,
+           prefix = "lag." )
 }
 \arguments{
   \item{purchase}{Data frame with columns \code{id}-person id,
@@ -43,9 +44,13 @@ gen.exp( purchase, id = "id", dop = "dop", amt = "amt", dpt = "dpt",
   \item{push.max}{Numerical. How much can purchases maximally be pushed forward in
     time. See details.}
   \item{pred.win}{The length of the window used for constructing the
-    average dose per time used to compute the duration of the last purchase}
+    average dose per time used to compute the duration of the last
+    purchase. Only used when \code{use.dpt=FALSE}.}
   \item{lag.dec}{How many decimals to use in the construction of
     names for the lagged exposure variables}
+  \item{prefix}{Character string used for prefixing lagged exposure
+    variables. Aimed to facilitate the use of \code{gen.exp} for
+    different drugs with the aim of merging information.}
 }
 
 \details{

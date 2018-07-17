@@ -110,9 +110,10 @@ function( purchase,  id="id" , dop="dop", amt="amt", dpt="dpt",
               lags = NULL,
           push.max = Inf,
           pred.win = Inf,
-           lag.dec = 1 )
+           lag.dec = 1,
+            prefix = "lag." )
 {
-# to aviot a NOTE
+# to aviod a NOTE from R CMD check
 dof <- NULL
 # Make sure that the data frames have the right column names
 wh <- match( c(id,dop,amt), names(purchase) )
@@ -143,12 +144,11 @@ if( use.dpt ) { tmp.dfr <- use.amt.dpt( purchase,
                                      lag.dec = lag.dec ) }
 
 # Having done what needs to be done about the purchase records we turn
-# to the follow-up records, but we need to accommodate the fact that
-# there might be more fu records per person:
+# to the follow-up records, but we first need to accommodate the fact
+# that there might be more fu records per person:
 
 # Generate record no within id in fu (ordering in fu is immaterial)
 fu$no <- ave( fu$id, fu$id, FUN=function(x) 1:length(x) )
-print( fu )
 # Set up the object to collect the resulting follow-up
 res <- NULL
 
@@ -171,7 +171,7 @@ lapply( split( tm.dfr, tm.dfr$id ),
         # The first and last date of drug exposure according to the assumption
         doi <- min(set$dof)
         doc <- max(set$dof)
-        # Breakpoints and the entry end exit dates are date we care for
+        # Breakpoints and the entry end exit dates are the dates we care for
         breaks <- sort( unique( c(breaks,doe,dox) ) )
         # only the breaks inside the follow-up interval
         xval   <- breaks[breaks>=doe & breaks<=dox]
@@ -203,9 +203,9 @@ lapply( split( tm.dfr, tm.dfr$id ),
         dfr$ctim <- approx( set$dof, set$cum.tim, xout=xval, rule=2 )$y
         # the same for the desired lags    
         for( lg in lags )
-           dfr[,paste( "ldos",
+           dfr[,paste( "lag.prefix",
                        formatC(lg,format="f",digits=lag.dec),
-                       sep="." )] <-
+                       sep="" )] <-
            approx( set$dof, set$cum.amt, xout=xval-lg, rule=2 )$y
         dfr$doff <- na.locf( dfr$doff, na.rm=FALSE )
         dfr$tfc[is.na(dfr$tfc)] <- 0
@@ -215,6 +215,8 @@ lapply( split( tm.dfr, tm.dfr$id ),
    res <- rbind( res, res.dfr ) # append to result from other fu$no 
    } # end of for( ni in 1:max(fu$no) )
 var.order <- c("id","dof","dur","off","doff","tfc","tfi","ctim","cdos",
-               names(res)[grep("ldos",names(res))] )    
-res[order(res$id,res$dof),var.order]
+               names(res)[grep("lag.prefix",names(res))] )    
+res <- res[order(res$id,res$dof),var.order]
+names(res) <- gsub( "lag.prefix", prefix, names(res) )
+res
 } # end of gen.ex
