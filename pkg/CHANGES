@@ -4,6 +4,11 @@ o gen.exp: time since drug cessation was only computed for latest
   cessation, not for intermittent ones. Rectified and expanded set of
   result variables keeping track of patients' status are added.
 
+  gen.exp also gains an argument, rm.dose, indicating whether doses
+  purchased should be counted if time-allocation of purchases are
+  limited by the push.max argument. Several disjoint FU-periods for
+  persone are now allowed.
+
 o The changed functionality of vcov() returning 0s for aliased
   parameters (instead of omitting them) is now used and hence ci.lin
   is simplified.
@@ -20,7 +25,8 @@ o A new link function, poisreg, added for (event,time) response data,
   courtesy of Martyn Plummer
 
 o Functions glm.Lexis, gam.Lexis and coxph.Lexis fitting models using
-  Lexis objects have been added. The two former use the poisreg family.
+  Lexis objects have been added. The two former use the poisreg
+  family. Slightly experimental still.
 
 o Bug in LCa.fit rectified, non-needed elements of npar can now be
   omitted, previously all 5 named items of the list were required.

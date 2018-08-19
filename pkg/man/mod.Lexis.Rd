@@ -19,6 +19,7 @@ and \code{\link{coxph}}. But it is only a set of wrappers fro
            xpos,         # 'from' states
            link = "log", # link function
           scale = 1,     # scaling of PY
+        verbose = TRUE,  # report what is done?
              ... )
   gam.Lexis( Lx,         # Lexis object	
            resp,         # 'to' states	
@@ -26,11 +27,13 @@ and \code{\link{coxph}}. But it is only a set of wrappers fro
            xpos,         # 'from' states
            link = "log", # link function
           scale = 1,     # scaling of PY
+        verbose = TRUE,  # report what is done?
              ... )
 coxph.Lexis( Lx, # Lexis object	
            resp, # 'to' states	
         formula, # timescale ~ model	
            xpos, # 'from' states
+        verbose = TRUE,  # report what is done?
              ... )
 }
 \arguments{
@@ -56,11 +59,13 @@ coxph.Lexis( Lx, # Lexis object
     \code{\link{poisreg}}. 
 }
 \item{scale}{Scalar. \code{lex.dur} is divided by this number before
-  analysis, so that you can get resultion rates on a scale of your wish. 
+  analysis, so that you can get resulting rates on a scale of your wish. 
 }
-  \item{\dots}{Arguments passed on to the methods.
+  \item{verbose}{Print information on the states modeled?
 }
+  \item{\dots}{Arguments passed on to the methods.  }
 }
+
 \details{
   The \code{glm} and \code{gam} models are fitted using the family
   \code{\link{poisreg}} which is a bit faster than the traditional
@@ -68,31 +73,41 @@ coxph.Lexis( Lx, # Lexis object
   two-column vector of events and person-time respectively, so the
   predictions, for example using \code{\link{ci.pred}} does not require
   \code{lex.dur} (and would ignore this) as variable in the
-  \code{newdata}. \code{ci.pred} returns the estimated rates in the same
+  \code{newdata}. \code{ci.pred} returns the estimated rates in
   units of the \code{lex.dur} in the \code{Lexis} object, scaled by
   \code{scale}.
 
-  Strictly speaking, it is a bit counterintuitive to have the time-scale
+  Strictly speaking, it is a bit counter-intuitive to have the time-scale
   on the l.h.s. of the formula for the \code{coxph} since the time scale
   is also a predictor of the occurrence rate. On the other hand, calling
   \code{coxph} directly would also entail having the name of the time
   scale in the \code{Surv} object on the l.h.s. of the formula. So the
-  inconsistency is just carried over from \code{coxph}.
-}
+  inconsistency is merely carried over from \code{coxph}.
+
+  The functions are slightly experimental so far. Argument names and
+  ordering may change in the future. The \code{update} methods do not
+  always work.}
+
 \value{\code{glm} returns a \code{\link{glm}} object, \code{gam} returns
   a \code{\link[mgcv]{gam}} object and \code{coxph} returns a
   \code{\link[survival]{coxph}} object. The returned objects all have an
   extra attribute, \code{Lexis}; a list with names \code{Exposure} and
   \code{Events}; character vectors of state names from which transitions
   are modeled and that are considered events, respectively. The
-  \code{coxph} object also has a \code{Timescale} element in the list.
+  \code{glm} object also has a \code{scale} element in the list, an scalar
+  indicating the scaling of \code{lex.dur} before modeling. The
+  \code{coxph} object also has a \code{Timescale} element in the list, a
+  character indicating the underlying timescale variable.
 }
+
 \author{
 Bendix Carstensen, \url{http://BendixCarstensen.com}.
 }
+
 \seealso{
 \code{\link{Lexis}}, \code{\link{cutLexis}}
 }
+
 \examples{
 library( Epi )
 library( survival )
