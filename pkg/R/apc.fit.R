@@ -172,7 +172,8 @@ if (tolower(substr(dist, 1, 2)) == "po") {
         family = poisson)
     Dist <- "Poisson with log(Y) offset"
 }
-if (tolower(substr(dist, 1, 3)) %in% c("bin")) {
+is.bin <- FALSE
+if (is.bin <- tolower(substr(dist, 1, 3)) %in% c("bin")) {
     m.APC <- glm(cbind(D, Y - D) ~ MA + I(P - p0) + MP +
         MC, family = binomial)
     Dist <- "Binomial regression (logistic) of D/Y"
@@ -297,6 +298,10 @@ else {
     colnames(Coh)[-1] <- c("C.eff", lu)
     Type <- paste("Sequential modelling", Dist, ": (", parm, "):\n")
 }
+# If the model was binomial we convert to probabilities
+o2p <- function(o) o/(1+o)
+if( is.bin ) Age[,-1] <- o2p(Age[,-1]) 
+
 res <- list(Type = Type,
            Model = Model,
              Age = Age,

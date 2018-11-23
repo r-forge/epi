@@ -98,7 +98,7 @@ ci.ratio( r1, r2,
   \item{df}{Integer. Number of degrees of freedom in the t-distribution used
     to compute the quantiles used to construct the confidence intervals.}
   \item{Exp}{For \code{ci.lin}, if \code{TRUE} columns 5:6 are replaced
-    with exp( columns 1,5,6 ). For \code{ci.exp} of \code{FALSE}, the
+    with exp( columns 1,5,6 ). For \code{ci.exp}, if \code{FALSE}, the
     untransformed parameters are returned. For \code{ci.pred} it
     indicates whether the predictions should be exponentiated - the
     default (\code{Exp=NULL}) is to make a prediction with a Wald CI on
