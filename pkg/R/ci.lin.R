@@ -43,13 +43,11 @@ if( any(whf) ) for( fn in names(dcl)[which(whf)] )
 # The contrast matrix from the model - differs a bit between (g)lm, gam and coxph
 # this is needed to keep NA rows from the data frame supplied
 org.op <- options( na.action='na.pass' )
+on.exit( options( org.op ) )
 if( inherits(obj,"coxph") ) MM <- model.matrix(         obj     ,    data=nd )
 if( inherits(obj,"gam"  ) ) MM <- model.matrix(         obj     , newdata=nd )
     else
 if( inherits(obj,"lm"   ) ) MM <- model.matrix( formula(obj)[-2],    data=nd )
-# reset na.action
-# options( org.op )
-options( na.action='na.omit' )
 return( MM )
     }
 
@@ -65,10 +63,12 @@ if( nrow(ndr)==1 ) ndr <- ndr[rep(1,nrow(ndx)),,drop=FALSE]
 if( (    ( nrow(ndx) !=  nrow(ndr)) ) |
     ( any(names(ndx) != names(ndr)) ) )
     stop("\nThe two prediction frames must have same dimensions and column names:",
-         "but dimensions are: ", dim(ndx), " and ", dim(ndr), "\n", 
+         "but dimensions are: (",
+         paste( dim(ndx),collapse=","), ") and ()",
+         paste( dim(ndr),collapse=","), ")\n", 
          "and column names are:\n",
-         "exp: ", names(ndx), "\n",
-         "ref: ", names(ndr), "\n")
+         "exp: ", paste( names(ndx), collapse=", " ), "\n",
+         "ref: ", paste( names(ndr), collapse=", " ), "\n")
 # Now supply and fix those variables that are needed in order to get model.matrix working:
 # Supplied variable names:
  cols <- names( ndx )

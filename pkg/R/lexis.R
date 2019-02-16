@@ -735,6 +735,13 @@ timeScales <- function(x)
   return (attr(x,"time.scales"))
 }
 
+timeSince <- function(x)
+{
+        tt  <- attr(x,"time.since")
+  names(tt) <- attr(x,"time.scales")
+  return( tt )
+}
+
 timeBand <- function(lex, time.scale, type="integer")
 {
   time.scale <- check.time.scale(lex, time.scale)[1]
