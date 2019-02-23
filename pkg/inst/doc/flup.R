@@ -10,14 +10,14 @@ options( width=90,
 
 
 ###################################################
-### code chunk number 2: flup.rnw:123-125
+### code chunk number 2: flup.rnw:125-127
 ###################################################
 library(Epi)
 print( sessionInfo(), l=F )
 
 
 ###################################################
-### code chunk number 3: flup.rnw:134-142
+### code chunk number 3: flup.rnw:136-144
 ###################################################
 data( DMlate )
 dmL <- Lexis( entry = list( per=dodm,
@@ -30,7 +30,7 @@ timeScales(dmL)
 
 
 ###################################################
-### code chunk number 4: flup.rnw:165-168
+### code chunk number 4: flup.rnw:167-170
 ###################################################
 str( DMlate )
 str( dmL )
@@ -38,7 +38,7 @@ head( dmL )[,1:10]
 
 
 ###################################################
-### code chunk number 5: flup.rnw:184-185
+### code chunk number 5: flup.rnw:186-187
 ###################################################
 summary.Lexis( dmL, timeScales=TRUE )
 
@@ -65,7 +65,7 @@ box(bty='o')
 
 
 ###################################################
-### code chunk number 8: flup.rnw:241-244
+### code chunk number 8: flup.rnw:243-246
 ###################################################
 dmS1 <- splitLexis( dmL, "age", breaks=seq(0,100,5) )
 summary( dmL )
@@ -73,7 +73,7 @@ summary( dmS1 )
 
 
 ###################################################
-### code chunk number 9: flup.rnw:254-257
+### code chunk number 9: flup.rnw:256-259
 ###################################################
 wh.id <- c(9,27,52,484)
 subset( dmL , lex.id %in% wh.id )[,1:10]
@@ -81,14 +81,14 @@ subset( dmS1, lex.id %in% wh.id )[,1:10]
 
 
 ###################################################
-### code chunk number 10: flup.rnw:263-265
+### code chunk number 10: flup.rnw:265-267
 ###################################################
 dmS2 <- splitLexis( dmS1, "tfD", breaks=c(0,1,2,5,10,20,30,40) )
 subset( dmS2, lex.id %in% wh.id )[,1:10]
 
 
 ###################################################
-### code chunk number 11: flup.rnw:270-276
+### code chunk number 11: flup.rnw:272-278
 ###################################################
 library( popEpi )
 dmM <- splitMulti( dmL, age = seq(0,100,5), 
@@ -99,7 +99,7 @@ summary( dmM )
 
 
 ###################################################
-### code chunk number 12: flup.rnw:287-290
+### code chunk number 12: flup.rnw:289-292
 ###################################################
 identical( dmS2, dmM )
 class( dmS2 )
@@ -107,26 +107,28 @@ class( dmM )
 
 
 ###################################################
-### code chunk number 13: flup.rnw:320-328
+### code chunk number 13: flup.rnw:322-332
 ###################################################
-subset( dmL, lex.id %in% wh.id )[,1:10]
+whc <- c(names(dmL)[1:7],"dodm","doins") # WHich Columns do we want to see?
+subset( dmL, lex.id %in% wh.id )[,whc]
 dmC <- cutLexis( data = dmL, 
                   cut = dmL$doins, 
             timescale = "per",
             new.state = "Ins",
             new.scale = "tfI",
      precursor.states = "DM" )
-subset( dmC, lex.id %in% wh.id )[,1:10]
+whc <- c(names(dmL)[1:8],"doins") # WHich Columns do we want to see?
+subset( dmC, lex.id %in% wh.id )[,whc]
 
 
 ###################################################
-### code chunk number 14: flup.rnw:338-339
+### code chunk number 14: flup.rnw:350-351
 ###################################################
 timeSince( dmC )
 
 
 ###################################################
-### code chunk number 15: flup.rnw:346-353
+### code chunk number 15: flup.rnw:360-367
 ###################################################
 dmS2C <- cutLexis( data = dmS2, 
                     cut = dmS2$doins,
@@ -134,11 +136,11 @@ dmS2C <- cutLexis( data = dmS2,
               new.state = "Ins",
               new.scale = "tfI",
        precursor.states = "DM" )
-subset( dmS2C, lex.id %in% wh.id )[,1:10]
+subset( dmS2C, lex.id %in% wh.id )[,whc]
 
 
 ###################################################
-### code chunk number 16: flup.rnw:376-377
+### code chunk number 16: flup.rnw:391-392
 ###################################################
 summary( dmS2C, timeScales=TRUE )
 
@@ -150,9 +152,9 @@ boxes( dmC, boxpos=TRUE, scale.R=1000, show.BE=TRUE )
 
 
 ###################################################
-### code chunk number 18: flup.rnw:420-428
+### code chunk number 18: flup.rnw:435-443
 ###################################################
-timeBand( dmS2C, "age", "middle" )[1:20]
+timeBand( dmS2C, "age", "middle" )[1:10]
 # For nice printing and column labelling we use the data.frame() function:
 data.frame( dmS2C[,c("per","age","tfD","lex.dur")],
             mid.age=timeBand( dmS2C, "age", "middle" ),
@@ -163,27 +165,27 @@ data.frame( dmS2C[,c("per","age","tfD","lex.dur")],
 
 
 ###################################################
-### code chunk number 19: flup.rnw:463-464
+### code chunk number 19: flup.rnw:478-479
 ###################################################
 summary( (dmS2$age-dmS2$tfD) - (dmS2$dodm-dmS2$dobth) ) 
 
 
 ###################################################
-### code chunk number 20: flup.rnw:469-471
+### code chunk number 20: flup.rnw:484-486
 ###################################################
 summary( timeBand( dmS2, "age", "middle" ) -
          timeBand( dmS2, "tfD", "middle" ) - (dmS2$dodm-dmS2$dobth) )
 
 
 ###################################################
-### code chunk number 21: flup.rnw:564-566
+### code chunk number 21: flup.rnw:591-593
 ###################################################
 dmCs <- splitMulti( dmC, age = seq(0,110,1/4) )
 summary( dmCs, t=T )
 
 
 ###################################################
-### code chunk number 22: flup.rnw:588-593
+### code chunk number 22: flup.rnw:615-620
 ###################################################
 ( a.kn <- with( subset( dmCs, lex.Xst=="Dead" ), 
                 quantile( age+lex.dur, (1:5-0.5)/5 ) ) )
@@ -193,7 +195,7 @@ summary( dmCs, t=T )
 
 
 ###################################################
-### code chunk number 23: flup.rnw:609-614
+### code chunk number 23: flup.rnw:636-641
 ###################################################
 ma <- glm( (lex.Xst=="Dead") ~ Ns(age,knots=a.kn),
             family = poisson,
@@ -203,7 +205,7 @@ summary( ma )
 
 
 ###################################################
-### code chunk number 24: flup.rnw:633-636
+### code chunk number 24: flup.rnw:660-663
 ###################################################
 Ma <- glm( cbind(lex.Xst=="Dead",lex.dur) ~ Ns(age,knots=a.kn),
            family = poisreg, data = dmCs )
@@ -211,20 +213,20 @@ summary( Ma )
 
 
 ###################################################
-### code chunk number 25: flup.rnw:644-646
+### code chunk number 25: flup.rnw:671-673
 ###################################################
 Xa <- glm.Lexis( dmCs, from="DM", to="Dead", 
                  formula = ~ Ns(age,knots=a.kn) )
 
 
 ###################################################
-### code chunk number 26: flup.rnw:654-655
+### code chunk number 26: flup.rnw:681-682
 ###################################################
 xa <- glm.Lexis( dmCs, formula = ~ Ns(age,knots=a.kn) )
 
 
 ###################################################
-### code chunk number 27: flup.rnw:658-659
+### code chunk number 27: flup.rnw:685-686
 ###################################################
 c( deviance(ma), deviance(Ma), deviance(Xa), deviance(xa) )
 
@@ -232,8 +234,10 @@ c( deviance(ma), deviance(Ma), deviance(Xa), deviance(xa) )
 ###################################################
 ### code chunk number 28: pr-a
 ###################################################
-nd <- data.frame( age=40:85 )
+nd <- data.frame( age=40:85, lex.dur=1000 )
+pr.0 <- ci.pred( ma, newdata = nd )      # mortality per 100 PY
 pr.a <- ci.pred( Ma, newdata = nd )*1000 # mortality per 100 PY
+summary(pr.0/pr.a)
 matshade( nd$age, pr.a, plot=TRUE,
           type="l", lty=1,
           log="y", xlab="Age (years)",
@@ -241,7 +245,7 @@ matshade( nd$age, pr.a, plot=TRUE,
 
 
 ###################################################
-### code chunk number 29: flup.rnw:702-706
+### code chunk number 29: flup.rnw:731-735
 ###################################################
 pm <- glm( cbind(lex.Xst=="Dead",lex.dur) ~ Ns(age,knots=a.kn) 
                                           + lex.Cst + sex,
@@ -250,7 +254,7 @@ round( ci.exp( pm ), 3 )
 
 
 ###################################################
-### code chunk number 30: flup.rnw:720-724
+### code chunk number 30: flup.rnw:749-753
 ###################################################
 pm <- glm( cbind(lex.Xst=="Dead",lex.dur) ~ Ns(age,knots=a.kn) 
                                           + Ns(tfI,knots=i.kn) 
@@ -259,7 +263,7 @@ pm <- glm( cbind(lex.Xst=="Dead",lex.dur) ~ Ns(age,knots=a.kn)
 
 
 ###################################################
-### code chunk number 31: flup.rnw:730-736
+### code chunk number 31: flup.rnw:759-765
 ###################################################
 Pm <- glm.Lexis( tsNA20(dmCs), 
                  form = ~ Ns(age,knots=a.kn) 
@@ -270,7 +274,7 @@ identical( model.matrix(Pm), model.matrix(pm) )
 
 
 ###################################################
-### code chunk number 32: flup.rnw:742-743
+### code chunk number 32: flup.rnw:771-772
 ###################################################
 round( ci.exp( Pm, subset="ex" ), 3 )
 
@@ -280,20 +284,21 @@ round( ci.exp( Pm, subset="ex" ), 3 )
 ###################################################
 ndI <- data.frame( expand.grid( tfI=c(NA,seq(0,15,0.1)),
                                 ai=seq(40,80,10) ),
-                  sex="M",
-                  lex.Cst="Ins" )
+                   sex="M",
+                   lex.Cst="Ins" )
 ndI <- transform( ndI, age=ai+tfI )
 head( ndI )
 ndA <- data.frame( age= seq(40,100,0.1), tfI=0,  lex.Cst="DM", sex="M" )
-pri <- ci.pred( Pm, ndI )
-pra <- ci.pred( Pm, ndA )
+pri <- ci.pred( Pm, ndI ) * 1000
+pra <- ci.pred( Pm, ndA ) * 1000
 matshade( ndI$age, pri, plot=TRUE, las=1,
+          xlab="Age (years)", ylab="DM mortality per 1000 PY",
           log="y", lty=1, col="blue" )
 matshade( ndA$age, pra )
 
 
 ###################################################
-### code chunk number 34: flup.rnw:777-781
+### code chunk number 34: flup.rnw:809-813
 ###################################################
 library( survival )
 cm <- coxph( Surv(age,age+lex.dur,lex.Xst=="Dead") ~
@@ -302,7 +307,7 @@ cm <- coxph( Surv(age,age+lex.dur,lex.Xst=="Dead") ~
 
 
 ###################################################
-### code chunk number 35: flup.rnw:785-788
+### code chunk number 35: flup.rnw:817-820
 ###################################################
 Cm <- coxph.Lexis( tsNA20(dmCs), 
                    form= age ~ Ns(tfI,knots=i.kn) + lex.Cst + sex )
@@ -310,7 +315,7 @@ cbind( ci.exp( cm ), ci.exp( Cm ) )
 
 
 ###################################################
-### code chunk number 36: flup.rnw:797-800
+### code chunk number 36: flup.rnw:829-832
 ###################################################
 round( cbind( ci.exp( Pm ),
        rbind( matrix(NA,5,3),
@@ -325,7 +330,10 @@ nr <- data.frame( tfI=    2         , lex.Cst="Ins", sex="M" )
 ppr <- ci.exp( pm, list(nd,nr), xvars="age" )
 cpr <- ci.exp( cm, list(nd,nr) )
 par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, las=1, bty="n" )
-matshade( nd$tfI, cbind(ppr,cpr), lty=c(1,2), log="y", plot=T )
+matshade( nd$tfI, cbind(ppr,cpr), plot=T, 
+          lty=c(1,2), log="y",
+          xlab="Time since insulin (years)", ylab="Rate ratio")
+abline( h=1, lty=3 )
 
 
 ###################################################
@@ -336,11 +344,14 @@ nr <- data.frame( tfI=    0         , lex.Cst="DM" , sex="M" )
 ppr <- ci.exp( pm, list(nd,nr), xvars="age" )
 cpr <- ci.exp( cm, list(nd,nr) )
 par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, las=1, bty="n" )
-matshade( nd$tfI, cbind(ppr,cpr), lty=c(1,2), log="y", plot=T )
+matshade( nd$tfI, cbind(ppr,cpr), 
+          xlab="Time since insulin (years)",
+         ylab="Rate ratio relative to non-Insulin",
+          lty=c(1,2), log="y", plot=T )
 
 
 ###################################################
-### code chunk number 39: flup.rnw:894-899
+### code chunk number 39: flup.rnw:934-939
 ###################################################
 imx <- glm.Lexis( tsNA20(dmCs), 
                  formula = ~ Ns(age    ,knots=a.kn) 
@@ -350,7 +361,7 @@ imx <- glm.Lexis( tsNA20(dmCs),
 
 
 ###################################################
-### code chunk number 40: flup.rnw:909-919
+### code chunk number 40: flup.rnw:949-959
 ###################################################
 Im <- glm.Lexis( tsNA20(dmCs), 
                  formula = ~ Ns(age    ,knots=a.kn) 
@@ -365,7 +376,7 @@ im <- glm.Lexis( tsNA20(dmCs),
 
 
 ###################################################
-### code chunk number 41: flup.rnw:934-935
+### code chunk number 41: flup.rnw:974-975
 ###################################################
 anova( imx, Im, im, test='Chisq')
 
@@ -375,15 +386,15 @@ anova( imx, Im, im, test='Chisq')
 ###################################################
 pxi <- ci.pred( imx, ndI )
 pxa <- ci.pred( imx, ndA )
-pii <- ci.pred( im , ndI )
-pia <- ci.pred( im , ndA )
 pIi <- ci.pred( Im , ndI )
 pIa <- ci.pred( Im , ndA )
+pii <- ci.pred( im , ndI )
+pia <- ci.pred( im , ndA )
 par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, las=1, bty="n" )
-matshade( ndI$age, cbind( pxi, pii, pIi)*1000, plot=T, log="y",
+matshade( ndI$age, cbind( pxi, pIi, pii)*1000, plot=T, log="y",
           xlab="Age", ylab="Mortality per 1000 PY",
           lty=1, lwd=2, col=c("blue","forestgreen","red"), alpha=0.1 )
-matshade( ndA$age, cbind( pxa, pia, pIa)*1000, 
+matshade( ndA$age, cbind( pxa, pIa, pia)*1000, 
           lty=1, lwd=2, col=c("blue","forestgreen","red"), alpha=0.1 )
 
 
@@ -396,7 +407,8 @@ Rxi <- ci.exp( imx, list(ndI,ndR) )
 Rii <- ci.exp( im , list(ndI,ndR) )
 RIi <- ci.exp( Im , list(ndI,ndR) )
 par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, las=1, bty="n" )
-matshade( ndI$age, cbind( Rxi, Rii, RIi), plot=T, log="y",
+matshade( ndI$age, cbind( Rxi, RIi, Rii), plot=T, log="y",
+          xlab="Age (years)", ylab="Rate ratio vs, non-Insulin",
           lty=1, lwd=2, col=c("blue","forestgreen","red"), alpha=0.1 )
 abline( h=1 )
 abline( h=ci.exp(imx,subset="lex.Cst")[,1], lty="25", col="blue" )
@@ -413,10 +425,13 @@ gm <- glm.Lexis( tsNA20(dmCs),
 pgi <- ci.pred( gm, ndI )
 pga <- ci.pred( gm, ndA )
 par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, las=1, bty="n" )
-matshade( ndI$age, cbind( pgi, pIi )*1000, lty=1, lwd=2, log="y", plot=T,
-          alpha=c(0.1,0.2), col=c("black","red") )
-matshade( ndA$age, cbind( pga, pIa )*1000, lty=1, lwd=2,
-          alpha=c(0.1,0.2), col=c("black","red") )
+matshade( ndI$age, cbind( pgi, pii )*1000,  plot=T,
+          lty=c("solid","21"), lend="butt", lwd=2, log="y",
+          xlab="Age (years)", ylab="Mortality rates per 1000 PY",
+          alpha=c(0.2,0.1), col=c("black","red") )
+matshade( ndA$age, cbind( pga, pia )*1000,
+          lty=c("solid","21"), lend="butt", lwd=2,
+          alpha=c(0.2,0.1), col=c("black","red") )
 
 
 ###################################################
@@ -427,18 +442,19 @@ iRR <- ci.exp( Im, ctr.mat=list(ndI,ndR) )
 gRR <- ci.exp( gm, ctr.mat=list(ndI,ndR) )
 par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, las=1, bty="n" )
 matshade( ndI$age, cbind(gRR,iRR), lty=1, log="y", plot=TRUE, 
+          xlab="Age (years)", ylab="Rate ratio: Ins vs. non-Ins",
           col=c("black","red") )
 abline( h=1 )
 
 
 ###################################################
-### code chunk number 46: flup.rnw:1045-1058
+### code chunk number 46: flup.rnw:1096-1109
 ###################################################
-dmd <- glm.Lexis( tsNA20(dmCs),
+dmd <- glm.Lexis( dmCs,
                   from="DM", to="Dead",
                   formula = ~ Ns(age,knots=a.kn) 
                             + sex )
-ind <- glm.Lexis( tsNA20(dmCs),
+ind <- glm.Lexis( dmCs,
                   from="Ins", to="Dead",
                   formula = ~ Ns(age,knots=a.kn) 
                             + Ns(tfI,knots=i.kn)
@@ -454,6 +470,7 @@ dma <- ci.pred( dmd, ndA )
 ###################################################
 par(mar=c(3,3,1,1),mgp=c(3,1,0)/1.6,las=1,bty="n")
 matshade( ndI$age, ini*1000, plot=TRUE, log="y",
+          xlab="Age (years)", ylab="Mortality rates per 1000 PY",
           lwd=2, col="red" )
 matshade( ndA$age, dma*1000,
           lwd=2, col="black" )
@@ -464,12 +481,13 @@ matshade( ndA$age, dma*1000,
 ###################################################
 par(mar=c(3,3,1,1),mgp=c(3,1,0)/1.6,las=1,bty="n")
 matshade( ndI$age, ci.ratio(ini,dmi), plot=TRUE, log="y",
+          xlab="Age (years)", ylab="RR insulin vs. no insulin",
           lwd=2, col="red" )
 abline( h=1 )
 
 
 ###################################################
-### code chunk number 49: flup.rnw:1099-1107
+### code chunk number 49: flup.rnw:1152-1160
 ###################################################
 dmCs <- cutLexis( data = dmS2, 
                     cut = dmS2$doins,
@@ -490,7 +508,7 @@ boxes( dmCs, boxpos=list(x=c(15,15,85,85),
 
 
 ###################################################
-### code chunk number 51: flup.rnw:1136-1144
+### code chunk number 51: flup.rnw:1190-1198
 ###################################################
 dmM <- mcutLexis( dmL,
              timescale = "per",
@@ -503,12 +521,14 @@ summary( dmM, t=T )
 
 
 ###################################################
-### code chunk number 52: flup.rnw:1148-1152
+### code chunk number 52: flup.rnw:1202-1208
 ###################################################
 wh <- c(subset(dmM,lex.Cst=="Ins-OAD")$lex.id[1:2],
         subset(dmM,lex.Cst=="OAD-Ins")$lex.id[1:2])
 options( width=110 )
-subset( dmM, lex.id %in% wh )[,c('lex.id',names(dmM[1:8]),c("doins","dooad"))]
+print( subset( dmM, lex.id %in% wh )[,c('lex.id',names(dmM[1:8]),c("doins","dooad"))],
+       digits=6, row.names=FALSE )
+summary( dmM, t=T )
 
 
 ###################################################
@@ -517,5 +537,14 @@ subset( dmM, lex.id %in% wh )[,c('lex.id',names(dmM[1:8]),c("doins","dooad"))]
 boxes( dmM, boxpos=list(x=c(15,80,40,40,85,85),
                         y=c(50,50,90,10,90,10)),
             scale.R=1000, show.BE=TRUE )
+
+
+###################################################
+### code chunk number 54: mboxr
+###################################################
+summary( dmMr <- Relevel( dmM, list('OAD+Ins'=5:6), first=FALSE) )
+boxes( dmMr, boxpos=list(x=c(15,50,15,85,85),
+                         y=c(85,50,15,85,15)),
+             scale.R=1000, show.BE=TRUE )
 
 
