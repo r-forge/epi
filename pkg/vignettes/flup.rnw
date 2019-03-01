@@ -29,10 +29,10 @@ options( width=90,
 \addcontentsline{toc}{chapter}{Introduction}
 
 This is an introduction to the \texttt{Lexis} machinery in the
-\texttt{Epi} package. It is intended for representation of follow-up
-data (event history data) from studies where exact dates of events are
-known. It accommodates follow-up through multiple states and on
-multiple time scales. 
+\texttt{Epi} package. The machinery is intended for representation and
+manipulation of follow-up data (event history data) from studies where
+exact dates of events are known. It accommodates follow-up through
+multiple states and on multiple time scales.
 
 This vignette uses an example from the \texttt{Epi} package to
 illustrate the set-up of a simple \texttt{Lexis} object (a data frame
@@ -48,6 +48,9 @@ intervals.
 Chapter 2 uses analysis of mortality rates among Danish
 diabetes patients currently on insulin treatment or not to illustrate
 the use of the the \texttt{Lexis} machinery.
+
+I owe much thanks to my colleague Lars Jorge Diaz for careful reading
+and many constructive suggestions.
 
 \chapter{Representation of follow-up data in the \texttt{Epi} package} 
 
@@ -102,9 +105,9 @@ and an indication of the status at exit (normally either ``alive'' or
   \label{fig:fu2}
 \end{figure}
 
-\section{Timescales}
+\section{Time scales}
 
-A timescale is a variable that varies deterministicly \emph{within}
+A time scale is a variable that varies deterministically \emph{within}
 each person during follow-up, \textit{e.g.}:
 \begin{itemize}
   \item Age
@@ -112,8 +115,8 @@ each person during follow-up, \textit{e.g.}:
   \item Time since start of treatment
   \item Time since relapse
 \end{itemize}
-All timescales advance at the same pace, so the time followed is the
-same on all timescales. Therefore, it will suffice to use only the
+All time scales advance at the same pace, so the time followed is the
+same on all time scales. Therefore, it will suffice to use only the
 entry point on each of the time scales, for example:
 \begin{itemize}
   \item Age at entry
@@ -135,6 +138,7 @@ of first oral drug use and date of death --- we can construct a
 \texttt{Lexis} object by:
 <<>>=
 data( DMlate )
+head( DMlate )
 dmL <- Lexis( entry = list( per=dodm,
                             age=dodm-dobth,
                             tfD=0 ),
@@ -147,10 +151,10 @@ timeScales(dmL)
 of death.)
 
 The \texttt{entry} argument is a \emph{named} list with the entry
-points on each of the timescales we want to use. It defines the names
-of the timescales and the entry points of the follow-up of each
+points on each of the time scales we want to use. It defines the names
+of the time scales and the entry points of the follow-up of each
 person. The \texttt{exit} argument gives the exit time on \emph{one}
-of the timescales, so the name of the element in this list must match
+of the time scales, so the name of the element in this list must match
 one of the names of the \texttt{entry} list. This is sufficient,
 because the follow-up time on all time scales is the same, in this
 case $\mathtt{dox}$-$\mathtt{dodm}$. 
@@ -165,12 +169,11 @@ in this case \texttt{DM}, because $\mathtt{FALSE}<\mathtt{TRUE}$.
 
 Now take a look at the result:
 <<>>=
-str( DMlate )
 str( dmL )
 head( dmL )[,1:10]
 @ %
 The \texttt{Lexis} object \texttt{dmL} has a variable for each
-timescale which is the entry point on this timescale. The follow-up
+time scale which is the entry point on this time scale. The follow-up
 time is in the variable \texttt{lex.dur} (\texttt{dur}ation).
 Note that the exit status is in the variable \texttt{lex.Xst}
 (e\texttt{X}it \texttt{st}ate. The variable \texttt{lex.Cst} is the
@@ -182,12 +185,12 @@ characterized by having $\mathtt{lex.Cst}=\mathtt{lex.Xst}$.
 There is a \texttt{summary} function for \texttt{Lexis} objects that
 lists the number of transitions and records as well as the total amount
 of follow-up time; it also (optionally) prints information about the names of the
-variables that constitute the timescales:
+variables that constitute the time scales:
 <<>>=
 summary.Lexis( dmL, timeScales=TRUE )
 @ %
 It is possible to get a visualization of the follow-up along the
-timescales chosen by using the \texttt{plot} method for \texttt{Lexis}
+time scales chosen by using the \texttt{plot} method for \texttt{Lexis}
 objects. \texttt{dmL} is an object of \emph{class} \texttt{Lexis}, so
 using the function \texttt{plot()} on it means that \R\ will look for
 the function \texttt{plot.Lexis} and use this function.
@@ -211,7 +214,7 @@ box(bty='o')
 @ %
 In the above code you will note that the values of the arguments
 \texttt{col} and \texttt{pch} are indexed by factors, using the
-convention \R\ that the index is taken as \emph{number of the level}
+convention in \R\ that the index is taken as \emph{number of the level}
 of the supplied factor. Thus \texttt{c("blue","red")[dmL\$sex]} is
 \texttt{"blue"} when \texttt{sex} is \texttt{M} (the first level).
 
@@ -228,7 +231,7 @@ The results of these two plotting commands are in figure
 \label{fig:Lexis-diagram}
 \end{figure}
 
-\section{Splitting the follow-up time along a timescale}
+\section{Splitting the follow-up time along a time scale}
 
 In next chapter we shall conduct statistical analysis of mortality
 rates, and a prerequisite for parametric analysis of rates is that
@@ -238,8 +241,8 @@ reasonably assume that rates are constant.
 The follow-up time in a cohort can be subdivided (``split'') along a
 time scale, for example current age. This is achieved by the
 \texttt{splitLexis} (note that it is \emph{not} called
-\texttt{split.Lexis}). This requires that the timescale and the
-breakpoints on this timescale are supplied. Try:
+\texttt{split.Lexis}). This requires that the time scale and the
+breakpoints on this time scale are supplied. Try:
 <<>>=
 dmS1 <- splitLexis( dmL, "age", breaks=seq(0,100,5) )
 summary( dmL )
@@ -259,7 +262,7 @@ subset( dmL , lex.id %in% wh.id )[,1:10]
 subset( dmS1, lex.id %in% wh.id )[,1:10]
 @ %
 The resulting object, \texttt{dmS1}, is again a \texttt{Lexis} object,
-and the follow-up may be split further along another timescale, for
+and the follow-up may be split further along another time scale, for
 example diabetes duration, \texttt{tfD}. Subsequently we list the
 results for the chosen individuals:
 <<>>=
@@ -312,7 +315,7 @@ that straddle the event be cut in two and placed in separate records,
 one representing follow-up \emph{before} the intermediate event, and another
 representing follow-up \emph{after} the intermediate event. This is
 achieved with the function \texttt{cutLexis}, which takes three
-arguments: the time point of the intermediate event, the timescale
+arguments: the time point of the intermediate event, the time scale
 that this point refers to, and the value of the (new) state following
 the date. Optionally, we may also define a new time scale with the
 argument \texttt{new.scale=}.
@@ -342,7 +345,7 @@ scales can then easily be derived from this.
 Note
 that individual 52 has had his follow-up cut at 6.55 years from
 diabetes diagnosis and individual 484 at 5.70 years from diabetes
-diagnosis. This dataset could then be split along the timescales as we
+diagnosis. This dataset could then be split along the time scales as we
 did before with \texttt{dmL}.
 
 We can see which of the time scales that are defined as time since
@@ -381,10 +384,10 @@ updated even if it is after the time where the persons moves to state
 state \texttt{Ins}, state \texttt{Dead} is always subsequent to state
 \texttt{Ins}.
 
-Note that we defined a new timescale, \texttt{tfI}, using the argument
+Note that we defined a new time scale, \texttt{tfI}, using the argument
 \texttt{new.scale=tfI}. This has a special status relative to the other
-three timescales, it is defined as time since entry into a state,
-namely \texttt{Ins}, this is noted in the timescale part of the
+three time scales, it is defined as time since entry into a state,
+namely \texttt{Ins}, this is noted in the time scale part of the
 summary of \texttt{Lexis} object --- the information sits in the
 attribute \texttt{time.since} of the \texttt{Lexis} object, which can
 be accessed by the function \texttt{timeSince()} or through the \texttt{summary()}:
@@ -417,10 +420,10 @@ can be used to describe mortality rates:
 \item fixed covariates
 \end{enumerate}
 
-There is only one time-dependent here, namely \texttt{lex.Cst}, the
-current state of the person's follow up; it takes the values
-\texttt{DM} and \texttt{Ins} according to whether the person has ever
-purchased insulin at a given time of follow-up.
+There is only one time-dependent covariate here, namely
+\texttt{lex.Cst}, the current state of the person's follow up; it
+takes the values \texttt{DM} and \texttt{Ins} according to whether the
+person has ever purchased insulin at a given time of follow-up.
 
 The time-scales are obvious candidates for explanatory variables for
 the rates, notably age and time from diagnosis (duration of diabetes)
@@ -428,7 +431,7 @@ and insulin.
 
 \subsection{Time scales as covariates}
 
-If we want to model the effect of the timescale variables on
+If we want to model the effect of the time scale variables on
 occurrence rates, we will for each interval use either the value of
 the left endpoint in each interval or the middle. There is a function
 \texttt{timeBand} which returns either of these:
@@ -447,10 +450,10 @@ intervals defined by \texttt{breaks=}, \emph{not} the midpoints nor
 left or right endpoints of the actual follow-up intervals (which would
 be \texttt{tfD} and \texttt{tfD+lex.dur}, respectively).
 
-These functions are intended for modeling timescale variables as
+These functions are intended for modeling time scale variables as
 factors (categorical variables) in which case the coding must be
 independent of the censoring and mortality pattern --- it should only
-depend on the chosen grouping of the timescale. Modeling timescales as
+depend on the chosen grouping of the time scale. Modeling time scales as
 \emph{quantitative} should not be based on these codings but directly
 on the values of the time-scale variables, notably the left endpoints
 of the intervals.
@@ -534,7 +537,7 @@ parametrization or choose a particular parametrization with explicit constraints
 
 As mentioned, the purpose of subdividing follow-up data in smaller
 intervals is to be able to model effects of time scale variables as
-parametric functions. When we split along a timescale we can get
+parametric functions. When we split along a time scale we can get
 intervals that are as small as we want; if they are sufficiently
 small, an assumption of constant rates in each interval becomes
 reasonable.
@@ -566,7 +569,7 @@ the values of the fixed covariates and the time-dependent variables
 for each interval. Thus the model will be one where the rate is
 assumed constant in each (small) interval, but where a parametric form
 of the \emph{size} of the rate in each interval is imposed by the
-model, using the timescale as a quantitative covariate.
+model, using the time scale as a quantitative covariate.
 
 \subsection{Interval length}
 
@@ -583,7 +586,7 @@ intervals. When we use intervals of 3 month's length it is superfluous
 to split along multiple time scales --- the precise location of
 tightly spaced splits will be irrelevant from any practical point of
 view. \texttt{splitLexis} and \texttt{splitMulti} will allocate the
-actual split times for all of the timescale variables, so these can be
+actual split times for all of the time scale variables, so these can be
 used directly in modeling.
 
 So we split the cut dataset in 3-month intervals along the age
@@ -592,7 +595,7 @@ scale:
 dmCs <- splitMulti( dmC, age = seq(0,110,1/4) )
 summary( dmCs, t=T )
 @ %
-We see that we have 228,748 records and 9996 persons, so about 23
+We see that we now have 228,748 records and 9996 persons, so about 23
 records per person. The total risk time is 54,275 years, a bit less
 than 3 months per record as expected.
 
@@ -672,8 +675,13 @@ called \texttt{glm.Lexis} it is \emph{not} an S3 method for
 Xa <- glm.Lexis( dmCs, from="DM", to="Dead", 
                  formula = ~ Ns(age,knots=a.kn) )
 @ %
+The result is a \texttt{glm} object but with an extra attribute, \texttt{Lexis}:
+<<>>=
+attr( Xa, "Lexis" )
+@ %
 There are similar wrappers for \texttt{gam} and \texttt{coxph} models,
-\texttt{gam.Lexis} and \texttt{coxph.Lexis}, but not elaborated here.
+\texttt{gam.Lexis} and \texttt{coxph.Lexis}, but these will not be
+elaborated in detail.
 
 The \texttt{from=} and \texttt{to=} can even be omitted, in which case
 all possible transitions \emph{into} any of the absorbing states is
@@ -687,11 +695,12 @@ c( deviance(ma), deviance(Ma), deviance(Xa), deviance(xa) )
 @ %
 Oops! the model \texttt{Xa} is apparently not the same as the other
 three? This is because the explicit specification
-\verb|from="DM", to="Dead"|, omits modeling contributions
-from the $\mathtt{Ins}\rightarrow\mathtt{Dead}$ transition. The other
-three models all use both transitions --- and assume that the two
-transition rates are the same, \ie that start of insulin has no effect
-on mortality. We shall relax this assumption later.
+\verb|from="DM", to="Dead"|, omits modeling contributions from the
+$\mathtt{Ins}\rightarrow\mathtt{Dead}$ transition --- the output
+actually said so. The other three models all use both transitions ---
+and assume that the two transition rates are the same, \ie that start
+of insulin has no effect on mortality. We shall relax this assumption
+later.
 
 The parameters from the model do not have any direct interpretation
 \textit{per se}, but we can compute the estimated mortality rates for
@@ -741,7 +750,7 @@ persons not on insulin and that women have 2/3 the mortality of men.
 
 If we want to test whether the excess mortality depends on the time
 since start if insulin treatment, we can add a spline terms in
-\texttt{tfI}. But since \texttt{tfI} is a timescale defined as time
+\texttt{tfI}. But since \texttt{tfI} is a time scale defined as time
 since entry into a new state (\texttt{Ins}), the variable \texttt{tfI}
 will be missing for those in the \texttt{DM} state, so before modeling
 we must set the \texttt{NA}s to 0, which we do with \texttt{tsNA20}
@@ -821,7 +830,7 @@ cbind( ci.exp( cm ), ci.exp( Cm ) )
 @ %
 We can compare the estimates from the Cox model with those from the
 Poisson model --- we must add \texttt{NA}s because the Cox-model does
-not give the parameters for the baseline timescale (\texttt{age}), but
+not give the parameters for the baseline time scale (\texttt{age}), but
 also remove one of the parameters, because \texttt{coxph} parametrizes
 factors (in this case \texttt{lex.Cst}) by all defined levels and not
 only by the levels present in the dataset at hand (note the line of
@@ -862,7 +871,8 @@ abline( h=1, lty=3 )
 @ %
 \insfig{Ieff}{0.8}{The naked duration effects relative to 2 years of
   duration, black from Poisson model, red from Cox model. The two sets
-  of estimates are identical.}
+  of estimates are identical, and so are the standard errors, so the
+  two shaded areas overlap almost perfectly.}
 
 In figure \ref{fig:Ieff}, p. \pageref{fig:Ieff}, we see that the
 duration effect is exactly the same from the two modeling approaches.
@@ -877,14 +887,16 @@ cpr <- ci.exp( cm, list(nd,nr) )
 par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, las=1, bty="n" )
 matshade( nd$tfI, cbind(ppr,cpr), 
           xlab="Time since insulin (years)",
-         ylab="Rate ratio relative to non-Insulin",
+          ylab="Rate ratio relative to non-Insulin",
           lty=c(1,2), log="y", plot=T )
 @ %
-\insfig{IeffR}{0.8}{Insulin duration effect (state \textrm{\tt Ins}) relative to no
-  insulin (state \textrm{\tt DM}), black from Poisson model, red from Cox
-  model. The \emph{shape} is the same as the previous figure, but the
-  RR is now relative to non-insulin, instead of relative to insulin
-  users at 2 years duration.}
+\insfig{IeffR}{0.8}{Insulin duration effect (state \textrm{\tt Ins})
+  relative to no insulin (state \textrm{\tt DM}), black from Poisson
+  model, red from Cox model. The \emph{shape} is the same as the
+  previous figure, but the RR is now relative to non-insulin, instead
+  of relative to insulin users at 2 years duration. The two sets of
+  estimates are identical, and so are the standard errors, so the two
+  shaded areas overlap almost perfectly.}
 
 In figure \ref{fig:IeffR}, p. \pageref{fig:IeffR}, we see the effect
 of increasing duration of insulin use \emph{for a fixed age} which is
@@ -898,7 +910,7 @@ person not on insulin, so we see that the RR (or hazard ratio, HR as
 some call it) is over 5 at the start of insulin (the \texttt{lex.Cst}
 estimate), and decreases to about 1.5 in the long term.
 
-Both figure \ref{fig:Ieff} and \ref{fig:IeffR} indicates a declining
+Both figure \ref{fig:Ieff} and \ref{fig:IeffR} indicate a declining
 RR by insulin duration, but only from figure \ref{fig:ins-time} it is
 visible that mortality actually is \emph{in}creasing by age after some
 2 years after insulin start. This point would not be available if we
@@ -995,12 +1007,12 @@ matshade( ndA$age, cbind( pxa, pIa, pia)*1000,
           lty=1, lwd=2, col=c("blue","forestgreen","red"), alpha=0.1 )
 @ %
 \insfig{dur-int}{0.8}{Age at insulin as interaction between age and
-  duration. Blue curves are from the naïve interaction model
-  (\textrm{\tt imx}) with identical RR at \textrm{\tt tfI}=0 at any
+  duration. Blue curves are from the naive interaction model
+  \textrm{\tt imx} with identical $\RR$ at \textrm{\tt tfI}=0 at any
   age; green curves are from the interaction model with age at
-  insulin, from the model (\textrm{\tt Im}) with only linear
+  insulin, from the model \textrm{\tt Im} with only linear
   differences by age, and red lines from the full interaction model
-  (\textrm{\tt im}).}
+  \textrm{\tt im}.}
 
 We can also plot the RRs only from these models (figure
 \ref{fig:dur-int-RR}, p. \pageref{fig:dur-int-RR}); for this we need
@@ -1053,9 +1065,10 @@ matshade( ndA$age, cbind( pga, pia )*1000,
           alpha=c(0.2,0.1), col=c("black","red") )
 @ %
 \insfig{splint}{0.8}{Spline-by-spline interaction between age and
-  duration (black), and the interaction using a non-linear effect of
-  age at entry (red), corresponding to the red curves in figure
-  \ref{fig:dur-int}.}
+  duration (model \textrm{\tt gm}, black), and the interaction using a
+  non-linear effect of age at entry (model \textrm{\tt im}, red),
+  corresponding to the red curves in figure \ref{fig:dur-int}.}
+This is in figure \ref{fig:splint}, p. \pageref{fig:splint}.
 
 \subsection{Evaluating interactions}
   
@@ -1067,7 +1080,7 @@ age and time since start of insulin, it would be illustrative to show
 the RR as a function of age at insulin and age at follow-up:
 <<RR-int,fig=TRUE>>=
 ndR <- transform( ndI, lex.Cst="DM", tfI=0 )
-iRR <- ci.exp( Im, ctr.mat=list(ndI,ndR) )
+iRR <- ci.exp( im, ctr.mat=list(ndI,ndR) )
 gRR <- ci.exp( gm, ctr.mat=list(ndI,ndR) )
 par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6, las=1, bty="n" )
 matshade( ndI$age, cbind(gRR,iRR), lty=1, log="y", plot=TRUE, 
@@ -1078,10 +1091,11 @@ abline( h=1 )
 \insfig{RR-int}{0.8}{The effect of duration of insulin use at
   different ages of follow-up (and age at insulin start). Estimates
   are from the model with an interaction term using a non-linear
-  effect of age at insulin start (red) and using a general spline
-  interactions (black). It appears that the general interaction
-  over-models a bit.}
-  
+  effect of age at insulin start (model \textrm{\tt im}, red) and
+  using a general spline interactions (model \textrm{\tt gm},
+  black). It appears that the general interaction over-models a bit.}
+This is in figure \ref{fig:RR-int}, p. \pageref{fig:RR-int}.
+
 The advantage of the parametric modeling (be that with age at insulin
 or general spline interaction) is that it is straight-forward to
 \emph{test} whether we have an interaction.
@@ -1108,7 +1122,8 @@ ini <- ci.pred( ind, ndI )
 dmi <- ci.pred( dmd, ndI )
 dma <- ci.pred( dmd, ndA )
 @ %
-The estimated mortality rates:
+The estimated mortality rates are shown in figure \ref{fig:sep-mort},
+p. \pageref{fig:sep-mort}, using:
 <<sep-mort,fig=TRUE>>=
 par(mar=c(3,3,1,1),mgp=c(3,1,0)/1.6,las=1,bty="n")
 matshade( ndI$age, ini*1000, plot=TRUE, log="y",
@@ -1118,7 +1133,9 @@ matshade( ndA$age, dma*1000,
           lwd=2, col="black" )
 @ %
 The estimated RRs are computed using that the estimates from the two
-models are uncorrelated, and hence qualify for \texttt{ci.ratio}:
+models are uncorrelated, and hence qualify for \texttt{ci.ratio} (this
+and the previous graph
+appear in figure \ref{fig:Ins-noIns}, p. \pageref{fig:Ins-noIns})
 <<sep-HR,fig=TRUE>>=
 par(mar=c(3,3,1,1),mgp=c(3,1,0)/1.6,las=1,bty="n")
 matshade( ndI$age, ci.ratio(ini,dmi), plot=TRUE, log="y",
@@ -1185,7 +1202,7 @@ vignette on \texttt{simLexis}.
 
 We may be interested in starting either insulin or OAD (oral
 anti-diabetic drugs), thus giving rise to more states and more
-timescales. This can be accomplished by the \texttt{mcutLexis}
+time scales. This can be accomplished by the \texttt{mcutLexis}
 function, that generalizes \texttt{cutLexis}:
 <<>>=
 dmM <- mcutLexis( dmL,
@@ -1197,7 +1214,7 @@ dmM <- mcutLexis( dmL,
           ties.resolve = TRUE )
 summary( dmM, t=T )
 @
-We see that we now have two timescales defined as entry since into
+We see that we now have two time scales defined as entry since into
 states.
 <<>>=
 wh <- c(subset(dmM,lex.Cst=="Ins-OAD")$lex.id[1:2],
@@ -1245,11 +1262,12 @@ The \texttt{Lexis} machinery has evolved over time since it was first
 introduced in a workable version in \texttt{Epi\_1.0.5} in August 2008.
 
 Over the years there have been additions of tools for handling
-multistate data. Here is a list of functions with a very brief
-description; it does not replace the documentation. Unless otherwise
-stated function named \texttt{something.Lexis} (with a ``\texttt{.}'')
-are S3 methods for \texttt{Lexis} objects, so you can skip the
-``\texttt{.Lexis}'' in daily use.
+multistate data. Here is a list of the current functions relating to
+\texttt{Lexis} objects with a very brief description; it does not
+replace the documentation. Unless otherwise stated, functions named
+\texttt{something.Lexis} (with a ``\texttt{.}'')  are S3 methods for
+\texttt{Lexis} objects, so you can skip the ``\texttt{.Lexis}'' in
+daily use.
 
 \setlist{noitemsep}
 \begin{description}
@@ -1265,8 +1283,8 @@ are S3 methods for \texttt{Lexis} objects, so you can skip the
 \item[\texttt{mcutLexis}] cut follow-up at several intermediate events
 \item[\texttt{countLexis}] cut follow-up at intermediate event count
   the no. events so far
-\item[\texttt{splitLexis}] split follow up along a timescale
-\item[\texttt{splitMulti}] split follow up along a timescale --- from
+\item[\texttt{splitLexis}] split follow up along a time scale
+\item[\texttt{splitMulti}] split follow up along a time scale --- from
   the \texttt{popEpi} package, faster and has simpler syntax than
   \texttt{splitLexis}
 \item[\texttt{addCov.Lexis}] add clinical measurements at a given date to a
@@ -1275,11 +1293,11 @@ are S3 methods for \texttt{Lexis} objects, so you can skip the
 
 \item[Boxes and plots]\ \\
 \begin{description}
-\item[\texttt{boxes.Lexis}] Draw a diagram of states and transitions
-\item[\texttt{plot.Lexis}] Draw a standard Lexis diagram
-\item[\texttt{points.Lexis}] Add points to a Lexis diagram
-\item[\texttt{lines.Lexis}] Add lines to a Lexis diagram
-\item[\texttt{PY.ann.Lexis}] Annotate life lines in a Lexis diagram
+\item[\texttt{boxes.Lexis}] draw a diagram of states and transitions
+\item[\texttt{plot.Lexis}] draw a standard Lexis diagram
+\item[\texttt{points.Lexis}] add points to a Lexis diagram
+\item[\texttt{lines.Lexis}] add lines to a Lexis diagram
+\item[\texttt{PY.ann.Lexis}] annotate life lines in a Lexis diagram
 \end{description}
 
 \item[Summarize and query]\ \\  
@@ -1287,17 +1305,17 @@ are S3 methods for \texttt{Lexis} objects, so you can skip the
 \item[\texttt{summary.Lexis}] overview of transitions, risk time etc.
 \item[\texttt{levels.Lexis}] what are the states in the \texttt{Lexis} object
 \item[\texttt{nid.Lexis}] number of persons in the \texttt{Lexis}
-  object --- how many different values of \texttt{lex.id} are there
+  object --- how many unique values of \texttt{lex.id} are present
 \item[\texttt{entry}] entry time
 \item[\texttt{exit}] exit time
 \item[\texttt{status}] status at entry or exit
-\item[\texttt{timeBand}] factor of time band
-\item[\texttt{timeScales}] what timescales are in the \texttt{Lexis} object
-\item[\texttt{timeSince}] what timescales are defined as time since a given state
+\item[\texttt{timeBand}] factor of time bands
+\item[\texttt{timeScales}] what time scales are in the \texttt{Lexis} object
+\item[\texttt{timeSince}] what time scales are defined as time since a given state
 \item[\texttt{breaks}] what breaks are currently defined
 \item[\texttt{absorbing}] what are the absorbing states
 \item[\texttt{transient}] what are the transient states
-\item[\texttt{preceding}, \texttt{before}] which states precedes this
+\item[\texttt{preceding}, \texttt{before}] which states precede this
 \item[\texttt{succeeding}, \texttt{after}] which states can follow this
 \item[\texttt{tmat.Lexis}] transition matrix for the \texttt{Lexis} object
 \end{description}
@@ -1305,11 +1323,12 @@ are S3 methods for \texttt{Lexis} objects, so you can skip the
 \item[Manipulate]\ \\
 \begin{description}
 \item[\texttt{subset.Lexis}, \texttt{[}] subset of a \texttt{Lexis} object
-\item[\texttt{merge.Lexis}] merges two \texttt{Lexis} objects  
-\item[\texttt{cbind.Lexis}] append a \texttt{data.frame} to a \texttt{Lexis} object
+\item[\texttt{merge.Lexis}] merges a \texttt{Lexis} objects with a
+  \texttt{data.frame}
+\item[\texttt{cbind.Lexis}] bind a \texttt{data.frame} to a \texttt{Lexis} object
 \item[\texttt{rbind.Lexis}] put two \texttt{Lexis} objects head-to-foot
-\item[\texttt{transform.Lexis}] transform variables
-\item[\texttt{tsNA20}] turn \texttt{NA}s to 0s for timescales
+\item[\texttt{transform.Lexis}] transform and add variables
+\item[\texttt{tsNA20}] turn \texttt{NA}s to 0s for time scales
 \item[\texttt{Relevel.Lexis}, \texttt{factorize.Lexis}] reorder and
   combine states
 \item[\texttt{bootLexis}] bootstrap sample of \emph{persons}
@@ -1323,7 +1342,7 @@ are S3 methods for \texttt{Lexis} objects, so you can skip the
 \item[\texttt{nState}, \texttt{pState}] count state occupancy from a
   simulated \texttt{Lexis} object 
 \item[\texttt{plot.pState}, \texttt{lines.pState}] plot state occupancy from a
-  simulated \texttt{Lexis} object 
+  \texttt{pState} object 
 \end{description}
 
 \item[Stack]\ \\
@@ -1343,11 +1362,13 @@ are S3 methods for \texttt{Lexis} objects, so you can skip the
 
 \item[Statistical models] --- these are \emph{not} S3 methods
 \begin{description}  
-\item[\texttt{glm.Lexis}, \texttt{gam.Lexis}] fit \texttt{glm}
-  resp. \texttt{gam} (from \texttt{mgcv}) model using the \texttt{poisreg} family to
+\item[\texttt{glm.Lexis}] fit a \texttt{glm} model using the
+  \texttt{poisreg} family to (hopefully) time split data
+\item[\texttt{gam.Lexis}] fit a \texttt{gam} model (from the
+  \texttt{mgcv} package) using the \texttt{poisreg} family to
   (hopefully) time split data
 \item[\texttt{coxph.Lexis}] fit a Cox model to follow-up in a
-  \texttt{Lexis} obejct
+  \texttt{Lexis} object
 \end{description}
 
 \end{description}

@@ -1,6 +1,13 @@
 Changes in 2.35
 
-o Epi.Rd included as man page, allowing easu access to the index via ?Epi.
+o Major re-write of vignette of  follow-up data
+
+o glm.Lexis example updated
+
+o Lexis now gives a not and not a warning when dropping persons with
+  no FU 
+
+o Epi.Rd included as man page, allowing easy access to the index via ?Epi.
 
 o simLexis updated to cope with poisreg family in modeling input
 
