@@ -1,3 +1,7 @@
+Changes in 2.38
+
+o The poisreg family now works with anova
+
 Changes in 2.37
 
 o ci.surv added to facilitate calculation of survival function from a
