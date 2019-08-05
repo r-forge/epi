@@ -4,8 +4,8 @@
 \newcommand{\Title}{Follow-up data with the\\ \texttt{Lexis} functions in
   \texttt{Epi}}
 \newcommand{\Tit}{Follow-up with \texttt{Lexis}}
-\newcommand{\Version}{Version 5}
-\newcommand{\Dates}{June 2019}
+\newcommand{\Version}{Version 6}
+\newcommand{\Dates}{August 2019}
 \newcommand{\Where}{SDCC}
 \newcommand{\Homepage}{\url{http://bendixcarstensen.com/} }
 \newcommand{\Faculty}{\begin{tabular}{rl}
@@ -57,9 +57,9 @@ and many constructive suggestions.
 
 The \texttt{Lexis} machinery in the \texttt{Epi} package was first
 conceived by Martyn Plummer\cite{Plummer.2011,Carstensen.2011a}, and
-since its first appearance in the \emph{Epi} package in 2008 it has
-been expanded with a number of utilities, as can be seen from the last
-chapter of this note: ``\texttt{Lexis} functions''.
+since its first appearance in the \texttt{Epi} package in 2008 it has
+been expanded with a number of utilities. An overview of these can be
+found in the last chapter of this note: ``\texttt{Lexis} functions''.
 
 \chapter{Representation of follow-up data in the \texttt{Epi} package} 
 
@@ -1381,14 +1381,29 @@ daily use.
 
 \end{description}
 
-\renewcommand{\refname}{References}
-\bibliographystyle{unsrt}
-\bibliography{%
-/home/bendix/art/bibtex/BxC,%
-/home/bendix/art/bibtex/Stat,%
-/home/bendix/art/bibtex/DMCa,%
-/home/bendix/art/bibtex/Diabetes%
-}
-\addcontentsline{toc}{chapter}{\refname}
+\renewcommand{\bibname}{References}
+
+\bibliographystyle{plain}
+\begin{thebibliography}{1}
+
+\bibitem{Carstensen.2011a}
+B~Carstensen and M~Plummer.
+\newblock Using {L}exis objects for multi-state models in {R}.
+\newblock {\em Journal of Statistical Software}, 38(6):1--18, 1 2011.
+
+%% \bibitem{Iacobelli.2013}
+%% S~Iacobelli and B~Carstensen.
+%% \newblock {Multiple time scales in multi-state models}.
+%% \newblock {\em Stat Med}, 32(30):5315--5327, Dec 2013.
+
+\bibitem{Plummer.2011}
+M~Plummer and B~Carstensen.
+\newblock Lexis: An {R} class for epidemiological studies with long-term
+  follow-up.
+\newblock {\em Journal of Statistical Software}, 38(5):1--12, 1 2011.
+
+\end{thebibliography}
+
+\addcontentsline{toc}{chapter}{\bibname}
 
 \end{document}
