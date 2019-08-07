@@ -1339,6 +1339,7 @@ daily use.
 \item[\texttt{tsNA20}] turn \texttt{NA}s to 0s for time scales
 \item[\texttt{Relevel.Lexis}, \texttt{factorize.Lexis}] reorder and
   combine states
+\item[\texttt{rm.tr}] remove transitions from a \texttt{Lexis} object
 \item[\texttt{bootLexis}] bootstrap sample of \emph{persons}
   (\texttt{lex.id}) in the \texttt{Lexis} object
 \end{description}

@@ -1,5 +1,7 @@
 Changes in 2.38
 
+o Minor editorial changes in urls in documentation files
+
 o The poisreg family now works with anova
 
 o Superfluous 'nanes' attributes on all variables in data sets bdendo and

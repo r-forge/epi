@@ -5,7 +5,7 @@ Title: A Package for Statistical Analysis in Epidemiology
 Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
                     email = "b@bxc.dk"),
              person("Martyn", "Plummer", role = "aut",
-                    email = "plummerm@iarc.fr"),
+                    email = "Martyn.Plummer@warwick.ac.uk"),
              person("Esa", "Laara", role = "ctb"),
              person("Michael", "Hills", role = "ctb"))
 Depends: R (>= 3.5.0), utils
