@@ -1,3 +1,12 @@
+Changes in 2.39
+
+o Bug in notes from ccwc corrected (MP)
+
+o Minor editorial changes in annotation of output from coxph.Lexis
+
+o The by= arguemnt to summary.Lexis crashed the function if the Lexis
+  object was a data.table
+
 Changes in 2.38
 
 o Minor editorial changes in urls in documentation files

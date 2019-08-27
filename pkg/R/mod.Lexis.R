@@ -160,7 +160,7 @@ if( !missing(from) &  missing(to) ) to   <- succeeding(Lx,from)
 nameLx <- deparse(substitute(Lx))
 
 # work out which transitions are modeled
-# first a small utility
+# first a small utility ofr annotation
 trt <- function( f, t ) paste( f, "->", t, sep="" )
 if( paired )
   {
@@ -204,10 +204,10 @@ Sobj <- Surv( Lx[,ts],
 
 # Tell what we intend to and then do it    
 if( verbose ){
-cat( deparse(substitute(model)),
-     " survival::coxph analysis of Lexis object ", nameLx,
+cat( "survival::coxph analysis of Lexis object ", nameLx,
      ":\nRates for", if(  onetr ) " the", " transition",
-                     if( !onetr ) "s", " ", trprn, "\n", sep="" )
+                     if( !onetr ) "s", " ", trprn,
+     "\nBaseline timescale: ", ts, sep="" )
              }
 
 mod <- coxph( as.formula( paste( "Sobj", 
