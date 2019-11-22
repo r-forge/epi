@@ -361,7 +361,7 @@ ci.lin( ..., Exp=TRUE  )[,if(pval) c(5:7,4)   else 5:7     ,drop=FALSE]
          } else {
 ci.lin( ..., Exp=FALSE )[,if(pval) c(1,5,6,4) else c(1,5,6),drop=FALSE]
                 }
-class( res ) <- c( "ci.lin", "matrix" )
+# class( res ) <- c( "ci.lin", "matrix" )
 res
 }
 

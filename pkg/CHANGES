@@ -1,4 +1,12 @@
+Changes in 2.40
+
+o plotCIF and stackedCIF have been modified to comply with changes in
+  survival (Esa Laara)
+
 Changes in 2.39
+
+o mat2pol added: function that takes a set of curves represented as columns
+  in a matrix (mat) and plots then as stacked polygons (pol)
 
 o the argument formula for glm.Lexis, gam.Lexis and coxph.Lexis is
   moved up to be the second argument, making simple specification of
