@@ -166,8 +166,10 @@ function(entry=0, exit, fail, origin=0, controls=1, match=list(),
         fr[(nn+1):(nn+ncase)] <- 1
         fr[(nn+ncase+1):newnn] <- 0
         pr[(nn+1):(nn+ncase)] <- (1:n)[case]
-        pr[(nn+ncase+1):(newnn)] <-
-          sample((1:n)[noncase], size=ncont)
+        ## Work around bad behaviour of sample for vectors of length 1
+        noncase.id <- (1:n)[noncase]
+        pr[(nn+ncase+1):(newnn)] <- noncase.id[sample.int(length(noncase.id),
+                                                          size=ncont)]
         nn <- newnn
       }
       else {
