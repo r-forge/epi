@@ -123,7 +123,7 @@ countLexis( data, cut, timescale = 1 )
   is immaterial in what order the cutpoints are entered.
 }
 \author{Bendix Carstensen, Steno Diabetes Center, \email{b@bxc.dk},
-        Martyn Plummer, IARC, \email{plummer@iarc.fr}
+  Martyn Plummer, \email{martyn.plummer@r-project.org}
 }
 \seealso{
   \code{\link{mcutLexis}},
