@@ -32,8 +32,8 @@ function(entry=0, exit, fail, origin=0, controls=1, match=list(),
   else if (mode(marg)=="call" && marg[[1]]=="list") {
     mnames <- names(marg)
     nm <- length(marg)
-    if (!is.null(mnames)) {
-      if (nm>1) {
+    if (nm>1) {
+      if (!is.null(mnames)) {
         for (i in 2:nm) {
           if (mode(marg[[i]])=="name")
             mnames[i] <- as.character(marg[[i]])

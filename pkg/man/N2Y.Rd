@@ -29,7 +29,7 @@ N2Y( A, P, N,
   person-time in them, respectively. The person-time is in units of the
   distance between population count dates.
 
-  If \code{res.dfr=FALSE} a three-way table classified by the left end
+  If \code{return.dfr=FALSE} a three-way table classified by the left end
   point of the age-classes and the periods and a factor \code{wh} taking
   the values \code{up} and \code{lo} corresponding to upper (early
   cohort) and lower (late cohort) Lexis triangles.

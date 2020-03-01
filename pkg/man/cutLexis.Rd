@@ -47,15 +47,17 @@ countLexis( data, cut, timescale = 1 )
     \code{precursor.states} will be ignored. }
 }
 \value{
-  A \code{Lexis} object, for which each follow-up interval
-  containing the cutpoint is split in two: one before
-  and one after the cutpoint. An extra time-scale is added; the time
-  since the event at \code{cut}. This is \code{NA} for any follow-up
-  prior to the intermediate event.
+  A \code{Lexis} object, for which each follow-up interval containing
+  the cutpoint is split in two: one before and one after the
+  cutpoint. Any record representing follow up after the cutpoint has its
+  value of \code{lex.Cst} updated to the new state. An extra time-scale
+  is added; the time since the event at \code{cut}. This time scake will
+  be\code{NA} for any follow-up prior to the intermediate event.
 
   The function \code{tsNA20} will replace all missing values in
   timescales with 0. This is commonly meeded when timescales defined as
-  time since entry into an inermediate state are used in modeling.
+  time since entry into an intermediate state are used in modeling. But
+  you do not want to do that permanently in the cut data frame.
   }
 \note{
   The \code{cutLexis} function superficially resembles the
