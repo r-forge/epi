@@ -1,6 +1,6 @@
 Package: Epi
-Version: 2.41
-Date: 2019-12-09
+Version: 2.42
+Date: 2020-10-23
 Title: A Package for Statistical Analysis in Epidemiology
 Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
                     email = "b@bxc.dk"),
@@ -9,7 +9,7 @@ Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
              person("Esa", "Laara", role = "ctb"),
              person("Michael", "Hills", role = "ctb"))
 Depends: R (>= 3.5.0), utils
-Imports: cmprsk, etm, splines, MASS, survival, plyr, Matrix, numDeriv,
+Imports: cmprsk, etm, splines, MASS, survival, plyr, dplyr, Matrix, numDeriv,
   data.table, zoo, mgcv
 Suggests: mstate, nlme, lme4, popEpi
 Description: Functions for demographic and epidemiological analysis in

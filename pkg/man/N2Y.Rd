@@ -43,13 +43,18 @@ N2Y( A, P, N,
   distinct values is \code{2*(nP-1)}, because the \code{P} in the output
   is coded differently for upper and lower Lexis triangles.
 
-  The number of age-classes is the same as in the input.  In the paper
-  "Age-Period-Cohort models for the Lexis diagram" I suggest that the
-  risk time in the lower triangles in the first age-class and in the
-  upper triangles in the last age-class are computed so that the total
-  risk time in the age-class corresponds to the average of the two
-  population figures for the age-class at either end of the period. This
-  is the method used.
+  The number of age-classes is the same as in the input
+  (\code{nA=length(table(A))}), so the number of distinct values is
+  \code{2*nA}, because the \code{A} in the output is coded differently
+  for upper and lower Lexis triangles.
+
+  In the paper "Age-Period-Cohort models for the Lexis diagram" I
+  suggest that the risk time in the lower triangles in the first
+  age-class and in the upper triangles in the last age-class are
+  computed so that the total risk time in the age-class corresponds to
+  the average of the two population figures for the age-class at either
+  end of a period multiplied with the period length. This is the method
+  used.
 }
 \references{
   B. Carstensen: Age-Period-Cohort models for the
@@ -79,7 +84,7 @@ ftable( N2Y( data=Nx, return.dfr=FALSE ) )
 ( N.2.1973 <- subset( Nx, A==2 & P==1973)$N )
 N.1.1972/3 + N.2.1973/6
 N.1.1972/6 + N.2.1973/3
-# These number can be found in the following plot:
+# These numbers can be found in the following plot:
 
 # Blue numbers are population size at 1 January
 # Red numbers are the computed person-years in Lexis triangles:
