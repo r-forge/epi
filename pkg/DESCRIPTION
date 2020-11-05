@@ -1,7 +1,7 @@
 Package: Epi
 Version: 2.42
 Date: 2020-10-23
-Title: A Package for Statistical Analysis in Epidemiology
+Title: Statistical Analysis in Epidemiology
 Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
                     email = "b@bxc.dk"),
              person("Martyn", "Plummer", role = "aut",

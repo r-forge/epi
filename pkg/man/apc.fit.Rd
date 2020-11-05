@@ -211,7 +211,7 @@ apc.fit( data,
    \url{http://BendixCarstensen.com/APC} 
    }
 \author{
-   Bendix Carstensen, \url{http://BendixCarstensen.com}
+   Bendix Carstensen, \url{http://bendixcarstensen.com}
    }
 \seealso{
    \code{\link{apc.frame}},
