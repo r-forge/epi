@@ -161,12 +161,13 @@ nd <- data.frame( tfd = seq(int,10,int)-int/2 ) # not the same as the split,
                                                 # and totally unrelated to it
 
 # cumulaive risks with confidence intervals
+# (too few times, too few simluations)
 system.time(
 res <- ci.Crisk(list(OAD = mO, 
                      Ins = mI, 
                     Dead = mD),
-                            nd = data.frame(tfd = (1:1000-0.5)/100),
-                            nB = 1000,
+                            nd = data.frame(tfd = (1:100-0.5)/10),
+                            nB = 50,
                           perm = 4:1))
 str(res)
 }

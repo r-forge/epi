@@ -18,9 +18,9 @@ x$lex.Cst <- factor(Cst, levels = all.levels)
 x$lex.Xst <- factor(Xst, levels = all.levels)
 
 # Note if levels changed
-if(intersect(all.levels, levels(Cst)) != levels(Cst) |
-   intersect(all.levels, levels(Xst)) != levels(Xst))
-  cat( "lex.Cst and lex.Xst now have levels:\n", all.levels, "\n")  
+if(length(setdiff(all.levels, levels(Cst))) > 0 |
+   length(setdiff(all.levels, levels(Xst))) > 0)
+   cat( "NOTE: lex.Cst and lex.Xst now have levels:\n", all.levels, "\n")  
 return(x)
 }
 
