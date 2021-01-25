@@ -42,7 +42,7 @@
     name indicating the time at which the covariate measurements were
     taken.
     }
-    \item{exnam}{
+  \item{exnam}{
     Character. Name of the variable in \code{clin} with the examination
     names (such as \code{wave1}, \code{wave2} etc.). Values may not be
     repeated within person. Will be carried over to the resulting
@@ -56,7 +56,8 @@
     variable in the result which will contain the time since the most
     recent covariate date. If the argument is omitted a variable called
     \code{tfc} will be constructed. If \code{addScales} is \code{TRUE}
-    this is included among the time scales.
+    this is included among the time scales, even it is not formally a
+    time scale.
     }
   \item{addScales}{
     Logical. Should timescales representing time since each examination time
@@ -73,7 +74,7 @@
     The implementation is clumpy, the function is slow.
 }
 \author{
-  Bendix Carstensen, \email{b@bxc.dk}, \url{http://BendixCarstensen.com}
+  Bendix Carstensen, \email{b@bxc.dk}, \url{http://bendixcarstensen.com}
 }
 \seealso{
 \code{\link{cutLexis}},

@@ -52,7 +52,7 @@ citEntry(entry = "Article",
   volume       = "38",
   number       = "6",
   pages        = "1--18",
-  url          = "http://www.jstatsoft.org/v38/i06/",
+  url          = "https://www.jstatsoft.org/v38/i06/",
 
   textVersion  =
   paste("Bendix Carstensen, Martyn Plummer (2011).",

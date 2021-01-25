@@ -208,7 +208,7 @@ apc.fit( data,
    Statistics in Medicine, 10; 26(15):3018-45, 2007.
 
    Various links to course material etc. is available through
-   \url{http://BendixCarstensen.com/APC} 
+   \url{http://bendixcarstensen.com/APC/} 
    }
 \author{
    Bendix Carstensen, \url{http://bendixcarstensen.com}

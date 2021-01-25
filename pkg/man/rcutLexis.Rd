@@ -9,10 +9,9 @@ are allowed, as well as recurrences. The states only refer to the last
 assued state, unlike the result from \code{\link{mcutLexis}}.
 }
 \usage{
-rcutLexis( Lx,
-          cut,
+rcutLexis( Lx, cut,
     timescale = 1,
-    precursor.states)
+    precursor.states = transient(Lx))
 }
 \arguments{
   \item{Lx}{
@@ -33,7 +32,7 @@ rcutLexis( Lx,
 \value{A \code{\link{Lexis}} object with follow-up cut at the event
   times supplied in \code{cut}}
 \author{
-Bendix Carstensen, \url{http://BendixCarstensen.com}
+Bendix Carstensen, \url{http://bendixcarstensen.com}
 }
 \seealso{
   \code{\link{cutLexis}},

@@ -11,34 +11,29 @@ function( Lx,
    addScales = FALSE )
 {
 # Function to add clinically measured covariates to a Lexis object
-
-# Two utility functions used to sort a Lexis object by (lex.id,time)    
-order.Lexis <- function( Lx )
-               {
-               # Some time scale may contain missing values
-               # So find (any) one that does not so we can sort on it 
-       N.NA <- apply(Lx[,timeScales(Lx)],2,function(x) sum(is.na(x)))
-  a.full.ts <- which(N.NA==0)[1]
-               order(Lx$lex.id,Lx[,timeScales(Lx)[a.full.ts]])
-               }
-sort.Lexis <- function( Lx ) Lx[order.Lexis(Lx),]
-   
+# avoid note about no visible binding
+mvar <- NULL
+       
 # The point is to cut the Lexis diagram at the examination dates
 # and subsequently add the clinical records
-# ...but first the usual cheking of paraphernalia
+    
+# ...but first the usual cheking of paraphernalia:
 
+# is it a Lexis object and is clin not    
 if( !inherits(Lx  ,"Lexis") ) stop( "Lx must be a Lexis object.\n" )
 if(  inherits(clin,"Lexis") ) stop( "clin cannot be a Lexis object.\n" )
-    
-# Is the timescale argument a timescale in Lx and is it a variable in clin?    
+
+# Is the timescale argument a timescale in Lx and is it a variable in clin? 
 ts <- if( is.numeric(timescale) ) timeScales( Lx )[timescale] else timescale
 if( !( ts %in% timeScales(Lx) ) )
-    stop( "timescale argument (", ts, ") must be among the timescales in the Lexis object ",
-          deparse(substitute(Lx)),":", timeScales(Lx), ".\n" )
+    stop("timescale argument (", ts,
+         ") must be among the timescales in the Lexis object ",
+         deparse(substitute(Lx)),":", timeScales(Lx), ".\n" )
 
 clin.nam <- deparse(substitute(clin))
 if( !( ts %in% names(clin) & "lex.id" %in% names(clin) ) )
-    stop( "'lex.id' and timescale '", ts, "' must be variables in the clin object ",
+    stop("'lex.id' and timescale '", ts,
+         "' must be variables in the clin object ",
           clin.nam, "\n" )
 
 # variables to merge by
@@ -56,29 +51,29 @@ if( any( dd <- duplicated(clin[,c("lex.id",ts)]) ) )
   clin <- clin[!dd,]
     }
     
-# the variable holding the name of the examination
+# if not supplied, make the variable holding the name of the examination
 if( missing(exnam) ) exnam <- "exnam"
 # and if it is not there, construct it
 if( !(exnam %in% names(clin)) )
     clin[,exnam] <- paste( "ex",
                            ave( clin$lex.id,
                                 clin$lex.id,
-                                FUN = function(x) cumsum(x/x) ),
+                                FUN = function(x) 1:length(x) ),
                            sep="" )
 
-# Add copy of the time of examination to be carried forward
+# Add copy of the times of examination to be carried forward
 clin[,tfc] <- clin[,ts]
     
 # Clinical variables to be merged in
 # --- note we take examination date and name as a cinical variable too 
-cvar <- setdiff( names(clin), mvar )
-
+cvar <- setdiff(names(clin), mvar)
+    
 # A data frame of cutting times
 cfr <- data.frame( lex.id = clin$lex.id,
                       cut = clin[,ts],
-                new.state = clin[,exnam] )
+                new.state = factor(clin[,exnam]) )
 
-# Now cut Lx --- this is really inefficient
+# Now cut Lx at the examination times
 mc <- Lx
 for( st in levels(cfr$new.state) )
 mc <- cutLexis( mc,
@@ -88,11 +83,13 @@ mc <- cutLexis( mc,
          new.scale = addScales )
     
 # Merge in states from the original object mx, but take attributes from mc
-mx <- Lx[,mvar]
+# ORG: mx <- if (inherits(Lx, "data.table")) Lx[,..mvar] else Lx[,mvar]
+# replaced by
+  mx <- as.data.frame(Lx)[,mvar]
 mx$org.Cst <- Lx$lex.Cst
 mx$org.Xst <- Lx$lex.Xst
-mx <- merge( mc, mx, by = mvar, all.x = TRUE )    
-mx <- sort.Lexis( mx )
+mx <- merge(mc, mx, by = mvar, all = TRUE)    
+mx <- sortLexis(mx)
     
 # Complete the state variables    
 ( wh <- which(is.na(mx$org.Cst)) )
@@ -108,7 +105,7 @@ mx <- mx[,-wh.rm]
     
 # Merge in the clinical variables and make sure it's sorted
 mx <- merge( mx, clin, by=mvar, all.x=TRUE )
-mx <- sort.Lexis( mx )
+mx <- sortLexis( mx )
     
 # And carry them forward within each lex.id
 
@@ -125,7 +122,7 @@ mx[,cvar] <- ave( mx[,cvar], mx$lex.id, FUN=locf.df )
 mx[,tfc] <- mx[,ts] - mx[,tfc]
 
 # Add as a time-scale
-if( addScales )
+if(addScales)
   {  
 new.scales <- setdiff( timeScales(mx), timeScales(Lx) )
 op <- options(warn = (-1)) # suppress warnings
@@ -138,7 +135,7 @@ names( brt ) <- tfc
 attr( mx, "breaks") <- c( attr( mx, "breaks"), brt ) 
   }
     
-# Done! - well order first
-sort.Lexis( mx )
+# Done! - well, order first
+sortLexis(mx)
 }
 

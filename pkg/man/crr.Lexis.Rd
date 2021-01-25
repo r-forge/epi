@@ -45,7 +45,7 @@ and \code{transitions} - a table of transitions and censorings showing
 which transition was analysed and which were taken as competing events.
 }
 
-\author{Bendix Carstensen, \url{http://BendixCarstensen.com} }
+\author{Bendix Carstensen, \url{http://bendixcarstensen.com} }
 
 \seealso{
   \code{\link[cmprsk:crr]{crr}}, \code{\link{Lexis}}
@@ -75,7 +75,7 @@ summary( tht.L )
 # Show the transitions
 boxes( tht.L, boxpos=list(x=c(20,rep(80,3),30),
                           y=c(60,90,60,30,10) ),
-              show.BE=TRUE, scale.R=1000 )
+              show.BE="nz", scale.R=1000 )
 
 # Fit a model for the Hepatocellular Carcinoma as outcome
 # - note that you can create a variable on the fly:
