@@ -4,9 +4,10 @@
 A function to cut follow-up at intermediate event times.
 }
 \description{
-Cuts follow-up at intermediate event times, multiple event per pseron
-are allowed, as well as recurrences. The states only refer to the last
-assued state, unlike the result from \code{\link{mcutLexis}}.
+Cuts follow-up at intermediate event times, multiple events per person
+are allowed, as well as recurrences of the sme type of event. The
+resulting states only refer to the last assumed state, unlike the result
+from \code{\link{mcutLexis}}.
 }
 \usage{
 rcutLexis( Lx, cut,

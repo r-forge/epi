@@ -9,7 +9,7 @@ Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
              person("Esa", "Laara", role = "ctb"),
              person("Michael", "Hills", role = "ctb"))
 Depends: R (>= 3.5.0), utils
-Imports: cmprsk, etm, splines, MASS, survival, plyr, dplyr, Matrix, numDeriv,
+Imports: cmprsk, etm, splines, MASS, survival, purrr, plyr, dplyr, Matrix, numDeriv,
   data.table, zoo, mgcv
 Suggests: mstate, nlme, lme4, popEpi
 Description: Functions for demographic and epidemiological analysis in

@@ -3,26 +3,28 @@ addCov <- function (Lx, ...) UseMethod("addCov")
 
 addCov.default <-
 addCov.Lexis <-
-function( Lx,
-        clin,
-   timescale = 1,
-       exnam,
-         tfc = "tfc",
-   addScales = FALSE )
+function(Lx,
+       clin,
+  timescale = 1,
+      exnam,
+        tfc = "tfc")
 {
 # Function to add clinically measured covariates to a Lexis object
-# avoid note about no visible binding
-mvar <- NULL
-       
-# The point is to cut the Lexis diagram at the examination dates
-# and subsequently add the clinical records
-    
-# ...but first the usual cheking of paraphernalia:
 
-# is it a Lexis object and is clin not    
+# The point is to cut the Lexis object at the examination dates
+# and subsequently add the clinical records
+
+# to avoid notes in check
+org.Cst <- NULL
+org.Xst <- NULL
+lex.Cst <- NULL
+lex.Xst <- NULL
+
+# ...but first the usual cheking of paraphernalia
+
 if( !inherits(Lx  ,"Lexis") ) stop( "Lx must be a Lexis object.\n" )
 if(  inherits(clin,"Lexis") ) stop( "clin cannot be a Lexis object.\n" )
-
+    
 # Is the timescale argument a timescale in Lx and is it a variable in clin? 
 ts <- if( is.numeric(timescale) ) timeScales( Lx )[timescale] else timescale
 if( !( ts %in% timeScales(Lx) ) )
@@ -34,108 +36,99 @@ clin.nam <- deparse(substitute(clin))
 if( !( ts %in% names(clin) & "lex.id" %in% names(clin) ) )
     stop("'lex.id' and timescale '", ts,
          "' must be variables in the clin object ",
-          clin.nam, "\n" )
-
-# variables to merge by
-mvar <- c( "lex.id", ts )
+         clin.nam, "\n" )
 
 # order clin to get the possible construction of examination names ok
-clin <- clin[order(clin$lex.id,clin[,ts]),]
+clin <- clin[order(clin$lex.id, clin[,ts]),]
 
 # check that examination dates are unique within persons
 if( any( dd <- duplicated(clin[,c("lex.id",ts)]) ) )
-    {
+  {
   warning( "Examination dates must be unique within persons\n",
-           sum(dd), " records with duplicate times from clin object ",
+           sum(dd), " records with duplicate dates from clin object ",
           clin.nam, " excluded.")
   clin <- clin[!dd,]
-    }
+  }
     
-# if not supplied, make the variable holding the name of the examination
+# the variable holding the name of the examination
 if( missing(exnam) ) exnam <- "exnam"
 # and if it is not there, construct it
 if( !(exnam %in% names(clin)) )
     clin[,exnam] <- paste( "ex",
                            ave( clin$lex.id,
                                 clin$lex.id,
-                                FUN = function(x) 1:length(x) ),
+                                FUN = function(x) cumsum(x/x) ),
                            sep="" )
+# exnam cannot have values that are also states
+if( length(common <- intersect(levels(Lx),
+                               unique(clin[,exnam]))) )
+  stop("Levels of Lx and examination names in clin must be disjoint",
+       "\nbut", paste(common, collapse=", "), "are in both")
 
-# Add copy of the times of examination to be carried forward
-clin[,tfc] <- clin[,ts]
+#...done checking 
     
-# Clinical variables to be merged in
+# variables to merge by
+mvar <- c("lex.id", ts)
+    
+# clinical variables to be merged in
 # --- note we take examination date and name as a cinical variable too 
 cvar <- setdiff(names(clin), mvar)
-    
-# A data frame of cutting times
-cfr <- data.frame( lex.id = clin$lex.id,
-                      cut = clin[,ts],
-                new.state = factor(clin[,exnam]) )
 
-# Now cut Lx at the examination times
-mc <- Lx
-for( st in levels(cfr$new.state) )
-mc <- cutLexis( mc,
-               cut = cfr[cfr$new.state==st,],
-         timescale = ts,
-  precursor.states = NULL,
-         new.scale = addScales )
-    
-# Merge in states from the original object mx, but take attributes from mc
-# ORG: mx <- if (inherits(Lx, "data.table")) Lx[,..mvar] else Lx[,mvar]
-# replaced by
-  mx <- as.data.frame(Lx)[,mvar]
-mx$org.Cst <- Lx$lex.Cst
-mx$org.Xst <- Lx$lex.Xst
-mx <- merge(mc, mx, by = mvar, all = TRUE)    
-mx <- sortLexis(mx)
-    
-# Complete the state variables    
-( wh <- which(is.na(mx$org.Cst)) )
-mx$org.Cst[wh] <- na.locf( mx$org.Cst, nx.rm=FALSE )[wh]
-mx$org.Xst[wh] <- na.locf( mx$org.Xst, nx.rm=FALSE )[wh]
-# but - oops - the earlier lex.Xst should be as lex.Cst
-mx$org.Xst[wh-1] <- mx$org.Cst[wh-1]
-# overwrite the useless ones and get rid of the intermediate
-mx$lex.Cst <- mx$org.Cst
-mx$lex.Xst <- mx$org.Xst
-wh.rm <- match( c("org.Cst","org.Xst"), names(mx) )
-mx <- mx[,-wh.rm]
-    
-# Merge in the clinical variables and make sure it's sorted
-mx <- merge( mx, clin, by=mvar, all.x=TRUE )
-mx <- sortLexis( mx )
-    
-# And carry them forward within each lex.id
+# A data frame of cutting times of the examinations
+cfr <- data.frame(lex.id = clin$lex.id,
+                     cut = clin[,ts],
+               new.state = clin[,exnam])
 
-# locf within each person (should be easier in data.table)
-locf.df <- function( df ) as.data.frame( lapply( df, na.locf, na.rm=FALSE ) )
+# a copy of Lx with a saved copy of the state variables on org
+Lc <- transform(Lx, org.Cst = lex.Cst,
+                    org.Xst = lex.Xst)
+# Now cut Lc at each new examination date, state variables will be
+# changed to examination names
+Lc <- rcutLexis(Lc,
+               cut = cfr,
+         timescale = ts )
 
-# ave does not like character variables so we convert to factors
-wh <- which( sapply( mx[,cvar], is.character ) )
-for( j in wh ) mx[,cvar[j]] <- factor( mx[,cvar[j]] )
-# then we can carry forward
-mx[,cvar] <- ave( mx[,cvar], mx$lex.id, FUN=locf.df )
-
-# Finally update the time from last clinical measurement
-mx[,tfc] <- mx[,ts] - mx[,tfc]
-
-# Add as a time-scale
-if(addScales)
-  {  
-new.scales <- setdiff( timeScales(mx), timeScales(Lx) )
-op <- options(warn = (-1)) # suppress warnings
-mx[,tfc] <- apply( mx[,new.scales,drop=FALSE], 1, min, na.rm=TRUE )    
-options(op) # reset the previous value
-attr( mx, "time.scales") <- c( attr( mx, "time.scales"), tfc ) 
-attr( mx, "time.since" ) <- c( attr( mx, "time.since"), "" )
-brt <- list( x=NULL )
-names( brt ) <- tfc
-attr( mx, "breaks") <- c( attr( mx, "breaks"), brt ) 
-  }
+# Lc now has the exnam in the variable lex.Cst, so we can merge the
+# clinical data to this if we rename to exnam
+# the lex.Cst contains the examination name, except where
+# the original levels are left
+Lc[,exnam] <- as.factor(ifelse(Lc$lex.Cst %in% levels(Lx),
+                               NA,
+                               as.character(Lc$lex.Cst)))
+mvar <- c("lex.id", exnam)
     
-# Done! - well, order first
-sortLexis(mx)
+# timescale is present in both Lc and clin,
+# so rename in clin, it will be the date of clin 
+names(clin)[grep(ts, names(clin))] <- tfc
+
+# merge with clinical measurements keeping the attributes
+att.Lc <- attributes(Lc)
+Lc <- left_join(Lc, clin, by = mvar)
+att.Lc$names <- attributes(Lc)$names
+attributes(Lc) <- att.Lc
+    
+# compute time since last examination
+Lc[,tfc] <- Lc[,ts] - Lc[,tfc]
+
+# we have problems if a clical date falls in an interval
+# ending with a transition, they need to be fixed:
+wh <- with(Lc, which(c(org.Xst[-nrow(Lc)] != org.Cst[-1] &
+                       lex.id [-nrow(Lc)] == lex.id [-1])))
+Lc$org.Xst[wh] <- Lc$org.Cst[wh+1]
+
+# move the original states back
+Lc <- select(Lc, -lex.Cst,
+                 -lex.Xst) %>%
+      rename(lex.Cst = org.Cst,
+             lex.Xst = org.Xst)
+    
+# Add tfc as a time.scale, time.since and breaks:
+attr(Lc, "time.scales") <- c(attr(Lc, "time.scales"), tfc) 
+attr(Lc, "time.since" ) <- c(attr(Lc, "time.since" ), "" )
+brt <- list(x = NULL)
+names(brt) <- tfc
+attr(Lc, "breaks") <- c(attr(Lc, "breaks"), brt) 
+    
+# Done! - well order first
+sortLexis(Lc)
 }
-

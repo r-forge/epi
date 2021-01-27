@@ -126,7 +126,7 @@ Ldm <- Lexis(entry = list( per = dodm,
                            tfd = 0 ),
               exit = list( per = dox ),
        exit.status = factor( !is.na(dodth), labels = c("DM","Dead") ),
-              data = DMlate )
+              data = DMlate[sample(1:nrow(DMlate),1000),] )
 summary(Ldm, timeScales = TRUE)
 
 # Cut at OAD and Ins times
@@ -151,9 +151,12 @@ boxes(Relevel(Sdm, c(1, 4, 2, 3)),
       scale.R = 100)
 
 # glm models for the cause-specific rates
-mD <- glm.Lexis(Sdm, ~ Ns(tfd, knots=0:6*2), to = 'Dead')
-mO <- glm.Lexis(Sdm, ~ Ns(tfd, knots=0:6*2), to = 'OAD' )
-mI <- glm.Lexis(Sdm, ~ Ns(tfd, knots=0:6*2), to = 'Ins' )
+system.time(
+mD <- glm.Lexis(Sdm, ~ Ns(tfd, knots=0:6*2), to = 'Dead') )
+system.time(
+mO <- glm.Lexis(Sdm, ~ Ns(tfd, knots=0:6*2), to = 'OAD' ) )
+system.time(
+mI <- glm.Lexis(Sdm, ~ Ns(tfd, knots=0:6*2), to = 'Ins' ) )
 
 # intervals for calculation of predicted rates
 int <- 1/100
@@ -161,13 +164,13 @@ nd <- data.frame( tfd = seq(int,10,int)-int/2 ) # not the same as the split,
                                                 # and totally unrelated to it
 
 # cumulaive risks with confidence intervals
-# (too few times, too few simluations)
+# (too few timepoints, too few simluations)
 system.time(
 res <- ci.Crisk(list(OAD = mO, 
                      Ins = mI, 
                     Dead = mD),
                             nd = data.frame(tfd = (1:100-0.5)/10),
-                            nB = 50,
+                            nB = 100,
                           perm = 4:1))
 str(res)
 }
