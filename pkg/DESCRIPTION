@@ -1,6 +1,6 @@
 Package: Epi
-Version: 2.43
-Date: 2021-01-25	
+Version: 2.44
+Date: 2021-02-28	
 Title: Statistical Analysis in Epidemiology
 Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
                     email = "b@bxc.dk"),
@@ -9,8 +9,8 @@ Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
              person("Esa", "Laara", role = "ctb"),
              person("Michael", "Hills", role = "ctb"))
 Depends: R (>= 3.5.0), utils
-Imports: cmprsk, etm, splines, MASS, survival, purrr, plyr, dplyr, Matrix, numDeriv,
-  data.table, zoo, mgcv
+Imports: cmprsk, etm, splines, MASS, survival, purrr, plyr, dplyr,
+  Matrix, numDeriv, data.table, zoo, mgcv
 Suggests: mstate, nlme, lme4, popEpi
 Description: Functions for demographic and epidemiological analysis in
   the Lexis diagram, i.e. register and cohort follow-up data, in
