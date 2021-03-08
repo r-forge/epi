@@ -160,10 +160,10 @@ rb <- rd[order(rd$lex.id, rd$per),]
 pdat <- list(A = ra, B = rb)
 pdat
 
-addDrug.Lexis(Sx, pdat, method = "ext") # default
-addDrug.Lexis(Sx, pdat, method = "ext", grace = 0.2)
-addDrug.Lexis(Sx, pdat, method = "dos", apt = 6)
-addDrug.Lexis(Sx, pdat, method = "fix", maxt = 1)
+ex1 <- addDrug.Lexis(Sx, pdat, method = "ext") # default
+ex2 <- addDrug.Lexis(Sx, pdat, method = "ext", grace = 0.2)
+dos <- addDrug.Lexis(Sx, pdat, method = "dos", apt = 6)
+fix <- addDrug.Lexis(Sx, pdat, method = "fix", maxt = 1)
 }
 \keyword{survival}
 \keyword{manip}

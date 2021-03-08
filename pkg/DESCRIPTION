@@ -1,6 +1,6 @@
 Package: Epi
-Version: 2.44
-Date: 2021-02-28	
+Version: 2.45
+Date: 2021-03-08	
 Title: Statistical Analysis in Epidemiology
 Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
                     email = "b@bxc.dk"),

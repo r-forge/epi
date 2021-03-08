@@ -1,3 +1,8 @@
+Changes in 2.45
+
+o A column of AIC is now added to the Anova entry of an apc object
+  returned by apc.fit.
+
 Changes in 2.44
 
 o addCov.Lexis now always return a data.frame
