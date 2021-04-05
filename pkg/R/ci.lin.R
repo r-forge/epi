@@ -26,28 +26,38 @@ VCOV.mipo     <- function( object, ... ) object$t
 COEF.polr     <- function( object, ... ) summary(object)$coefficients
 VCOV.gnlm     <- function( object, ... ) object$cov
 VCOV.rq       <- function( object, ... ) summary(object, cov=TRUE)$cov
-
 df2ctr <-
-function( obj, nd )
+function(obj, nd)
     {
-if( !( inherits(obj,"lm") | inherits(obj,"coxph") ) )
-  stop("data frame facility not inplemented for ", class(obj), " objects" )
+if (!(inherits(obj, "lm") | inherits(obj, "coxph")))
+  stop("data frame facility not inplemented for ", class(obj), " objects")
+
 # Factors in the prediction frame must have more than one level, which
-# they typically do not have in the specification, so we find the
-# factors in the prediction frame and expand levels to the complete
-# set of levels which should secure the working of model.matrix()
-dcl <- attr( obj$terms, "dataClasses" )
-whf <- ( dcl == "factor" )
-if( any(whf) ) for( fn in names(dcl)[which(whf)] )
-                nd[,fn] <- factor( nd[,fn], levels=obj$xlevels[[fn]] )
-# The contrast matrix from the model - differs a bit between (g)lm, gam and coxph
-# this is needed to keep NA rows from the data frame supplied
+# they typically do not have in the specification of a prediction
+# frame, so we find the factors in the prediction frame and expand
+# levels to the complete set of levels which we get from the model
+# object This should secure the working of model.matrix(); note that
+# the machinery differs between gam and non-gam glms
+dcl <- attr(obj$terms, "dataClasses")
+whf <- (dcl == "factor")
+if (any(whf)){
+for (fn in names(dcl)[which(whf)]){
+    nd[,fn] <- factor(nd[,fn],
+                      levels = if (inherits(obj, "gam"))
+                                  levels(obj$var.summary[[fn]])
+                             else        obj$xlevels    [[fn]])
+                                  }
+             }
+
+# The folowing is needed to keep NA rows from the data frame supplied
 org.op <- options( na.action='na.pass' )
 on.exit( options( org.op ) )
-if( inherits(obj,"coxph") ) MM <- model.matrix(         obj     ,    data=nd )
-if( inherits(obj,"gam"  ) ) MM <- model.matrix(         obj     , newdata=nd )
-    else
-if( inherits(obj,"lm"   ) ) MM <- model.matrix( formula(obj)[-2],    data=nd )
+
+# The contrast matrix from the model - differs a between (g)lm, gam and coxph
+if (inherits(obj,"coxph") ) MM <- model.matrix(         obj     ,    data=nd)
+if (inherits(obj,"gam"  ) ) MM <- model.matrix(         obj     , newdata=nd)
+   else
+if (inherits(obj,"lm"   ) ) MM <- model.matrix( formula(obj)[-2],    data=nd)
 return( MM )
     }
 

@@ -27,7 +27,8 @@ addDrug.Lexis(Lx,  # Lexis object
                           # name of the time variable from Lx
           prefix = NULL,  # character vector of length \code{length(pdat)}
           suffix = NULL,  # character vector of length \code{length(pdat)}
-          sepfix = ".")   # what should the separator be when forming prefix/suffix
+          sepfix = ".",   # what should the separator be when forming prefix/suffix
+         verbose = TRUE)
 }
 
 \arguments{
@@ -61,6 +62,9 @@ addDrug.Lexis(Lx,  # Lexis object
 }
   \item{sepfix}{Character, used to separate the \code{prefix} and the
     name of the generated type of variable.
+}
+  \item{verbose}{Logical. Should the function ell you about the choices
+  you made?
 }
 }
 
@@ -105,19 +109,25 @@ exposure variables are computed, see next section.
 \value{  
 A \code{\link{Lexis}} object with the same risk time, states and events
 as \code{Lx}. The follow-up for each person has been cut at the purchase
-times of each of the drugs, as well as at the expiry times for drug
-coverage. Further for each drug (i.e. data frame in the \code{pdat}
-list) 4 variables have been added:
-
+times of each of the drugs, as well as at the expiry times for each drug
+coverage. Further, for each drug (i.e. data frame in the \code{pdat}
+list) the argument \code{pre} supplies a prefix for the 4 variables that
+will be added. Supposing this is \code{pr} for a given drug the 4
+variables will be:
 \itemize{
- \item \code{pre.ex}: logical; is the person exposed in this interval
- \item \code{pre.tf}: numeric: time since first purchase, same units as
+ \item \code{pr.ex}: logical; is the person exposed in this interval
+ \item \code{pr.tf}: numeric: time since first purchase, same units as
  \code{lex.dur} 
- \item \code{pre.ct}: numeric: cumulative time on the drug, same units
+ \item \code{pr.ct}: numeric: cumulative time on the drug, same units
  as \code{lex.dur} 
- \item \code{pre.cd}: numeric: cumulative dose of the drug, same units
+ \item \code{pr.cd}: numeric: cumulative dose of the drug, same units
  as \code{amt} 
  }
+So if \code{pre} has length 3, and \code{pre} is \code{c("a","b","c")}
+the function will add variables
+\code{a.ex, a.tf, a.ct, a.cd,
+  b.ex, b.tf, b.ct, b.cd,
+  c.ex, c.tf, c.ct, c.cd}
 }
 \author{
 Bendix Carstensen, \url{http://bendixcarstensen.com}
@@ -149,12 +159,12 @@ Sx <- splitLexis(Lx, "per", breaks = seq(1990, 2020, 1.0))
 ra <- data.frame(per = c(2007 + runif(12,0,10)),
                  amt = sample(2:4, 12, r = TRUE),
               lex.id = sample(1:2, 12, r = TRUE))
-ra <- rc[order(rc$lex.id, rc$per),]
+ra <- ra[order(ra$lex.id, ra$per),]
 
 rb <- data.frame(per = c(2009 + runif(10, 0, 10)),
                  amt = sample(round(2:4/3,1), 10, r = TRUE),
               lex.id = sample(1:2, 10, r = TRUE))
-rb <- rd[order(rd$lex.id, rd$per),]
+rb <- rb[order(rb$lex.id, rb$per),]
 
 # put in a named list
 pdat <- list(A = ra, B = rb)

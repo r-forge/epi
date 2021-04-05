@@ -30,7 +30,7 @@ lex.id <- dop <- extime <- NULL
 if(length(intersect(c("lex.id", amt), names(pdat))) < 2)
   stop("lex.id and", amt, "must be columns in the data frame\n")
   
-if(missing(tnam)) cat('NOTE: timescale "', tnam, '" assumed\n', sep = '')
+if(missing(tnam) & verbose) cat('NOTE: timescale "', tnam, '" assumed\n', sep = '')
     
 if(method == "ext")
   if(verbose)
@@ -67,7 +67,10 @@ pdat <- pdat[order(pdat$lex.id,pdat[,tnam]),]
                          pdat$amt <- pdat[, amt]
 if(apt %in% names(pdat)) pdat$apt <- pdat[, apt]
     
-# compute the time of expiry of current purchase by method chosen
+# compute the time of expiry of each purchase by method chosen
+# note methods 'fix' and 'dos' only use the current purchase
+# while 'ext' refers to other purchases for the person
+    
 if(method == 'fix')
   pdat$extime <- pdat$dop + maxt
 
@@ -92,14 +95,14 @@ select(lex.id, dop, amt)        -> pzero
 pzero <- as.data.frame(pzero)
 
 # append to original data frame
-pdat <- rbind(pdat[,names(pzero)], pzero)
+pdat <- rbind(pdat[, names(pzero)], pzero)
 
 # reinstate the time-scale name
-names(pdat)[grep("dop",names(pdat))] <- tnam
+names(pdat)[grep("dop", names(pdat))] <- tnam
     
 # sort by lex.id and time and coerce to data frame
-oo <- order(pdat$lex.id, pdat[,tnam, drop = TRUE])
-pdat <- as.data.frame(pdat[oo,])
+oo <- order(pdat$lex.id, pdat[, tnam, drop = TRUE])
+pdat <- as.data.frame(pdat[oo, ])
 rownames(pdat) <- NULL
 pdat
 }
@@ -119,19 +122,19 @@ function(Lx, # Lexis object, should be timesplit
                      # "fix" is using a fixed interval, maxt
        maxt = NULL,  # vector of times covered by a single prescription,
       grace = 0,     # vector of grace periods after final data
-       tnam = setdiff(names(pdat[[1]]),c("lex.id", amt))[1],
+       tnam = setdiff(names(pdat[[1]]), c("lex.id", amt))[1],
      prefix = NULL,  # character vector
      suffix = NULL,  # character vector
-     sepfix = "."    # separator for pre- and suf-fixes
+     sepfix = ".",   # separator for pre- and suf-fixes
+    verbose = TRUE
         )
 {
 # utility functions
   na0 <- function(x) ifelse(is.na(x), 0, x)
 csum0 <- function(x) c(0, cumsum(na0(x)[-length(x)]))
 
-# binding variables
-qwzrx <- exnam <- tfc <- lex.id <- pur <-
-lex.dur <- xtime <- expos <- dospt <- NULL
+# binding variables to avoid check troubles in CRAN
+qwzrx <- exnam <- tfc <- lex.id <- pur <- lex.dur <- xtime <- expos <- dospt <- NULL
     
 # don't bother about the warnings
 oldopts <- options(warn = -1)    
@@ -141,7 +144,7 @@ on.exit(options(oldopts))
 lex.attr <- attributes(Lx)
 
 # time scale
-if (missing(tnam)) 
+if (missing(tnam) & verbose) 
    cat("NOTE: timescale taken as '", tnam, "'\n", sep = "")
     
 # construct names for the 0-expanded purchase data frames if not given
@@ -150,7 +153,7 @@ if(is.null(names(pdat))) names(pdat) <- paste0('P', 1:length(pdat))
 # prefix or suffix for variables ex, tf, ct, cd
 if(!(suff <- !is.null(prefix))) prefix <- names(pdat)    
 if(!(pref <- !is.null(suffix))) suffix <- names(pdat)    
-if(suff && pref) cat("NOTE: you are asking for *both* pre- and suffix\n")
+if(suff && pref && verbose) cat("NOTE: you are asking for *both* pre- and suffix\n")
 # if none specified use prefix
 pref <- pref | !suff
 
@@ -162,6 +165,13 @@ shortnames <- substr(onam, 1, 2)
 np <- length(pdat)
 
 # expand maxt and grace by recycling
+Lm <- (length(maxt ) < np)
+Lg <- (length(grace) < np)
+if ((Lm | Lg) & verbose) cat(if (Lm     ) "maxt",
+                             if (Lm & Lg) "and",
+                             if (     Lg) "grace",
+                             if (Lm & Lg) "have" else "has",
+                             "been recycled across drugs", np, "\n")
 maxt  <- rep(maxt , np)[1:np]
 grace <- rep(grace, np)[1:np]
     
@@ -179,14 +189,14 @@ for(i in 1:np)
                            maxt = maxt[i], 
                           grace = grace[i],
                            tnam = tnam,
-                        verbose = i == 1)
-   pall <- rbind(pall, pdat0[[i]][,c("lex.id", tnam)])
+                        verbose = i == 1 & verbose)
+   pall <- rbind(pall, pdat0[[i]][, c("lex.id", tnam)])
    }
 
 # order pall by id and time, remove duplicates and add a bogus variable
-oo <- order(pall$lex.id, pall[,tnam])
-pall <- pall[oo,]
-pall <- pall[!duplicated(pall),]
+oo <- order(pall$lex.id, pall[, tnam])
+pall <- pall[oo, ]
+pall <- pall[!duplicated(pall), ]
 pall$qwzrx <- 0   
 
 # add the total purchase data in order to expand to all cut dates when  
@@ -196,9 +206,9 @@ Gx <- select(Gx, -qwzrx, -exnam, -tfc)
     
 # remove tfc as time scale and keep Lexis attributes to resinstate later
 wh.tfc <- match("tfc", attr(Gx, "time.scales"))
- attr(Gx,"time.scales") <- Gsc <- attr(Gx, "time.scales")[-wh.tfc]
- attr(Gx,"time.since")  <- Gsi <- attr(Gx, "time.since" )[-wh.tfc]      
-class(Gx)               <- Gcl <- c("Lexis", "data.frame")
+ attr(Gx, "time.scales") <- Gsc <- attr(Gx, "time.scales")[-wh.tfc]
+ attr(Gx, "time.since")  <- Gsi <- attr(Gx, "time.since" )[-wh.tfc]      
+class(Gx)                <- Gcl <- c("Lexis", "data.frame")
     
 # put the expanded drug purchases in the Lexis object 
 allnam <- NULL
@@ -212,7 +222,7 @@ for(i in 1:np)
    allnam <- c(allnam, rnam)
        
    # add the i'th drug exposure data file
-    Gx <- addCov.Lexis(Gx, pdat0[[i]], timescale = tnam, exnam = "pur")
+   Gx <- addCov.Lexis(Gx, pdat0[[i]], timescale = tnam, exnam = "pur")
      
    # compute the exposure variables, drop unneeded variables and rename
    Gx <- 

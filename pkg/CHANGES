@@ -1,7 +1,14 @@
 Changes in 2.45
 
-o A column of AIC is now added to the Anova entry of an apc object
+o A column with AIC is now added to the Anova entry of an apc object
   returned by apc.fit.
+
+o Small clean-ups in the code for addDrug.Lexis
+
+o Update of the utility df2ctr where gam models with factors
+  crashed. Now levels of factors in models are properly extracted from
+  gam objects. Could cause a crash of ci.Crisk for gam models with
+  factors.
 
 Changes in 2.44
 
