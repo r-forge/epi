@@ -23,6 +23,8 @@ Bendix Carstensen
 options( width=90,
          SweaveHooks=list( fig=function()
          par(mar=c(3,3,1,1),mgp=c(3,1,0)/1.6,las=1,bty="n") ) )
+library(Epi)
+installed.packages()["Epi", 1:3]
 @ %
 
 \chapter*{Introduction}
@@ -176,8 +178,8 @@ in this case \texttt{DM}, because $\mathtt{FALSE}<\mathtt{TRUE}$.
 
 Now take a look at the result:
 <<>>=
-str( dmL )
-head( dmL )[,1:10]
+str(dmL)
+head(dmL)[,1:10]
 @ %
 The \texttt{Lexis} object \texttt{dmL} has a variable for each
 time scale which is the entry point on this time scale. The follow-up
@@ -208,15 +210,15 @@ The function allows quite a bit of control over the output, and a
 \texttt{points.Lexis} function allows plotting of the endpoints of
 follow-up:
 <<dmL2,fig=TRUE>>=
-par( mar=c(3,3,1,1), mgp=c(3,1,0)/1.6 )
-plot( dmL, 1:2, lwd=1, col=c("blue","red")[dmL$sex],
-      grid=TRUE, lty.grid=1, col.grid=gray(0.7),
-      xlim=1960+c(0,60), xaxs="i",
-      ylim=  40+c(0,60), yaxs="i", las=1 )
-points( dmL, 1:2, pch=c(NA,3)[dmL$lex.Xst],
-        col="lightgray", lwd=3, cex=0.3 )
-points( dmL, 1:2, pch=c(NA,3)[dmL$lex.Xst],
-        col=c("blue","red")[dmL$sex], lwd=1, cex=0.3 )
+par(mar=c(3,3,1,1), mgp=c(3,1,0)/1.6 )
+plot(dmL, 1:2, lwd=1, col=c("blue","red")[dmL$sex],
+     grid=TRUE, lty.grid=1, col.grid=gray(0.7),
+     xlim=1960+c(0,60), xaxs="i",
+     ylim=  40+c(0,60), yaxs="i", las=1)
+points(dmL, 1:2, pch=c(NA,3)[dmL$lex.Xst],
+       col="lightgray", lwd=3, cex=0.3)
+points(dmL, 1:2, pch=c(NA,3)[dmL$lex.Xst],
+       col=c("blue","red")[dmL$sex], lwd=1, cex=0.3)
 box(bty='o')
 @ %
 In the above code you will note that the values of the arguments
@@ -264,38 +266,39 @@ To see how records are split for each individual, it is useful to list
 the results for a few individuals (whom we selected with a view to the
 illustrative usefulness):
 <<>>=
-wh.id <- c(9,27,52,484)
-subset( dmL , lex.id %in% wh.id )[,1:10]
-subset( dmS1, lex.id %in% wh.id )[,1:10]
+wh.id <- c(9, 27, 52, 484)
+subset(dmL , lex.id %in% wh.id)[,1:10]
+subset(dmS1, lex.id %in% wh.id)[,1:10]
 @ %
 The resulting object, \texttt{dmS1}, is again a \texttt{Lexis} object,
 and the follow-up may be split further along another time scale, for
 example diabetes duration, \texttt{tfD}. Subsequently we list the
 results for the chosen individuals:
 <<>>=
-dmS2 <- splitLexis( dmS1, "tfD", breaks=c(0,1,2,5,10,20,30,40) )
+dmS2 <- splitLexis(dmS1, "tfD", breaks=c(0,1,2,5,10,20,30,40))
 subset( dmS2, lex.id %in% wh.id )[,1:10]
 @ %
 A more efficient (and more intuitive) way of making this double split
 is to use the \texttt{splitMulti} function from the \texttt{popEpi}
 package:
 <<>>=
-library( popEpi )
-dmM <- splitMulti( dmL, age = seq(0,100,5), 
-                        tfD = c(0,1,2,5,10,20,30,40),
-                   drop = FALSE )
-summary( dmS2 )
-summary( dmM )
+library(popEpi)
+options("popEpi.datatable" = FALSE)
+dmM <- splitMulti(dmL, age = seq(0,100,5), 
+                       tfD = c(0,1,2,5,10,20,30,40),
+                  drop = FALSE )
+summary(dmS2)
+summary(dmM)
 @ %
 Note we used the argument \texttt{drop=FALSE} which will retain
-follow-up also outside the window defined by the breaks. Otherwise the
-default for \texttt{splitMulti} would be to drop follow-up outside
-\texttt{age} [0,100] and \texttt{tfD} [0,40]. This clipping behaviour
-is not available in \texttt{splitLexis}, nevertheless this may be
-exactly what we want in some situations.
+follow-up also outside the window defined by the range of the
+breaks. Otherwise, the default for \texttt{splitMulti} would be to drop
+follow-up outside \texttt{age} [0,100] and \texttt{tfD} [0,40]. This
+clipping behaviour is not available in \texttt{splitLexis},
+nevertheless this may be exactly what we want in some situations.
 
 So we see that the two ways of splitting data yields the same amount of
-follow-up, but the results are not identical:
+follow-up, but the results are not necessarily identical on all machines:
 <<>>=
 identical( dmS2, dmM )
 class( dmS2 )
@@ -330,30 +333,24 @@ argument \texttt{new.scale=}.
 We are interested in the time before and after inception of insulin
 use, which occurs at the date \texttt{doins}:
 <<>>=
-whc <- c(names(dmL)[1:7],"dodm","doins") # WHich Columns do we want to see?
-subset( dmL, lex.id %in% wh.id )[,whc]
+subset(dmL, lex.id %in% wh.id)
 dmC <- cutLexis( data = dmL, 
                   cut = dmL$doins, 
             timescale = "per",
             new.state = "Ins",
-            new.scale = "tfI",
-     precursor.states = "DM" )
-whc <- c(names(dmL)[1:8],"doins") # WHich Columns do we want to see?
-subset( dmC, lex.id %in% wh.id )[,whc]
+            new.scale = "tfI")
+subset(dmC, lex.id %in% wh.id)[,1:10]
 @ %
-(The \texttt{precursor.states=} argument is explained below).  
-
 Note that the process of cutting time is simplified by having all
 types of events referred to the calendar time scale. This is a
 generally applicable advice in handling follow-up data: Get all event
 times as \emph{dates}, location of events and follow-up on other time
 scales can then easily be derived from this.
 
-Note
-that individual 52 has had his follow-up cut at 6.55 years from
+Note that individual 52 has had his follow-up cut at 6.55 years from
 diabetes diagnosis and individual 484 at 5.70 years from diabetes
-diagnosis. This dataset could then be split along the time scales as we
-did before with \texttt{dmL}.
+diagnosis. This dataset could then be split along the time scales as
+we did before with \texttt{dmL}.
 
 The result of this can also be achieved by cutting the split dataset
 \texttt{dmS2} instead of \texttt{dmL}:
@@ -364,7 +361,7 @@ dmS2C <- cutLexis( data = dmS2,
               new.state = "Ins",
               new.scale = "tfI",
        precursor.states = "DM" )
-subset( dmS2C, lex.id %in% wh.id )[,whc]
+subset( dmS2C, lex.id %in% wh.id )
 @ %
 Thus it does not matter in which order we use \texttt{splitLexis} and
 \texttt{cutLexis}. Mathematicians would say that \texttt{splitLexis}
@@ -381,21 +378,22 @@ updated even if it is after the time where the persons moves to state
 state \texttt{Ins}, state \texttt{Dead} is always subsequent to state
 \texttt{Ins}.
 
-Note that we defined a new time scale, \texttt{tfI}, using the argument
-\texttt{new.scale=tfI}. This has a special status relative to the other
-three time scales, it is defined as time since entry into a state,
-namely \texttt{Ins}, this is noted in the time scale part of the
-summary of \texttt{Lexis} object --- the information sits in the
+Note that we defined a new time scale, \texttt{tfI}, using the
+argument \texttt{new.scale=tfI}. This has a special status relative to
+the other three time scales, it is defined as time since entry into a
+state, namely \texttt{Ins}, this is noted in the time scale part of
+the summary of \texttt{Lexis} object --- the information sits in the
 attribute \texttt{time.since} of the \texttt{Lexis} object, which can
-be accessed by the function \texttt{timeSince()} or through the \texttt{summary()}:
+be accessed by the function \texttt{timeSince()} or through the
+\texttt{summary()}:
 <<>>=
-summary( dmS2C, timeScales=TRUE )
+summary(dmS2C, timeScales = TRUE)
 @ % 
 Finally we can get a quick overview of the states and transitions by
 using \texttt{boxes} --- \texttt{scale.R} scales transition rates to
 rates per 1000 PY:
 <<box1,fig=TRUE,height=6,width=8>>=
-boxes( dmC, boxpos=TRUE, scale.R=1000, show.BE=TRUE )
+boxes(dmC, boxpos = TRUE, scale.R = 1000, show.BE = TRUE)
 @ %
 \insfig{box1}{0.8}{States, person years, transitions and rates in the
   cut dataset. The numbers \emph{in} the boxes are person-years and
@@ -1217,11 +1215,10 @@ summary( dmM, t=T )
 We see that we now have two time scales defined as entry since into
 states.
 <<>>=
-wh <- c(subset(dmM,lex.Cst=="Ins-OAD")$lex.id[1:2],
-        subset(dmM,lex.Cst=="OAD-Ins")$lex.id[1:2])
-options( width=110 )
-print( subset( dmM, lex.id %in% wh )[,c('lex.id',names(dmM[1:8]),c("doins","dooad"))],
-       digits=6, row.names=FALSE )
+wh <- c(subset(dmM, lex.Cst == "Ins-OAD")$lex.id[1:2],
+        subset(dmM, lex.Cst == "OAD-Ins")$lex.id[1:2])
+options(width = 80)
+subset(dmM, lex.id %in% wh)
 @ %
 We can also illustrate the transitions to the different states, as in
 figure \ref{fig:mbox}:
@@ -1286,10 +1283,10 @@ daily use.
 \item[Cut and split]\ \\
 \begin{description}
 \item[\texttt{cutLexis}] cut follow-up at intermediate event
-\item[\texttt{mcutLexis}] cut follow-up at different intermediate
+\item[\texttt{mcutLexis}] cut follow-up at multiple intermediate
   events, keeping track of history
-\item[\texttt{rcutLexis}] cut follow-up at intermediate events, only
-  recoding the current state
+\item[\texttt{rcutLexis}] cut follow-up at intermediate, possibly
+  recurring, events, only recording the current state
 \item[\texttt{countLexis}] cut follow-up at intermediate event time and count
   the no. events so far
 \item[\texttt{splitLexis}] split follow up along a time scale
@@ -1298,8 +1295,7 @@ daily use.
   \texttt{splitLexis}
 \item[\texttt{addCov.Lexis}] add clinical measurements at a given date to a
   \texttt{Lexis} object
-\item[\texttt{addDrug.Lexis}] add drug exposures to a \texttt{Lexis}
-  object
+\item[\texttt{addDrug.Lexis}] add drug exposures to a \texttt{Lexis} object
 \end{description}
 
 \item[Boxes and plots]\ \\

@@ -51,8 +51,11 @@ onetr <- length( trnam )==1
 trprn <- paste( trnam, collapse=", " )
     
 # warn if a potentially silly model is defined
-if( any( (ts<-table(sapply( strsplit(trnam,"->"), function(x) x[1] )))>1 ) ) warning(
- "NOTE:\nMultiple transitions *from* state '",names(ts[ts>1]),"' - are you sure?",
+if (any((ts <- table(sapply(strsplit(trnam,"->"),
+                            function(x) x[1])))>1)) warning(
+ "NOTE:\nMultiple transitions *from* state '",
+ paste(names(ts[ts>1]), collapse = "', '"),
+ "' - are you sure?",
  "\nThe analysis requested is effectively merging outcome states.", 
  "\nYou may want analyses using a *stacked* dataset - see ?stack.Lexis\n" )
 
@@ -168,9 +171,13 @@ function( Lx, # Lexis object
 if( !inherits(Lx,"Lexis") )
     stop( "The first argument must be a Lexis object.\n")
 
+# Convert numbers to state names    
+if (is.numeric(from)) from <- levels(Lx$lex.Cst)[from]
+if (is.numeric(to))   to   <- levels(Lx$lex.Xst)[to]
+    
 # sensible defaults if only one of to and from is missing
-if(  missing(from) & !missing(to) ) from <- preceding (Lx,to  )
-if( !missing(from) &  missing(to) ) to   <- succeeding(Lx,from)
+if ( missing(from) & !missing(to)) from <- preceding (Lx, to  )
+if (!missing(from) &  missing(to)) to   <- succeeding(Lx, from)
 
 # name of the dataset
 nameLx <- deparse(substitute(Lx))
