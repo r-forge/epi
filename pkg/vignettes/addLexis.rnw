@@ -23,7 +23,6 @@ options( width=90,
          par(mar=c(3,3,1,1),mgp=c(3,1,0)/1.6,las=1,bty="n") ) )
 library(Epi)
 library(dplyr)
-library(tidyr)
 @ %
 \renewcommand{\rwpre}{./addLexis}
 
@@ -248,23 +247,27 @@ you want to have these replaced by 'older' clinical measurements you
 can do that explicitly by \texttt{dplyr::fill} with a construction
 like:
 <<>>=
-cov <- c("bp", "chol")
-Lx <- La
-Lx <- group_by(Lx, lex.id) %>% 
-         fill(all_of(cov)) %>% 
-                 ungroup()
-class(Lx)
+if (require(tidyr, quietly=TRUE)) {
+    cov <- c("bp", "chol")
+    Lx <- La
+    Lx <- group_by(Lx, lex.id) %>% 
+        fill(all_of(cov)) %>% 
+        ungroup()
+    class(Lx)
+}
 @ %
 We see that the \texttt{Lexis} attributes are lost by using the
 \texttt{group\_by} function, so we fish out the covariates from the
 \texttt{tibble} and stick them back into the \texttt{Lexis} object:
 <<>>=
-Lx <- La
-Lx[,cov] <- as.data.frame( group_by(Lx, lex.id) 
-                       %>% fill(all_of(cov)))[,cov]
-class(Lx)
-La
-Lx
+if (require(tidyr, quietly=TRUE)) {
+    Lx <- La
+    Lx[,cov] <- as.data.frame( group_by(Lx, lex.id) 
+                              %>% fill(all_of(cov)))[,cov]
+    class(Lx)
+    La
+    Lx
+}
 @ %
 The slightly convoluted code where the covariate columns are
 explicitly selected, owes to the fact that the \texttt{dplyr}
