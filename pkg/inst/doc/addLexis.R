@@ -1,4 +1,4 @@
-### R code from vignette source 'addLexis.rnw'
+### R code from vignette source 'addLexis'
 ### Encoding: UTF-8
 
 ###################################################
@@ -276,15 +276,7 @@ head(purC)
 
 
 ###################################################
-### code chunk number 20: addLexis.rnw:485-488
-###################################################
-save(Sx, purA, purB, purC, 
-     file = "~/stat/R/examples/data/SxpurABC.Rda")
-load(file = "~/stat/R/examples/data/SxpurABC.Rda")
-
-
-###################################################
-### code chunk number 21: addLexis.rnw:497-504
+### code chunk number 20: addLexis.rnw:491-498
 ###################################################
 Sx1 <- subset(Sx, lex.id < 1000)
 pur <- list(A = subset(purA, lex.id < 1000),
@@ -296,7 +288,7 @@ summary(ad1)
 
 
 ###################################################
-### code chunk number 22: addLexis.rnw:507-514
+### code chunk number 21: addLexis.rnw:501-508
 ###################################################
 Sx2 <- subset(Sx, lex.id < 500)
 pur <- list(A = subset(purA, lex.id < 500),
@@ -308,7 +300,7 @@ summary(ad2)
 
 
 ###################################################
-### code chunk number 23: addLexis.rnw:521-528
+### code chunk number 22: addLexis.rnw:515-522
 ###################################################
 pur <- list(A = subset(purA, lex.id < 500 & runif(nrow(purA)) < 0.5),
             B = subset(purB, lex.id < 500 & runif(nrow(purB)) < 0.5),
@@ -320,7 +312,7 @@ summary(ad3)
 
 
 ###################################################
-### code chunk number 24: addLexis.rnw:544-550
+### code chunk number 23: addLexis.rnw:538-544
 ###################################################
 pur <- list(B = subset(purB, lex.id < 500),
             C = subset(purC, lex.id < 500))
@@ -331,13 +323,13 @@ summary(ad4)
 
 
 ###################################################
-### code chunk number 25: addLexis.rnw:559-560
+### code chunk number 24: addLexis.rnw:553-554
 ###################################################
 summary(ad1$lex.dur)
 
 
 ###################################################
-### code chunk number 26: addLexis.rnw:577-580
+### code chunk number 25: addLexis.rnw:571-574
 ###################################################
 summary(ad1)
 summary(adc <- coarse.Lexis(ad1, lim = c(1/6,1/2)))
@@ -345,7 +337,7 @@ summary(adc$lex.dur)
 
 
 ###################################################
-### code chunk number 27: addLexis.rnw:593-603
+### code chunk number 26: addLexis.rnw:587-597
 ###################################################
 summary(Sx2)
 system.time(ad4 <- addDrug.Lexis(Sx2, 
@@ -360,7 +352,7 @@ summary(ad5)
 
 
 ###################################################
-### code chunk number 28: addLexis.rnw:608-614
+### code chunk number 27: addLexis.rnw:602-608
 ###################################################
 ad4$keep <- with(ad4, (B.ex & B.ct == 0) |
                       (C.ex & C.ct == 0))
@@ -368,26 +360,5 @@ ad6 <- coarse.Lexis(ad4,
                     lim = c(1/4, 1/2),
                    keep = ad4$keep)
 summary(ad6)
-
-
-###################################################
-### code chunk number 29: addLexis.rnw:626-627 (eval = FALSE)
-###################################################
-## load(file = "~/stat/R/examples/data/SxpurABC.Rda")
-
-
-###################################################
-### code chunk number 30: addLexis.rnw:629-639 (eval = FALSE)
-###################################################
-## dim(Sx)
-## pur <- list(A = purA,
-##             B = purB,
-##             C = purC)
-## sapply(pur, nrow)
-## system.time(adx <- addDrug.Lexis(Sx, pur, tnam = "per", grace = 1/6))
-## system.time(adc <- coarse.Lexis(adx, lim = c(1/6,1/2)))
-## summary(Sx)
-## summary(adx)
-## summary(adc)
 
 

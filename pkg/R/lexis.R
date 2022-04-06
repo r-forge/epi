@@ -735,25 +735,27 @@ setdiff( names( tc[tc>0] ), transient(x) )
 }    
 
 updn <-
-function( x, tt, states )
+function(x, tt, states)
 {
-if( any(is.na(match(states,levels(x)))) )
-  stop( "'states' must be among states: ", paste(levels(x),sep=',') )
-tt <- tt[,states,drop=FALSE]
-setdiff( rownames( tt[apply(tt,1,sum)>0,,drop=FALSE] ), states )
+if (any(is.na(match(states,levels(x)))))
+  stop("'states' must be one of states: ", paste(levels(x), sep=','))
+tt <- tt[, states, drop=FALSE]
+cc <- intersect(rownames(tt), colnames(tt))
+tt[cbind(cc,cc)] <- 0
+rownames(tt[apply(tt, 1, sum) > 0, , drop = FALSE])
 }
-before <- preceding <- function( x, states ) updn( x, table(x$lex.Cst,x$lex.Xst), states )
-after <- succeeding <- function( x, states ) updn( x, table(x$lex.Xst,x$lex.Cst), states )
+before <- preceding <- function( x, states ) updn( x, table(x$lex.Cst, x$lex.Xst), states)
+after <- succeeding <- function( x, states ) updn( x, table(x$lex.Xst, x$lex.Cst), states)
 
 timeScales <- function(x)
 {
-  return (attr(x,"time.scales"))
+  return(attr(x, "time.scales"))
 }
 
 timeSince <- function(x)
 {
-        tt  <- attr(x,"time.since")
-  names(tt) <- attr(x,"time.scales")
+        tt  <- attr(x, "time.since")
+  names(tt) <- attr(x, "time.scales")
   return( tt )
 }
 

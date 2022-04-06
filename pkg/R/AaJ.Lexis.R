@@ -33,7 +33,7 @@ if( length(formula) != 2 )
 rhs <- as.character(formula[length(formula)]) # right hand side of formula
 Lx <- mkcens.Lexis(Lx)
     
-ts <- Epi:::check.time.scale(Lx, timeScale)
+ts <- check.time.scale(Lx, timeScale)
 Lx$zeit <- Lx[,ts]
 cat("NOTE: Timescale is ", ts, 
 #   "; initial level assumed to be ", levels(Lx)[2], 

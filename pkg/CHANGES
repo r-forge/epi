@@ -1,5 +1,7 @@
 Changes in 2.45/2.46
 
+o A bug in preceding / succeeding was fixed.
+
 o a print method for Lexis objects added. It rounds timescales and
   lex.dur to the same number of decimals. Default 2. Other numerical
   variables are rounded too, default 3. .lex columnas an time scales

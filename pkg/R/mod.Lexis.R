@@ -2,7 +2,7 @@ modLexis <-
 function( Lx,
       nameLx,
      formula,
-        from = preceding(Lx,to),
+        from = preceding(Lx, to),
           to = absorbing(Lx),
       paired = FALSE,
         link = "log", scale = 1, verbose = TRUE,
@@ -36,23 +36,23 @@ trt <- function( f, t ) paste( f, "->", t, sep="" )
 # work out which transitions are modeled
 if( paired )
   {
-if( length(from) != length(to) )
+if (length(from) != length(to))
     stop("If 'paired' is TRUE, from and to must have same length!\n")
-if( any(from==to) )
+if (any(from == to))
     stop("If 'paired' is TRUE, entries in from and to must be different within pairs\n")
-trnam <- trt( from, to )
+trnam <- trt(from, to)
   } else {  
-tm <- tmat( Lx )[from,to,drop=FALSE]
-trnam <- outer( rownames(tm), colnames(tm), trt )[tm>0]
+tm <- tmat(Lx)[from, to, drop = FALSE]
+trnam <- outer(rownames(tm), colnames(tm), trt)[tm > 0]
 trnam <- trnam[!is.na(trnam)]
   }
 # just for formatting the explanatory text
-onetr <- length( trnam )==1
-trprn <- paste( trnam, collapse=", " )
+onetr <- length(trnam) == 1
+trprn <- paste(trnam, collapse=", ")
     
 # warn if a potentially silly model is defined
-if (any((ts <- table(sapply(strsplit(trnam,"->"),
-                            function(x) x[1])))>1)) warning(
+if (any((ts <- table(sapply(strsplit(trnam, "->"),
+                            function(x) x[1]))) > 1)) warning(
  "NOTE:\nMultiple transitions *from* state '",
  paste(names(ts[ts>1]), collapse = "', '"),
  "' - are you sure?",
@@ -77,15 +77,15 @@ form[3] <- formula[2]
 from <- levels( factor(Lx$lex.Cst) ) # only levels present in lex.Cst
 
 # Scaling
-Lx$lex.dur <- Lx$lex.dur/scale
+Lx$lex.dur <- Lx$lex.dur / scale
     
 # Tell what we intend to and then do it
 if( verbose ){
-cat( deparse(substitute(model)),
-     " Poisson analysis of Lexis object ", nameLx, " with ", link, " link",
-     ":\nRates for", if(  onetr ) " the", " transition",
-                     if( !onetr ) "s", ": ", trprn,
-     if( scale!=1 ) paste(", lex.dur (person-time) scaled by", scale ), "\n", sep="" )
+cat(deparse(substitute(model)),
+    " Poisson analysis of Lexis object ", nameLx, " with ", link, " link",
+    ":\nRates for", if( onetr) " the", " transition",
+                    if(!onetr) "s", ":", paste0("\n", trprn), "\n",
+    if( scale!=1 ) paste(", lex.dur (person-time) scaled by", scale ), "\n", sep="" )
              }
     
 # Fit the model

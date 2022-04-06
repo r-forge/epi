@@ -1,4 +1,4 @@
-### R code from vignette source 'flup.rnw'
+### R code from vignette source 'flup'
 ### Encoding: UTF-8
 
 ###################################################
