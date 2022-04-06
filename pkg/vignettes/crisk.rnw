@@ -161,7 +161,6 @@ data; we set up the Lexis object, an then cut the follow-up time at
 dates of OAD and Ins:
 <<>>=
 library(Epi)
-library(popEpi)
 data(DMlate)
 Ldm <- Lexis(entry = list( per = dodm,
                            age = dodm-dobth, 
@@ -181,8 +180,8 @@ We initially split the FU before drug inception in intervals of
 1/12 year, creating a \texttt{Lexis} object for a competing risks
 situation with three possible event types:
 <<>>= 
-Sdm <- splitMulti(factorize(subset(Mdm, lex.Cst == "DM")),
-                  tfd = seq(0, 20, 1/12))
+Sdm <- splitLexis(factorize(subset(Mdm, lex.Cst == "DM")),
+                  time.scale="tfd", breaks = seq(0, 20, 1/12))
 summary(Sdm)
 @  %
 We can illustrate the follow-up in the full data set and in the restricted
@@ -691,7 +690,7 @@ boxes(dmL, boxpos = TRUE)
 In order to model the cause-specific mortality rates by sex and time from
 diagnosis (\texttt{tfD}), we first split the data in 6-month intervals
 <<>>=
-sL <- splitMulti(dmL, age = 0:120)
+sL <- splitLexis(dmL, time.scale="age", breaks = 0:120)
 summary(sL)
 @ 
 <<>>= 

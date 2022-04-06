@@ -10,8 +10,8 @@ Authors@R: c(person("Bendix", "Carstensen", role = c("aut", "cre"),
              person("Michael", "Hills", role = "ctb"))
 Depends: R (>= 3.5.0), utils
 Imports: cmprsk, etm, splines, MASS, survival, plyr, dplyr,
-  Matrix, numDeriv, data.table, zoo, mgcv, magrittr
-Suggests: mstate, nlme, lme4, tidyr, demography, popEpi
+  Matrix, numDeriv, data.table, zoo, mgcv, magrittr, tidyr
+Suggests: mstate, nlme, lme4, demography, popEpi
 Description: Functions for demographic and epidemiological analysis in
   the Lexis diagram, i.e. register and cohort follow-up data. In
   particular representation, manipulation, rate estimation and

@@ -51,7 +51,7 @@ Chapter 2 uses analysis of mortality rates among Danish diabetes
 patients (available in the \texttt{Epi} package) currently on insulin
 treatment or not to illustrate the use of the the \texttt{Lexis}
 machinery.
- 
+
 \section{History}
 
 The \texttt{Lexis} machinery in the \texttt{Epi} package was first
@@ -60,7 +60,7 @@ since its first appearance in the \texttt{Epi} package in 2008 it has
 been expanded with a number of utilities. An overview of these can be
 found in the last chapter of this note: ``\texttt{Lexis} functions''.
 
-\chapter{Representation of follow-up data in the \texttt{Epi} package} 
+\chapter{Representation of follow-up data in the \texttt{Epi} package}
 
 In the \texttt{Epi}-package, follow-up data is represented by adding
 some extra variables and a few attributes to a data frame. Such a data
@@ -166,7 +166,7 @@ person. The \texttt{exit} argument gives the exit time on \emph{one}
 of the time scales, so the name of the element in this list must match
 one of the names of the \texttt{entry} list. This is sufficient,
 because the follow-up time on all time scales is the same, in this
-case $\mathtt{dox}$-$\mathtt{dodm}$. 
+case $\mathtt{dox}$-$\mathtt{dodm}$.
 
 The \texttt{exit.status} is a categorical variable (a \emph{factor})
 that indicates the exit status --- in this case whether the person
@@ -228,7 +228,7 @@ of the supplied factor. Thus \texttt{c("blue","red")[dmL\$sex]} is
 \texttt{"blue"} when \texttt{sex} is \texttt{M} (the first level).
 
 The results of these two plotting commands are in figure
-\ref{fig:Lexis-diagram}, p. \pageref{fig:Lexis-diagram}. 
+\ref{fig:Lexis-diagram}, p. \pageref{fig:Lexis-diagram}.
 \begin{figure}[tb]
 \centering
 \includegraphics[width=0.35\textwidth]{flup-dmL1}
@@ -282,13 +282,14 @@ A more efficient (and more intuitive) way of making this double split
 is to use the \texttt{splitMulti} function from the \texttt{popEpi}
 package:
 <<>>=
-library(popEpi)
-options("popEpi.datatable" = FALSE)
-dmM <- splitMulti(dmL, age = seq(0,100,5), 
-                       tfD = c(0,1,2,5,10,20,30,40),
-                  drop = FALSE )
-summary(dmS2)
-summary(dmM)
+if (require(popEpi, quietly=TRUE)) {
+  options("popEpi.datatable" = FALSE)
+  dmM <- splitMulti(dmL, age = seq(0,100,5),
+                    tfD = c(0,1,2,5,10,20,30,40),
+                    drop = FALSE )
+  summary(dmS2)
+  summary(dmM)
+}
 @ %
 Note we used the argument \texttt{drop=FALSE} which will retain
 follow-up also outside the window defined by the range of the
@@ -300,15 +301,17 @@ nevertheless this may be exactly what we want in some situations.
 So we see that the two ways of splitting data yields the same amount of
 follow-up, but the results are not necessarily identical on all machines:
 <<>>=
-identical( dmS2, dmM )
-class( dmS2 )
-class( dmM )
+if (require(popEpi, quietly=TRUE)) {
+  identical( dmS2, dmM )
+  class( dmS2 )
+  class( dmM )
+}
 @ %
 As we see, this is because the \texttt{dmM} object also is a
 \texttt{data.table} object; the \texttt{splitMulti} uses the
 \texttt{data.table} machinery which makes the splitting substantially
 faster --- this is of particular interest if you operate on large data
-sets ($>100,000$ records). 
+sets ($>100,000$ records).
 
 Thus the recommended way of splitting follow-up time is by
 \texttt{splitMulti}. But you should be aware that the result is a
@@ -334,8 +337,8 @@ We are interested in the time before and after inception of insulin
 use, which occurs at the date \texttt{doins}:
 <<>>=
 subset(dmL, lex.id %in% wh.id)
-dmC <- cutLexis( data = dmL, 
-                  cut = dmL$doins, 
+dmC <- cutLexis( data = dmL,
+                  cut = dmL$doins,
             timescale = "per",
             new.state = "Ins",
             new.scale = "tfI")
@@ -355,7 +358,7 @@ we did before with \texttt{dmL}.
 The result of this can also be achieved by cutting the split dataset
 \texttt{dmS2} instead of \texttt{dmL}:
 <<>>=
-dmS2C <- cutLexis( data = dmS2, 
+dmS2C <- cutLexis( data = dmS2,
                     cut = dmS2$doins,
               timescale = "per",
               new.state = "Ins",
@@ -388,7 +391,7 @@ be accessed by the function \texttt{timeSince()} or through the
 \texttt{summary()}:
 <<>>=
 summary(dmS2C, timeScales = TRUE)
-@ % 
+@ %
 Finally we can get a quick overview of the states and transitions by
 using \texttt{boxes} --- \texttt{scale.R} scales transition rates to
 rates per 1000 PY:
@@ -475,7 +478,7 @@ modeled too; the age at diabetes is logically equal to the difference
 between current age (\texttt{age}) and time since diabetes diagnosis
 (\texttt{tfD}):
 <<>>=
-summary( (dmS2$age-dmS2$tfD) - (dmS2$dodm-dmS2$dobth) ) 
+summary( (dmS2$age-dmS2$tfD) - (dmS2$dodm-dmS2$dobth) )
 @ %
 This calculation refers to the \emph{start} of each interval --- which
 are in the time scale variables in the \texttt{Lexis} object. But when
@@ -494,7 +497,7 @@ endpoint of the intervals, that is the time scale variables in the
 If we dissolve the relationship between the variables \texttt{age},
 \texttt{tfD} and age at diagnosis by grouping we may obtain
 identifiability of the three separate effects, but it will be at the
-price of an arbitrary allocation of a linear trend between them. 
+price of an arbitrary allocation of a linear trend between them.
 
 For the sake of clarity, consider current age, $a$, duration of
 disease, $d$ and age at diagnosis $e$, where
@@ -503,7 +506,7 @@ disease, $d$ and age at diagnosis $e$, where
  \text{age at diagnosis} +
  \text{disease duration},
  \quad \text{\ie} \quad a=e+d \quad
- \Leftrightarrow \quad e+d-a=0 
+ \Leftrightarrow \quad e+d-a=0
 \]
 If we model the effect of the quantitative variables $a$, $e$ and $d$
 on the log-rates by three functions $f$, $g$ and $h$:
@@ -528,7 +531,7 @@ variables we will in reality have settled for a particular value of
 $\kappa$, without known why we chose just that. The solution is to
 resort to predictions which are independent of the particular
 parametrization or choose a particular parametrization with explicit constraints.
- 
+
 \section{Modeling of rates}
 
 As mentioned, the purpose of subdividing follow-up data in smaller
@@ -549,7 +552,7 @@ person are \emph{conditionally} independent (conditional on having
 survived till the start of the interval in question). This implies
 that the total contribution to the likelihood from a single person is
 a product of terms, and hence the same as the likelihood of a number
-of independent Poisson terms, one from each interval. 
+of independent Poisson terms, one from each interval.
 
 Note that variables are neither Poisson distributed (\eg they can only
 ever assume values 0 or 1) nor independent --- it is only the
@@ -588,7 +591,7 @@ used directly in modeling.
 So we split the cut dataset in 3 months intervals along the age
 scale:
 <<>>=
-dmCs <- splitMulti( dmC, age = seq(0,110,1/4) )
+dmCs <- splitLexis( dmC, time.scale="age", breaks=seq(0, 110, 1/4) )
 summary( dmCs, t=T )
 @ %
 We see that we now have 228,748 records and 9996 persons, so about 23

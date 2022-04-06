@@ -22,7 +22,6 @@ options( width=90,
          SweaveHooks=list( fig=function()
          par(mar=c(3,3,1,1),mgp=c(3,1,0)/1.6,las=1,bty="n") ) )
 library(Epi)
-library(popEpi)
 library(dplyr)
 library(tidyr)
 @ %
@@ -220,18 +219,20 @@ La$per == Lb$per
 @ % 
 The same goes for \texttt{splitMulti}:
 <<>>=
-# split BEFORE add
-Mb <- addCov.Lexis(splitMulti(Lx, age = seq(0, 80, 5)),
-                   clin,
-                   exnam = "xnam" )
-#
-# split AFTER add
-Ma <- splitMulti(addCov.Lexis(Lx,
-                            clin,
-                           exnam = "xnam" ),
-                 age = seq(0, 80, 5))
-La$tfc == Mb$tfc
-Ma$tfc == Mb$tfc
+if (require(popEpi, quietly=TRUE)) {
+    ## split BEFORE add
+    Mb <- addCov.Lexis(splitMulti(Lx, age = seq(0, 80, 5)),
+                       clin,
+                       exnam = "xnam" )
+    ##
+    ## split AFTER add
+    Ma <- splitMulti(addCov.Lexis(Lx,
+                                  clin,
+                                  exnam = "xnam" ),
+                     age = seq(0, 80, 5))
+    La$tfc == Mb$tfc
+    Ma$tfc == Mb$tfc
+}
 @ %
 In summary, because both \texttt{addCov.Lexis} and
 \texttt{splitLexis}/\texttt{splitMulti} use LOCF for covariates the
@@ -422,8 +423,7 @@ summary(Lx)
 We split the data along the age-scale (omitting the variables we shall
 not need):
 <<>>=
-library(popEpi)
-Sx <- splitMulti(Lx[,1:7], age = 0:120)
+Sx <- splitLexis(Lx[,1:7], time.scale="age", breaks = 0:120)
 summary(Sx)
 @ %
 
