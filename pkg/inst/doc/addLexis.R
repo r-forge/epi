@@ -2,19 +2,17 @@
 ### Encoding: UTF-8
 
 ###################################################
-### code chunk number 1: addLexis.rnw:20-27
+### code chunk number 1: addLexis.rnw:20-25
 ###################################################
 options( width=90,
          SweaveHooks=list( fig=function()
          par(mar=c(3,3,1,1),mgp=c(3,1,0)/1.6,las=1,bty="n") ) )
 library(Epi)
-library(popEpi)
 library(dplyr)
-library(tidyr)
 
 
 ###################################################
-### code chunk number 2: addLexis.rnw:94-106
+### code chunk number 2: addLexis.rnw:92-104
 ###################################################
 xcoh <- structure(list(id = c("A", "B", "C"),
                     birth = c("1952-07-14", "1954-04-01", "1987-06-10"),
@@ -31,7 +29,7 @@ xcoh
 
 
 ###################################################
-### code chunk number 3: addLexis.rnw:113-121
+### code chunk number 3: addLexis.rnw:111-119
 ###################################################
 Lcoh <- Lexis(entry = list(per = doe),
                exit = list(per = dox, 
@@ -44,7 +42,7 @@ str(Lcoh)
 
 
 ###################################################
-### code chunk number 4: addLexis.rnw:137-140
+### code chunk number 4: addLexis.rnw:135-138
 ###################################################
 Lx$lex.id <- as.character(Lx$lex.id)
 str(Lx)
@@ -52,7 +50,7 @@ Lx
 
 
 ###################################################
-### code chunk number 5: addLexis.rnw:148-160
+### code chunk number 5: addLexis.rnw:146-158
 ###################################################
 clin <- data.frame(lex.id = c("A", "A", "C", "B", "C"),
                       per = cal.yr(c("1977-3-17", 
@@ -69,20 +67,20 @@ clin
 
 
 ###################################################
-### code chunk number 6: addLexis.rnw:171-172
+### code chunk number 6: addLexis.rnw:169-170
 ###################################################
 (Cx <- addCov.Lexis(Lx, clin))
 
 
 ###################################################
-### code chunk number 7: addLexis.rnw:186-188
+### code chunk number 7: addLexis.rnw:184-186
 ###################################################
 (Dx <- addCov.Lexis(Lx, clin, exnam = "xnam", tfc = "tfCl"))
 summary(Dx, t=T)
 
 
 ###################################################
-### code chunk number 8: addLexis.rnw:195-210
+### code chunk number 8: addLexis.rnw:193-208
 ###################################################
 # split BEFORE add
 Lb <- addCov.Lexis(splitLexis(Lx,
@@ -102,7 +100,7 @@ La
 
 
 ###################################################
-### code chunk number 9: addLexis.rnw:216-219
+### code chunk number 9: addLexis.rnw:214-217
 ###################################################
 La$tfc == Lb$tfc
 La$age == Lb$age
@@ -110,46 +108,52 @@ La$per == Lb$per
 
 
 ###################################################
-### code chunk number 10: addLexis.rnw:222-234
+### code chunk number 10: addLexis.rnw:220-234
 ###################################################
-# split BEFORE add
-Mb <- addCov.Lexis(splitMulti(Lx, age = seq(0, 80, 5)),
-                   clin,
-                   exnam = "xnam" )
-#
-# split AFTER add
-Ma <- splitMulti(addCov.Lexis(Lx,
-                            clin,
-                           exnam = "xnam" ),
-                 age = seq(0, 80, 5))
-La$tfc == Mb$tfc
-Ma$tfc == Mb$tfc
+if (require(popEpi, quietly=TRUE)) {
+    ## split BEFORE add
+    Mb <- addCov.Lexis(splitMulti(Lx, age = seq(0, 80, 5)),
+                       clin,
+                       exnam = "xnam" )
+    ##
+    ## split AFTER add
+    Ma <- splitMulti(addCov.Lexis(Lx,
+                                  clin,
+                                  exnam = "xnam" ),
+                     age = seq(0, 80, 5))
+    La$tfc == Mb$tfc
+    Ma$tfc == Mb$tfc
+}
 
 
 ###################################################
-### code chunk number 11: addLexis.rnw:249-255
+### code chunk number 11: addLexis.rnw:249-257
 ###################################################
-cov <- c("bp", "chol")
-Lx <- La
-Lx <- group_by(Lx, lex.id) %>% 
-         fill(all_of(cov)) %>% 
-                 ungroup()
-class(Lx)
+if (require(tidyr, quietly=TRUE)) {
+    cov <- c("bp", "chol")
+    Lx <- La
+    Lx <- group_by(Lx, lex.id) %>% 
+        fill(all_of(cov)) %>% 
+        ungroup()
+    class(Lx)
+}
 
 
 ###################################################
-### code chunk number 12: addLexis.rnw:260-266
+### code chunk number 12: addLexis.rnw:262-270
 ###################################################
-Lx <- La
-Lx[,cov] <- as.data.frame( group_by(Lx, lex.id) 
-                       %>% fill(all_of(cov)))[,cov]
-class(Lx)
-La
-Lx
+if (require(tidyr, quietly=TRUE)) {
+    Lx <- La
+    Lx[,cov] <- as.data.frame( group_by(Lx, lex.id) 
+                              %>% fill(all_of(cov)))[,cov]
+    class(Lx)
+    La
+    Lx
+}
 
 
 ###################################################
-### code chunk number 13: addLexis.rnw:334-347
+### code chunk number 13: addLexis.rnw:338-351
 ###################################################
 fu <- data.frame(doe = c(2006, 2008),
                  dox = c(2015, 2018),
@@ -167,7 +171,7 @@ str(Sx)
 
 
 ###################################################
-### code chunk number 14: addLexis.rnw:356-366
+### code chunk number 14: addLexis.rnw:360-370
 ###################################################
 set.seed(1952)
 rf <- data.frame(per = c(2005 + runif(12, 0, 10)),
@@ -182,7 +186,7 @@ rg <- data.frame(per = c(2009 + runif(10, 0, 10)),
 
 
 ###################################################
-### code chunk number 15: addLexis.rnw:377-380
+### code chunk number 15: addLexis.rnw:381-384
 ###################################################
 pdat <- list(F = rf, G = rg)
 pdat
@@ -190,7 +194,7 @@ Lx
 
 
 ###################################################
-### code chunk number 16: addLexis.rnw:389-402
+### code chunk number 16: addLexis.rnw:393-406
 ###################################################
 summary(Sx) ; names(Sx)
 ex1 <- addDrug.Lexis(Sx, pdat, method = "ext") # default
@@ -208,7 +212,7 @@ fix
 
 
 ###################################################
-### code chunk number 17: addLexis.rnw:411-420
+### code chunk number 17: addLexis.rnw:415-424
 ###################################################
 data(DMlate) ; str(DMlate)
 Lx <- Lexis(entry = list(per = dodm,
@@ -222,15 +226,14 @@ summary(Lx)
 
 
 ###################################################
-### code chunk number 18: addLexis.rnw:424-427
+### code chunk number 18: addLexis.rnw:428-430
 ###################################################
-library(popEpi)
-Sx <- splitMulti(Lx[,1:7], age = 0:120)
+Sx <- splitLexis(Lx[,1:7], time.scale="age", breaks = 0:120)
 summary(Sx)
 
 
 ###################################################
-### code chunk number 19: addLexis.rnw:435-476
+### code chunk number 19: addLexis.rnw:438-479
 ###################################################
 set.seed(1952)
 
@@ -276,7 +279,7 @@ head(purC)
 
 
 ###################################################
-### code chunk number 20: addLexis.rnw:491-498
+### code chunk number 20: addLexis.rnw:494-501
 ###################################################
 Sx1 <- subset(Sx, lex.id < 1000)
 pur <- list(A = subset(purA, lex.id < 1000),
@@ -288,7 +291,7 @@ summary(ad1)
 
 
 ###################################################
-### code chunk number 21: addLexis.rnw:501-508
+### code chunk number 21: addLexis.rnw:504-511
 ###################################################
 Sx2 <- subset(Sx, lex.id < 500)
 pur <- list(A = subset(purA, lex.id < 500),
@@ -300,7 +303,7 @@ summary(ad2)
 
 
 ###################################################
-### code chunk number 22: addLexis.rnw:515-522
+### code chunk number 22: addLexis.rnw:518-525
 ###################################################
 pur <- list(A = subset(purA, lex.id < 500 & runif(nrow(purA)) < 0.5),
             B = subset(purB, lex.id < 500 & runif(nrow(purB)) < 0.5),
@@ -312,7 +315,7 @@ summary(ad3)
 
 
 ###################################################
-### code chunk number 23: addLexis.rnw:538-544
+### code chunk number 23: addLexis.rnw:541-547
 ###################################################
 pur <- list(B = subset(purB, lex.id < 500),
             C = subset(purC, lex.id < 500))
@@ -323,13 +326,13 @@ summary(ad4)
 
 
 ###################################################
-### code chunk number 24: addLexis.rnw:553-554
+### code chunk number 24: addLexis.rnw:556-557
 ###################################################
 summary(ad1$lex.dur)
 
 
 ###################################################
-### code chunk number 25: addLexis.rnw:571-574
+### code chunk number 25: addLexis.rnw:574-577
 ###################################################
 summary(ad1)
 summary(adc <- coarse.Lexis(ad1, lim = c(1/6,1/2)))
@@ -337,7 +340,7 @@ summary(adc$lex.dur)
 
 
 ###################################################
-### code chunk number 26: addLexis.rnw:587-597
+### code chunk number 26: addLexis.rnw:590-600
 ###################################################
 summary(Sx2)
 system.time(ad4 <- addDrug.Lexis(Sx2, 
@@ -352,7 +355,7 @@ summary(ad5)
 
 
 ###################################################
-### code chunk number 27: addLexis.rnw:602-608
+### code chunk number 27: addLexis.rnw:605-611
 ###################################################
 ad4$keep <- with(ad4, (B.ex & B.ct == 0) |
                       (C.ex & C.ct == 0))

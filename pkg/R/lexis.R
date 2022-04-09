@@ -513,24 +513,34 @@ points.Lexis <- function(x, time.scale=options()[["Lexis.time.scale"]], ...)
 print.Lexis <-
 function(x, ..., td = 2, nd = 3, rnam = FALSE, org = FALSE)
     {
-    whL <- c("lex.id", timeScales(x), "lex.dur", "lex.Cst", "lex.Xst")
-    tsl <- c(timeScales(x), "lex.dur")
-    oth <- setdiff(names(x), whL)    
+    # "intersect" is to allow subsets of variables to be printed
+    # result is ordered as the first argument to intersect()
+    # The time-scale variables
+    tsl <- intersect(c(timeScales(x), "lex.dur"), names(x))
+    # The Lexis variables
+    whL <- intersect(c("lex.id", tsl, "lex.Cst", "lex.Xst"), names(x))
+    # non-Lexis variables"
+    oth <- setdiff(names(x), whL)
+    # non-Lexis numerical variables
     nuv <- setdiff(names(which(sapply(x, is.numeric))), whL)
+    # round the time-scale variables
     x[,tsl] <- round(x[,tsl], td)
+    # round the non-Lexis numerical variables
     x[,nuv] <- round(x[,nuv], nd)
     if (org) print.data.frame(x, row.names = rnam, ...)
         else print.data.frame(x[,c(whL, oth)],
                                  row.names = rnam, ...)
-    invisible(c(whL, org))
+    # return the printed ordering of variables 
+    invisible(c(whL, oth))
     }
 
 PY.ann <- function (x, ...) UseMethod("PY.ann")
 PY.ann.Lexis <-
 function( x, time.scale=options()[["Lexis.time.scale"]], digits=1, ... )
 {
-  if( !inherits(x,"Lexis") )
-    stop( "Only meaningful for Lexis objects not for objects of class ", class(x) )
+  if (!inherits(x,"Lexis"))
+    stop("Only meaningful for Lexis objects not for objects of class ",
+         class(x))
   wh.x <- x[,time.scale[1]] + x[,"lex.dur"]/2
   if( two.scales <- length(time.scale)==2 )
      wh.y <- x[,time.scale[2]] + x[,"lex.dur"]/2

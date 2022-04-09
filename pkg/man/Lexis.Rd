@@ -19,13 +19,17 @@ entry.status = 0,
        notes = TRUE,
          tol = .Machine$double.eps^0.5,
 keep.dropped = FALSE)
-\method{print}{Lexis}(x, ..., td = 2, nd = 3, rnam = FALSE, org = FALSE)
+\method{print}{Lexis}(x, ...,
+                      td = 2,
+                      nd = 3,
+                    rnam = FALSE,
+                     org = FALSE)
 }
 \arguments{
   \item{entry}{a named list of entry times. Each element of the list is
     a numeric variable representing the entry time on the named time
     scale. The name of the elements of the list will appear as names of
-    variables designated as timescales in the resuting object. All time
+    variables designated as timescales in the resulting object. All time
     scales must have the same units (e.g. years). 
     The names of the timescales must be different from any column name in
     \code{data}.}
@@ -83,6 +87,12 @@ keep.dropped = FALSE)
   object using the \code{merge} method for \code{Lexis} objects. The
   latter is the default.
 
+  The \code{print} method prints the time-scale variables and other
+  numerical variables rounded, possibly differently. Reorders columns so
+  the Lexis-specific variables comes first. Returns (invisibly) a character
+  vector with the (re)ordering of the columns in the object, even if
+  \code{org = TRUE} is set.
+  
   There are also \code{merge}, \code{subset}, \code{transform} and many
   other methods for \code{Lexis} objects. They work as the corresponding
   methods for data-frames but ensures that the result is a \code{Lexis}
@@ -184,6 +194,11 @@ L2 <- Lexis(entry = list(per = entry),
       exit.status = Fail,
              data = xcoh)
 L2
+# behaviour of print method:
+L2[,1:6]
+L2[,6:1]
+print(L2[,6:1], org=TRUE)
+(print(L2[,-3]))
 }
 \seealso{
    \code{\link{plot.Lexis}},

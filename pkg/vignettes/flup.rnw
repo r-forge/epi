@@ -284,9 +284,10 @@ package:
 <<>>=
 if (require(popEpi, quietly=TRUE)) {
   options("popEpi.datatable" = FALSE)
-  dmM <- splitMulti(dmL, age = seq(0,100,5),
+  dmM <- splitMulti(dmL, 
+                    age = seq(0,100,5),
                     tfD = c(0,1,2,5,10,20,30,40),
-                    drop = FALSE )
+                   drop = FALSE)
   summary(dmS2)
   summary(dmM)
 }
