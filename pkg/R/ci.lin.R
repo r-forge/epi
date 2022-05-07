@@ -75,8 +75,8 @@ function( obj, ndx, ndr,
         sample = FALSE )
 {
 if( nrow(ndr)==1 ) ndr <- ndr[rep(1,nrow(ndx)),,drop=FALSE]
-if( (    ( nrow(ndx) !=  nrow(ndr)) ) |
-    ( any(names(ndx) != names(ndr)) ) )
+if(         ( nrow(ndx)  !=       nrow(ndr)) |
+    any(sort(names(ndx)) != sort(names(ndr))) )
     stop("\nThe two prediction frames must have same dimensions",
          "and column names, but dimensions are (",
          paste(dim(ndx), collapse=","), ") and (",
