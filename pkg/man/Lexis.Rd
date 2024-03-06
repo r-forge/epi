@@ -216,6 +216,7 @@ print(L2[,6:1], org=TRUE)
    \code{\link{rbind.Lexis}},
    \code{\link{transform.Lexis}},
    \code{\link{summary.Lexis}},
+   \code{\link{unLexis}},
    \code{\link{timeScales}},
    \code{\link{timeBand}},
    \code{\link{entry}},

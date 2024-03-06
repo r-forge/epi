@@ -17,7 +17,7 @@
                      clin,
                 timescale = 1,
                     exnam,
-                      tfc = "tfc")
+                      tfc = "tfc", \dots)
 }
 \arguments{
   \item{Lx}{
@@ -60,6 +60,8 @@
     If the argument is omitted a variable called \code{tfc} will be
     constructed. 
     }
+  \item{\dots}{Arguments passed on. Ignored
+}
 }
 \value{
     A \code{Lexis} object representing the same follow-up as \code{Lx}, 

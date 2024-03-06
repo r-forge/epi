@@ -1,5 +1,4 @@
-### R code from vignette source 'crisk'
-### Encoding: UTF-8
+### R code from vignette source 'crisk.rnw'
 
 ###################################################
 ### code chunk number 1: crisk.rnw:25-28
