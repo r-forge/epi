@@ -5,9 +5,13 @@ o tidying function calls (missing ...'s in metods) and Rd files
 
 o bootLexis crashed if lex.id was non-numeric. Fixed now.
 
-o new function: unLexis
-
+o new functions: unLexis removes Lexis atttributes; legendbox explains
+  the contents of the plot from boxes.Lexis
+  
 o vignettes groomed
+
+o cutLexis would give erroneous results if the Lexis object was not
+  sorted by id and the cut= argument was a data frame
 
 Changes in 2.47
 

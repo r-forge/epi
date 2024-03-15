@@ -18,16 +18,16 @@ VCOV.lmerMod  <- function(x, ...) as.matrix(vcov(x))
 
 # For the rest of the non-conforming classes we then just need the
 # methods not defined
-# VCOV.coxph    <- function(object, ...)
-#                  survival::vcov.coxph(object, complete=FALSE, ...)
-COEF.crr      <- function(object, ...) object$coef
-VCOV.crr      <- function(object, ...) object$var
-COEF.MIresult <- function(object, ...) object$coefficients
-VCOV.MIresult <- function(object, ...) object$variance
-COEF.mipo     <- function(object, ...) object$qbar
-VCOV.mipo     <- function(object, ...) object$t
-VCOV.gnlm     <- function(object, ...) object$cov
-VCOV.rq       <- function(object, ...) summary(object, cov=TRUE)$cov
+# VCOV.coxph    <- function(x, ...)
+#                  survival::vcov.coxph(x, complete=FALSE, ...)
+COEF.crr      <- function(x, ...) x$coef
+VCOV.crr      <- function(x, ...) x$var
+COEF.MIresult <- function(x, ...) x$coefficients
+VCOV.MIresult <- function(x, ...) x$variance
+COEF.mipo     <- function(x, ...) x$qbar
+VCOV.mipo     <- function(x, ...) x$t
+VCOV.gnlm     <- function(x, ...) x$cov
+VCOV.rq       <- function(x, ...) summary(x, cov=TRUE)$cov
 
 df2ctr <-
 function(obj, nd)
