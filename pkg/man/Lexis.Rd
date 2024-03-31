@@ -68,7 +68,7 @@ keep.dropped = FALSE)
 \details{
   The analysis of long-term population-based follow-up studies typically
   requires multiple time scales to be taken into account, such as
-  age, calender time, or time since an event. A \code{Lexis} object is
+  age, calendar time, or time since an event. A \code{Lexis} object is
   a data frame with additional attributes that allows these multiple time
   dimensions of follow-up to be managed.
 
