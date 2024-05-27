@@ -12,9 +12,10 @@ options(width=90,
 
 
 ###################################################
-### code chunk number 2: yll.rnw:30-31 (eval = FALSE)
+### code chunk number 2: yll.rnw:31-33
 ###################################################
-## source("../r/boxes.MS.R")
+anfang <- Sys.time()
+cat("Start time:", format(anfang, "%F, %T"), "\n")
 
 
 ###################################################
@@ -41,20 +42,20 @@ boxes.MS(zz)
 
 
 ###################################################
-### code chunk number 5: yll.rnw:275-276
+### code chunk number 5: yll.rnw:278-279
 ###################################################
 data(DMepi)
 
 
 ###################################################
-### code chunk number 6: yll.rnw:282-284
+### code chunk number 6: yll.rnw:285-287
 ###################################################
 str(DMepi)
 head(DMepi)
 
 
 ###################################################
-### code chunk number 7: yll.rnw:304-310
+### code chunk number 7: yll.rnw:307-313
 ###################################################
 DMepi <- transform(subset(DMepi, A > 30),
                    A = A + 0.5,
@@ -65,7 +66,7 @@ head(DMepi)
 
 
 ###################################################
-### code chunk number 8: yll.rnw:316-341
+### code chunk number 8: yll.rnw:319-344
 ###################################################
 # Knots used in all models
 (a.kn <- seq(40, 95, , 6))
@@ -95,7 +96,7 @@ lW.f <- update(lW.m, data = subset(DMepi, sex == "F"))
 
 
 ###################################################
-### code chunk number 9: yll.rnw:348-385
+### code chunk number 9: yll.rnw:351-388
 ###################################################
 a.ref <- 30:90
 p.ref <- 1996:2016
@@ -178,5 +179,14 @@ plyll("Tot", " - total mortality refernce")
 ### code chunk number 12: sus
 ###################################################
 plyll("Sus", " - susceptibility assumed")
+
+
+###################################################
+### code chunk number 13: yll.rnw:471-475
+###################################################
+ende <- Sys.time()
+cat("  Start time:", format(anfang, "%F, %T"), "\n")
+cat("    End time:", format(  ende, "%F, %T"), "\n")
+cat("Elapsed time:", round(difftime(ende, anfang, units = "mins"), 2), "minutes\n")
 
 
