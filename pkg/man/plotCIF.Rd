@@ -31,7 +31,7 @@ stackedCIF( x, group = 1,
 }
 \arguments{
   
-\item{x}{An object of class \code{\link{survfit}}, the \code{type} of
+\item{x}{An object of class \code{\link[survival]{survfit}}, the \code{type} of
   \code{event} in \code{Surv()} being "\code{mstate}"; the first level
   of the event factor represents censoring and the remaining ones the
   alternative competing events. 
@@ -80,11 +80,13 @@ Statistics in Medicine, 26: 2389--2430.
 }
 \note{
 Aalen-Johansen curves for competing events in several groups can also
-be plotted by function \code{\link{plot.survfit}} of the survival
+be plotted by function \code{\link[survival]{plot.survfit}} of the survival
 library as well as by some functions in other packages covering analysis
 of time-to-event data.}
 \seealso{
-\code{\link{survfit}}, \code{\link{plot}}, \code{\link{plot.survfit}}. 
+  \code{\link[survival]{survfit}},
+  \code{\link{plot}},
+  \code{\link[survival]{plot.survfit}}. 
 }
 \examples{
 library(survival)   #  requires version 2.39-4 or later
@@ -115,11 +117,11 @@ text( 38, 0.8, "Men", pos = 2)
 text( 38, 0.5, "Women", pos = 2)
 
 par(mfrow=c(1,2))
-stackedCIF(fitCI, group = 1, colour = c("gray80", "gray90"),
+stackedCIF(fitCI, group = 1, fill = c("gray80", "gray90"),
   main = "Women", xlab="Time (years)" )	
 text( 36, 0.15, "PCM", pos = 2)
 text( 36, 0.6, "Death", pos = 2)
-stackedCIF(fitCI, group = 2, colour = c("gray80", "gray90"), 
+stackedCIF(fitCI, group = 2, fill = c("gray80", "gray90"), 
   main = "Men", xlab="Time (years)" )
 text( 39, 0.10, "PCM", pos = 2)
 text( 39, 0.6, "Death", pos = 2)	
