@@ -18,7 +18,7 @@ Bendix Carstensen
                       \end{tabular}}
 
 \input{topreport}
-\renewcommand{\rwpre}{./flup}
+\renewcommand{\rwpre}{./aaflup}
 
 \chapter*{Introduction}
 \addcontentsline{toc}{chapter}{Introduction}
@@ -301,8 +301,8 @@ The results of these two plotting commands are in figure
 \ref{fig:Lexis-diagram}, p. \pageref{fig:Lexis-diagram}.
 \begin{figure}[tb]
 \centering
-\includegraphics[width = 0.35\textwidth]{flup-dmL1}
-\includegraphics[width = 0.63\textwidth]{flup-dmL2}
+\includegraphics[width = 0.35\textwidth]{aaflup-dmL1}
+\includegraphics[width = 0.63\textwidth]{aaflup-dmL2}
 \caption{\it Lexis diagram of the \textrm{\tt DMlate} dataset; left
   panel is the default version, right panel is with some bells and
   whistles. The red lines are for women, blue for men, crosses
@@ -1185,8 +1185,8 @@ abline(h = 1)
 @ %
 \begin{figure}[tb]
 \centering
-\includegraphics[width = 0.49\textwidth]{flup-sep-mort}
-\includegraphics[width = 0.49\textwidth]{flup-sep-HR}
+\includegraphics[width = 0.49\textwidth]{aaflup-sep-mort}
+\includegraphics[width = 0.49\textwidth]{aaflup-sep-HR}
 \caption{\it Left panel: Mortality rates from separate models for the
   two mortality transitions; the \textrm{\tt
     DM}$\rightarrow$\textrm{\tt Dead} transition modeled by age alone;
