@@ -30,7 +30,7 @@ library(popEpi)
 library(dplyr)
 library(tidyr)
 @ %
-\renewcommand{\rwpre}{./addLexis}
+\renewcommand{\rwpre}{./02addLexis}
 
 <<echo = FALSE>>=
 anfang <- Sys.time()
